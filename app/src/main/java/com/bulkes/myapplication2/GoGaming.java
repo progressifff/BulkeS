@@ -6,9 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -74,7 +76,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Holder = this.getHolder();
         Holder.addCallback(this);
         this.setFocusable(true);
-        bulk = new Bulk(ScreenWidth/2,ScreenHeight/2,(float)150.6,Color.RED);
+
 
         isTouch = false;
         deltaX = 0;
@@ -103,12 +105,18 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     public void run()
     {
         Canvas canva;
+        Matrix matrix = new Matrix();
+        Log.v("Size(w h)", String.valueOf(ScreenWidth) + " " + String.valueOf(ScreenHeight));
+        float scaling = ScreenHeight / 1080f;
+        bulk = new Bulk(ScreenWidth/2 / scaling,ScreenHeight/2 / scaling,(float)150.6,Color.RED);
+        matrix.setScale(   scaling, scaling);
         while(runFlag)
         {
             canva = null;
             try
             {
                 canva = Holder.lockCanvas();
+                canva.setMatrix(matrix);
                 if(canva!=null)
                 {
                     try {
@@ -137,7 +145,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     public void Draw(Canvas canvas)
     {
 //------------------------Draw Field------------------------------------------------------------
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         paint.setColor(Color.RED);
@@ -184,7 +192,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setStyle(Paint.Style.FILL);
         if(bulk.getIsMoved())
         {
-            if (((bulk.X() - bulk.Radius() - deltaX) < 0 || (bulk.X() + bulk.Radius() + deltaX) > ScreenWidth) || ((bulk.Y() - bulk.Radius() - deltaY) < 0 || (bulk.Y() + bulk.Radius() + deltaY) > ScreenHeight)) {
+            if (((bulk.X() - bulk.Radius() - deltaX) < 0 || (bulk.X() + bulk.Radius() + deltaX) > 1920.0f) || ((bulk.Y() - bulk.Radius() - deltaY) < 0 || (bulk.Y() + bulk.Radius() + deltaY) > 1080.0f)) {
                 return;
             }
         //    Log.v("GoGaming", String.valueOf(deltaX * (float) 0.1));

@@ -39,6 +39,7 @@ public class MainMenuActivity extends AppCompatActivity{
         if (actionBar != null) {
             actionBar.hide();
         }
+
         setContentView(R.layout.activity_crossfade);
 
         cardAbout = (CardView)findViewById(R.id.card_about);
