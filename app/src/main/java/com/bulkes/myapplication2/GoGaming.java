@@ -57,7 +57,10 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private float downY;
     private Paint paint;
     private boolean runFlag = false;
+    private User user;
     private Bulk bulk;
+
+    Indicator user_indicator;
     //%%%%%%%%%%%%%%%%%%%%%%%%%%
     private Boolean isTouch;
     private float begDownX;
@@ -74,8 +77,9 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Holder = this.getHolder();
         Holder.addCallback(this);
         this.setFocusable(true);
-        bulk = new Bulk(ScreenWidth/2,ScreenHeight/2,(float)150.6,Color.RED);
+     //   bulk = new Bulk(ScreenWidth/2,ScreenHeight/2,(float)150.6,Color.RED);
 
+        user = new User(ScreenWidth / 2, ScreenHeight/2, (float)100.6,Color.RED);
         isTouch = false;
         deltaX = 0;
         deltaY = 0;
@@ -137,12 +141,12 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     public void Draw(Canvas canvas)
     {
 //------------------------Draw Field------------------------------------------------------------
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(bulk.X(), bulk.Y(), bulk.Radius(), paint);
+        canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         drawBulk(canvas);
         drawJoyStick(canvas);
@@ -182,16 +186,33 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     {
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
-        if(bulk.getIsMoved())
+        if(user.getIsMoved())
         {
-            if (((bulk.X() - bulk.Radius() - deltaX) < 0 || (bulk.X() + bulk.Radius() + deltaX) > ScreenWidth) || ((bulk.Y() - bulk.Radius() - deltaY) < 0 || (bulk.Y() + bulk.Radius() + deltaY) > ScreenHeight)) {
+            if (((user.getX() - user.getRadius() - deltaX) < 0 || (user.getX() + user.getRadius() + deltaX) > ScreenWidth) || ((user.getY() - user.getRadius() - deltaY) < 0 || (user.getY() + user.getRadius() + deltaY) > ScreenHeight)) {
                 return;
             }
         //    Log.v("GoGaming", String.valueOf(deltaX * (float) 0.1));
             //Здесь сделал проверку на не число NAN. В определенное время Бульк пропадает. В логе показывает NAN. Читал про NAN, оно возникает, при делении на ноль или корня кв. от отрицательного числа.
             if (!Float.isNaN(((downX < begDownX) ? (-deltaX) : (deltaX)) * 0.1f) && !Float.isNaN(((downY < begDownY) ? (-deltaY) : (deltaY)) * 0.1f))
-                bulk.Move(((downX < begDownX) ? (-deltaX) : (deltaX)) * 0.1f, ((downY < begDownY) ? (-deltaY) : (deltaY)) * 0.1f);
-            canvas.drawCircle(bulk.X(), bulk.Y(), bulk.Radius(), paint);
+                user.move(((downX < begDownX) ? (-deltaX) : (deltaX)) * 0.1f, ((downY < begDownY) ? (-deltaY) : (deltaY)) * 0.1f);
+            canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
+
+
+
+
+
+        /*    user_indicator = user.getIndicatorPosition(downX, downY);
+            paint.setColor(Color.argb(50, 100, 200, 100));
+
+            canvas.drawPath(user.getTriangle(), paint);
+          */
+            Paint shadowPaint = new Paint();
+            shadowPaint.setAntiAlias(true);
+            shadowPaint.setColor(Color.RED);
+            shadowPaint.setTextSize(32.0f);
+            shadowPaint.setStrokeWidth(1.0f);
+            shadowPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawText("12:55", 35f, 35f, shadowPaint);
         }
 //-------Move Bulk to point of touch
         /*
@@ -225,7 +246,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         switch(event.getAction())
         {
             case MotionEvent.ACTION_DOWN:
-                bulk.setIsMoved(true);
+                user.setIsMoved(true);
                 isTouch = true;
                 downX = begDownX = event.getX();
                 downY =  begDownY = event.getY();
@@ -256,13 +277,13 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 // Direction of Bulk
     private void checkDirection(float downX, float downY)
     {
-        if(downX > bulk.X())
-            bulk.setXDirection(1);
-        else if(downX < bulk.X())
-            bulk.setXDirection(-1);
-        if(downY > bulk.Y())
-            bulk.setYDirection(1);
-        else if(downY < bulk.Y())
-            bulk.setYDirection(-1);
+        if(downX > user.getX())
+            user.setXDirection(1);
+        else if(downX < user.getX())
+            user.setXDirection(-1);
+        if(downY > user.getY())
+            user.setYDirection(1);
+        else if(downY < user.getY())
+            user.setYDirection(-1);
     }
 }

@@ -5,14 +5,14 @@ import android.graphics.Color;
 /**
  * Created by 1 on 09.03.16.
  */
-public class GamePoint
+public class Unit
 {
-    protected   float       x;
-    protected   float       y;
-    protected   float       radius;
-    protected   int         color;
-    protected   boolean     is_deleted;
-    GamePoint()
+    protected float x;
+    protected float y;
+    protected float radius;
+    protected int color;
+    protected boolean is_deleted;
+    public Unit()
     {
         x = 0f;
         y = 0f;
@@ -20,7 +20,7 @@ public class GamePoint
         color = Color.RED;
         is_deleted = false;
     }
-    GamePoint(float _x, float _y, float _radius, int _color)
+    public Unit(float _x, float _y, float _radius, int _color)
     {
         x = _x;
         y = _y;
@@ -28,26 +28,26 @@ public class GamePoint
         color = _color;
         is_deleted = false;
     }
-    GamePoint(float _x, float _y, float _radius) {
+    public Unit(float _x, float _y, float _radius) {
         x = _x;
         y = _y;
         radius = _radius;
         color = Color.RED;
         is_deleted = false;
     }
-    float X()
+    float getX()
     {
         return x;
     }
-    float Y()
+    float getY()
     {
         return y;
     }
-    float Radius()
+    float getRadius()
     {
         return radius;
     }
-    void Move(float dx, float dy)
+    void move(float dx, float dy)
     {
         x += dx;
         y += dy;
