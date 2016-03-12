@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:weightSum="1">
+    <FrameLayout
+        android:id="@+id/frameid"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+        <include layout="@layout/about_content"/>
+        <include layout="@layout/help_content"/>
+    </FrameLayout>
+    <Button
+        android:id="@+id/play_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play Game"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="25dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top Score"
+        android:id="@+id/statistic_button"
+        android:layout_below="@+id/play_button"
+        android:layout_alignLeft="@+id/play_button"
+        android:layout_alignStart="@+id/play_button"
+        android:layout_alignRight="@+id/play_button"
+        android:layout_alignEnd="@+id/play_button" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help"
+        android:id="@+id/help_button"
+        android:layout_below="@+id/statistic_button"
+        android:layout_alignLeft="@+id/statistic_button"
+        android:layout_alignStart="@+id/statistic_button"
+        android:layout_alignRight="@+id/statistic_button"
+        android:layout_alignEnd="@+id/statistic_button" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="About"
+        android:id="@+id/about_button"
+        android:layout_below="@+id/help_button"
+        android:layout_alignLeft="@+id/help_button"
+        android:layout_alignStart="@+id/help_button"
+        android:layout_alignRight="@+id/help_button"
+        android:layout_alignEnd="@+id/help_button" />
+</RelativeLayout>
