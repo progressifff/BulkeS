@@ -57,8 +57,8 @@ public class GameMap
                             startSectorX + random.nextInt((int)diffSectorX),
                             startSectorY + random.nextInt((int)diffSectorY),
                             (float)random.nextInt(Settings.MaxFoodSize - Settings.MinFoodInSector) + Settings.MinFoodSize,
-                            getColor(random.nextInt(10)),
-                            5);
+                            getColor(random.nextInt(10)),//update
+                            5);//update
                     map.add(unit);
                 }
                 startSectorX += diffSectorX;

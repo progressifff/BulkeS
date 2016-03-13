@@ -10,7 +10,7 @@ public class Bulk extends Unit
     {
         super(_x,_y, _radius, _color);
         isMoved = false;
-        speed = 10 + 0;
+        speed = 10;
     }
     public Bulk( float _x, float _y, float _radius)
     {

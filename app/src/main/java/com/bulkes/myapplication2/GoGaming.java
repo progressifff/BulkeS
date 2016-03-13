@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -54,6 +56,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private int ScreenWidth;
     private int ScreenHeight;
     private float scaling;
+    private Matrix matrix;
     private float downX;
     private float downY;
     private Paint paint;
@@ -79,8 +82,11 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Holder = this.getHolder();
         Holder.addCallback(this);
         this.setFocusable(true);
-        scaling = ScreenHeight / Settings.ScreenHeightDefault;
-        user = new User(ScreenWidth / 2 / scaling, ScreenHeight/2 / scaling, 100f,Color.RED);
+        scaling = (float)ScreenHeight / Settings.ScreenHeightDefault;
+        Log.v("Scale", String.valueOf(scaling));
+        matrix = new Matrix();
+        matrix.setScale(scaling, scaling);
+        user = new User(ScreenWidth / 2 / scaling, ScreenHeight/2 / scaling, Settings.StartSizeUser,Color.RED);
         gameMap = new GameMap();
         isTouch = false;
         deltaX = 0;
@@ -126,6 +132,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     }
                     synchronized (Holder)
                     {
+                        canva.setMatrix(matrix);
                         Draw(canva);
                     }
                 }

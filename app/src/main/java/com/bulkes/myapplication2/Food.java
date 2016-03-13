@@ -8,6 +8,7 @@ public class Food extends Unit
     private  int feed;
 
     public Food(int feed) {
+        super();
         this.feed = feed;
     }
 
