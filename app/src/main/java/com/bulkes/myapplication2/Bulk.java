@@ -4,9 +4,7 @@ package com.bulkes.myapplication2;
  */
 public class Bulk extends Unit
 {
-    protected  int xDirection;
-    protected  int yDirection;
-    protected  int speed;
+    protected  float speed;
     protected  Boolean isMoved;
     public Bulk(float _x, float _y, float _radius, int _color)
     {
@@ -19,19 +17,9 @@ public class Bulk extends Unit
         super(_x, _y, _radius);
     }
     //-------------------------------------------
-    public int getXDirection()
-    {return xDirection;}
-    public void setXDirection(int direct)
-    {xDirection = direct;}
-    //-------------------------------------------
-    public int getYDirection()
-    {return yDirection;}
-    public void setYDirection(int direct)
-    {yDirection = direct;}
-    //-------------------------------------------
-    public int getSpeed()
+    public float getSpeed()
     {return speed;}
-    public void setSpeed(int _speed)
+    public void setSpeed(float _speed)
     {speed = _speed;}
     //-------------------------------------------
     public Boolean getIsMoved()

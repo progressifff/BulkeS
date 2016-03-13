@@ -8,18 +8,18 @@ import android.graphics.Path;
 public class User extends Bulk
 {
     private Indicator indicator;
-    protected  Boolean isMoved;
     public User( float _x, float _y, float _radius)
     {
         super(_x, _y, _radius);
         indicator = new Indicator();
+        setSpeed(0.1f);
     }
 
     public User( float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
-        isMoved = false;
         indicator = new Indicator();
+        setSpeed(0.1f);
     }
 
     public Indicator getIndicatorPosition(float x_end, float y_end)

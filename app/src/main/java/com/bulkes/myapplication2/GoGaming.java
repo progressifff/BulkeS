@@ -65,7 +65,8 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private Boolean isTouch;
     private float begDownX;
     private float begDownY;
-    float deltaX, deltaY;
+    private float deltaX, deltaY;
+    private GameMap gameMap;
     //%%%%%%%%%%%%%%%%%%%%%%%%%
 
     public GameView(Context context,Point size) {
@@ -77,9 +78,9 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Holder = this.getHolder();
         Holder.addCallback(this);
         this.setFocusable(true);
-     //   bulk = new Bulk(ScreenWidth/2,ScreenHeight/2,(float)150.6,Color.RED);
 
         user = new User(ScreenWidth / 2, ScreenHeight/2, (float)100.6,Color.RED);
+        gameMap = new GameMap();
         isTouch = false;
         deltaX = 0;
         deltaY = 0;
@@ -124,7 +125,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     }
                     synchronized (Holder)
                     {
-                        Draw(canva);
+                        draw(canva);
                     }
                 }
             }
@@ -138,21 +139,18 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    public void Draw(Canvas canvas)
+    public void draw(Canvas canvas)
     {
 //------------------------Draw Field------------------------------------------------------------
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        drawBulk(canvas);
+        drawMap(canvas);
+        drawScores(canvas);
+        drawUser(canvas);
         drawJoyStick(canvas);
     }
 
-    public void drawJoyStick(Canvas canvas)
+    private void drawJoyStick(Canvas canvas)
     {
         float stickX;
         float stickY;
@@ -167,79 +165,64 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             paint.setAlpha(240);
             if(Math.sqrt(Math.pow((downX - begDownX), 2) + Math.pow((downY - begDownY), 2)) > joyStickRadiusOut)
             {
-                k = (downY-begDownY)/(downX - begDownX);
-                deltaX = (float)Math.sqrt(Math.pow(joyStickRadiusOut,2)/(Math.pow(k,2)+1f));
-                deltaY = (float)Math.sqrt((Math.pow(joyStickRadiusOut,2) * Math.pow(k,2))/(1f + Math.pow(k,2)));
+                if((downX - begDownX) != 0)
+                {
+                    k = (downY-begDownY)/(downX - begDownX);
+                    deltaX = (float)Math.sqrt(Math.pow(joyStickRadiusOut,2)/(Math.pow(k,2)+1f));
+                    deltaY = (float)Math.sqrt((Math.pow(joyStickRadiusOut,2) * Math.pow(k,2))/(1f + Math.pow(k,2)));
+                }
+                else
+                {
+                    deltaX = 0;
+                    deltaY = joyStickRadiusOut;
+                }
+                deltaX = (downX < begDownX) ? (- deltaX) : (deltaX);
+                deltaY = (downY < begDownY) ? (- deltaY) : (deltaY);
             }
             else
             {
-                deltaX = Math.abs(downX-begDownX);
-                deltaY = Math.abs(downY-begDownY);
+                deltaX = downX-begDownX;
+                deltaY = downY-begDownY;
             }
-            stickX = (downX < begDownX) ? (begDownX - deltaX) : (begDownX + deltaX);
-            stickY = (downY < begDownY) ? (begDownY - deltaY) : (begDownY + deltaY);
+            stickX = begDownX + deltaX;
+            stickY = begDownY + deltaY;
             canvas.drawCircle(stickX, stickY, joyStickRadiusIn, paint); // stick(small circle with Radius = 40) is less transparent
         }
     }
 
-    public void drawBulk(Canvas canvas)
+    private void drawUser(Canvas canvas)
     {
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
-        if(user.getIsMoved())
-        {
-            if (((user.getX() - user.getRadius() - deltaX) < 0 || (user.getX() + user.getRadius() + deltaX) > ScreenWidth) || ((user.getY() - user.getRadius() - deltaY) < 0 || (user.getY() + user.getRadius() + deltaY) > ScreenHeight)) {
-                return;
-            }
-        //    Log.v("GoGaming", String.valueOf(deltaX * (float) 0.1));
-            //Здесь сделал проверку на не число NAN. В определенное время Бульк пропадает. В логе показывает NAN. Читал про NAN, оно возникает, при делении на ноль или корня кв. от отрицательного числа.
-            if (!Float.isNaN(((downX < begDownX) ? (-deltaX) : (deltaX)) * 0.1f) && !Float.isNaN(((downY < begDownY) ? (-deltaY) : (deltaY)) * 0.1f))
-                user.move(((downX < begDownX) ? (-deltaX) : (deltaX)) * 0.1f, ((downY < begDownY) ? (-deltaY) : (deltaY)) * 0.1f);
-            canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
-
-
-
-
-
-        /*    user_indicator = user.getIndicatorPosition(downX, downY);
-            paint.setColor(Color.argb(50, 100, 200, 100));
-
-            canvas.drawPath(user.getTriangle(), paint);
-          */
-            Paint shadowPaint = new Paint();
-            shadowPaint.setAntiAlias(true);
-            shadowPaint.setColor(Color.RED);
-            shadowPaint.setTextSize(32.0f);
-            shadowPaint.setStrokeWidth(1.0f);
-            shadowPaint.setStyle(Paint.Style.STROKE);
-            canvas.drawText("12:55", 35f, 35f, shadowPaint);
-        }
-//-------Move Bulk to point of touch
-        /*
-        float k;
-        float x;
-        float y;
-        if(bulk.getIsMoved() == true)
-        {
-            k = (downY-bulk.Y())/(downX - bulk.X());
-            if(!Float.isNaN(k))
-            {
-            //Log.v("GoGaming", String.valueOf(k));
-                if(Math.abs(downX - bulk.X()) > Math.abs(downY - bulk.Y())) {
-                    x = bulk.getSpeed();
-                    y = k * (bulk.X() + x * bulk.getXDirection()) - k * bulk.X() + bulk.Y();
-                    bulk.Move(x * bulk.getXDirection(), y - bulk.Y());
-                }
-                else if (Math.abs(downY - bulk.Y()) > Math.abs(downX - bulk.X()))
-                {
-                    y = bulk.getSpeed();
-                    x = (bulk.Y() +  y* bulk.getYDirection() + k*bulk.X() - bulk.Y())/k;
-                    bulk.Move(x - bulk.X(), y* bulk.getYDirection());
-                }
-            }
-        }
-        */
+        canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
+        user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
+        paint.setColor(Color.GRAY);
+        paint.setAlpha(240);
+        canvas.drawPath(user.getTriangle(), paint);
     }
+
+    private void drawMap(Canvas canvas)
+    {
+        Unit point;
+        for(int i = 0; i < gameMap.getSize();i++)
+        {
+            point = gameMap.getMapUnit(i);
+            paint.setColor(point.color);
+            point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
+            canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+        }
+    }
+
+    private void drawScores(Canvas canvas)
+    {
+        paint.setAntiAlias(true);
+        paint.setColor(Color.RED);
+        paint.setTextSize(52.0f);
+        paint.setStrokeWidth(1.0f);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawText("12:55", 35f, 35f, paint);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -254,16 +237,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             case MotionEvent.ACTION_MOVE:
                 downX = event.getX();
                 downY = event.getY();
-                /*if(Math.sqrt(Math.pow(event.getX() - bulk.X(), 2) + Math.pow(event.getY() - bulk.Y(), 2))<=bulk.Radius()/2)
-                    bulk.setIsMoved(false);
-                else
-                {
-                    bulk.setIsMoved(true);
-                    downX = event.getX();
-                    downY = event.getY();
-                    checkDirection(downX, downY);
-                }
-                */
                 break;
             case MotionEvent.ACTION_UP:
                 isTouch = false;
@@ -273,17 +246,5 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 break;
         }
         return true;
-    }
-// Direction of Bulk
-    private void checkDirection(float downX, float downY)
-    {
-        if(downX > user.getX())
-            user.setXDirection(1);
-        else if(downX < user.getX())
-            user.setXDirection(-1);
-        if(downY > user.getY())
-            user.setYDirection(1);
-        else if(downY < user.getY())
-            user.setYDirection(-1);
     }
 }
