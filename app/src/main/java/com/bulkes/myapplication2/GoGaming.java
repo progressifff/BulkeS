@@ -125,7 +125,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     }
                     synchronized (Holder)
                     {
-                        draw(canva);
+                        Draw(canva);
                     }
                 }
             }
@@ -139,7 +139,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    public void draw(Canvas canvas)
+    public void Draw(Canvas canvas)
     {
 //------------------------Draw Field------------------------------------------------------------
         paint.setColor(Color.WHITE);
