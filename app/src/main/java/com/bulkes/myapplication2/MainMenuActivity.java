@@ -7,6 +7,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
@@ -39,7 +41,9 @@ public class MainMenuActivity extends AppCompatActivity{
         if (actionBar != null) {
             actionBar.hide();
         }
-
+		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);    // Removes title bar
+        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);    // Removes notification bar
+		
         setContentView(R.layout.activity_crossfade);
 
         cardAbout = (CardView)findViewById(R.id.card_about);

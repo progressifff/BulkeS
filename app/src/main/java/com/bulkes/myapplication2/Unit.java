@@ -52,4 +52,14 @@ public class Unit
         x += dx;
         y += dy;
     }
+    public boolean isOverlapped(Unit unit)
+    {
+        Indicator pointOut= new Indicator();//point on radius external circle
+        pointOut.getParameters(unit.getX(), unit.getY(), unit.getRadius(),x, y);//(x;y) - center current unit
+        return (Math.pow((double)pointOut.getX() - x, 2.0) +  Math.pow((double)pointOut.getY() - y, 2.0)) < Math.pow((float)radius, 2.0);
+    }
+    public void setIsDeleted(boolean flag)
+    {
+        is_deleted = flag;
+    }
 }

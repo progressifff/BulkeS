@@ -215,9 +215,14 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         for(int i = 0; i < gameMap.getSize();i++)
         {
             point = gameMap.getMapUnit(i);
-            paint.setColor(point.color);
-            point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
-            canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+            if(point.is_deleted == false)
+            {
+                paint.setColor(point.color);
+                if(user.isOverlapped(point))
+                    point.setIsDeleted(true);
+                point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
+                canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+            }
         }
     }
 
