@@ -29,9 +29,11 @@ public class GameMap
         map.add(point);
     }
     //update!!!
-    private int getColor(int count)
+    private int getColor()
     {
-        return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+        Log.v("Color ", String.valueOf(Settings.getCountColors()));
+        return Settings.ColorList[random.nextInt(Settings.getCountColors())];
+        //return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
     private float getRandomX(int startSectorX, int diffSectorX)
     {
@@ -71,7 +73,7 @@ public class GameMap
                             getRandomX((int)startSectorX, (int)diffSectorX),
                             getRandomY((int) startSectorY, (int) diffSectorY),
                             getRandomRadius(),
-                            getColor(random.nextInt(10)),//update
+                            getColor(),//update
                             5);//update
                     boolean flagCorrect;
                     do//update infinity loop
