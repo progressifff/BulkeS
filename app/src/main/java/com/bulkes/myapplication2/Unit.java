@@ -9,6 +9,30 @@ public class Unit
 {
     protected float x;
     protected float y;
+
+    public void setX(float x)
+    {
+        this.x = x;
+    }
+
+    public void setY(float y)
+    {
+        this.y = y;
+    }
+
+    public void setRadius(float radius)
+    {
+        this.radius = radius;
+    }
+
+    public void setColor(int color)
+    {
+        this.color = color;
+    }
+    public void setIsDeleted(boolean flag)
+    {
+        is_deleted = flag;
+    }
     protected float radius;
     protected int color;
     protected boolean is_deleted;
@@ -58,8 +82,5 @@ public class Unit
         pointOut.getParameters(unit.getX(), unit.getY(), unit.getRadius(),x, y);//(x;y) - center current unit
         return (Math.pow((double)pointOut.getX() - x, 2.0) +  Math.pow((double)pointOut.getY() - y, 2.0)) < Math.pow((float)radius, 2.0);
     }
-    public void setIsDeleted(boolean flag)
-    {
-        is_deleted = flag;
-    }
+
 }

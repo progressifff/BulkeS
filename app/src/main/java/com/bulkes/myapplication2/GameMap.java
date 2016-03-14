@@ -33,11 +33,24 @@ public class GameMap
     {
         return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
+    private float getRandomX(int startSectorX, int diffSectorX)
+    {
+        return startSectorX + random.nextInt(diffSectorX);
+    }
+    private float getRandomY(int startSectorY, int diffSectorY)
+    {
+        return startSectorY + random.nextInt(diffSectorY);
+    }
+    private float getRandomRadius()
+    {
+        return (float)random.nextInt(Settings.MaxFoodSize - Settings.MinFoodSize) + Settings.MinFoodSize;
+    }
 
     // 8 sectors; each contains [min;max] Food with [min;max] Size
     public void generateSmartMap()
     {
         map = new ArrayList<>();
+        ArrayList <Unit> sector_map = new ArrayList<>(100);
         Unit unit;
         float startSectorX;
         float startSectorY;
@@ -51,22 +64,49 @@ public class GameMap
             {
                 int foodInGroup = random.nextInt(Settings.MaxFoodInSector - Settings.MinFoodInSector) + Settings.MinFoodInSector;
                 Log.v("Food ", String.valueOf(foodInGroup));
+                sector_map.clear();
                 for(int i = 0; i < foodInGroup; ++i)
                 {
                     unit = new Food(
-                            startSectorX + random.nextInt((int)diffSectorX),
-                            startSectorY + random.nextInt((int)diffSectorY),
-                            (float)random.nextInt(Settings.MaxFoodSize - Settings.MinFoodInSector) + Settings.MinFoodSize,
+                            getRandomX((int)startSectorX, (int)diffSectorX),
+                            getRandomY((int) startSectorY, (int) diffSectorY),
+                            getRandomRadius(),
                             getColor(random.nextInt(10)),//update
                             5);//update
-                    map.add(unit);
+                    boolean flagCorrect;
+                    do//update infinity loop
+                    {
+                        flagCorrect = true;
+                        for (Unit temp : sector_map)
+                        {
+                            if (temp.isOverlapped(unit))
+                            {
+                                unit.setX(getRandomX((int) startSectorX, (int) diffSectorX));
+                                unit.setY(getRandomY((int) startSectorY, (int) diffSectorY));
+                                unit.setRadius(getRandomRadius());
+                                flagCorrect = false;
+                            }
+                        }
+                    }while(flagCorrect == false);
+                    sector_map.add(unit);
+                }
+                for (Unit temp: map)//loop for correction
+                {
+                    for (Unit temp_sector: sector_map)
+                    {
+                        if(temp.isOverlapped(temp_sector))
+                            temp_sector.setIsDeleted(true);
+                    }
+                }
+                for (Unit temp: sector_map)//loop for adding
+                {
+                    map.add(temp);
                 }
                 startSectorX += diffSectorX;
             }
             startSectorY += diffSectorY;
         }
     }
-
     public int getSize()
     {
         return map.size();

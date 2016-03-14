@@ -32,7 +32,7 @@ public class Indicator
                 alpha = -(float)Math.acos((x - x0) / R);
             else
                 alpha = (float)Math.acos((x - x0) / R);
-        Log.v("Indicator ", String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(alpha) + " " + String.valueOf(x1) + " " + String.valueOf(y1));
+        //Log.v("Indicator ", String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(alpha) + " " + String.valueOf(x1) + " " + String.valueOf(y1));
     }
 
     public float getAlpha() {
