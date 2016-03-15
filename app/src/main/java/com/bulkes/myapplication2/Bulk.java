@@ -1,29 +1,57 @@
 package com.bulkes.myapplication2;
+
+import android.util.Log;
+
 /**
  * Created by progr on 10.03.2016.
  */
 public class Bulk extends Unit
 {
-    protected  float speed;
-    protected  Boolean isMoved;
+    protected  float        speed;
+    protected  boolean      isMoved;
+    protected  float        mass;
+
     public Bulk(float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
+        mass = (float)Math.PI * radius * radius;
         isMoved = false;
-        speed = 10;
+        speed = Settings.UserDefaultSpeed;
     }
     public Bulk( float _x, float _y, float _radius)
     {
-        super(_x, _y, _radius);
+        this(_x, _y, _radius, Settings.UserDefaultColor);
     }
     //-------------------------------------------
     public float getSpeed()
-    {return speed;}
+    {
+        return speed;
+    }
     public void setSpeed(float _speed)
-    {speed = _speed;}
+    {
+        speed = _speed;
+    }
     //-------------------------------------------
-    public Boolean getIsMoved()
-    {return isMoved;}
-    public void setIsMoved(Boolean flag)
-    {isMoved = flag;}
+    public boolean getIsMoved()
+    {
+        return isMoved;
+    }
+    public void setIsMoved(boolean flag)
+    {
+        isMoved = flag;
+    }
+    public void addMass(int feed)
+    {
+        setMass((float)feed + mass);
+    }
+    public float getMass() {
+        return mass;
+    }
+
+    public void setMass(float mass) {
+        this.mass = mass;
+        Log.v("Mass: ", String.valueOf(mass));
+        setRadius((float) Math.sqrt((double) mass / Math.PI));
+        Log.v("Radius: ", String.valueOf(radius));
+    }
 }

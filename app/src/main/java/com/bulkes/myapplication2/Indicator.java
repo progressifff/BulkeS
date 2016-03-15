@@ -25,14 +25,16 @@ public class Indicator
             x = (float)Math.sqrt(1.0f / (1f + k * k)) * R + x0;
 
         y = k * x - k * x0 + y0;
-        if( Math.abs(y - y0) < 0.001f)
-            alpha = 0;
+        if( Math.abs(x1 - x0) < 0.001f)
+        {
+                alpha = 0f;
+        }
         else
             if(y1 - y0 < 0 )
                 alpha = -(float)Math.acos((x - x0) / R);
             else
                 alpha = (float)Math.acos((x - x0) / R);
-        //Log.v("Indicator ", String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(alpha) + " " + String.valueOf(x1) + " " + String.valueOf(y1));
+      //  Log.v("Indicator ", String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(alpha) + " " + String.valueOf(x1) + " " + String.valueOf(y1));
     }
 
     public float getAlpha() {

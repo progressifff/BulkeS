@@ -17,6 +17,12 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
+
 /**
  * Created by progr on 08.03.2016.
  */
@@ -72,6 +78,11 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private float deltaX, deltaY;
     private GameMap gameMap;
     //%%%%%%%%%%%%%%%%%%%%%%%%%
+    static long currentTime;//action for pause
+    static long startTime;
+
+    private Timer timer;//timer for tick time and generate new food
+    private TimerTasks timerTask;
 
     public GameView(Context context,Point size) {
         super(context);
@@ -86,11 +97,16 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Log.v("Scale", String.valueOf(scaling));
         matrix = new Matrix();
         matrix.setScale(scaling, scaling);
-        user = new User(ScreenWidth / 2 / scaling, ScreenHeight/2 / scaling, Settings.StartSizeUser,Color.RED);
+        user = new User(ScreenWidth / 2 / scaling, ScreenHeight/2 / scaling, Settings.UserStartSize,Color.RED);
         gameMap = new GameMap();
         isTouch = false;
         deltaX = 0;
         deltaY = 0;
+        timer = new Timer();
+        timerTask = new TimerTasks();
+        timer.schedule(timerTask, 0, 1000);
+        Calendar calendar = Calendar.getInstance();
+        startTime = calendar.getTimeInMillis();
     }
 
     @Override
@@ -206,7 +222,8 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
         paint.setColor(Color.GRAY);
         paint.setAlpha(240);
-        canvas.drawPath(user.getTriangle(), paint);
+        if(user.getIsMoved())
+            canvas.drawPath(user.getTriangle(), paint);
     }
 
     private void drawMap(Canvas canvas)
@@ -218,10 +235,17 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             if(point.is_deleted == false)
             {
                 paint.setColor(point.color);
-                if(user.isOverlapped(point))
+                if(user.isEated(point))
+                {
+                    user.addMass(((Food) point).getFeed());
                     point.setIsDeleted(true);
-                point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
-                canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+                }
+                else
+                {
+                    if(user.getIsMoved())
+                        point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
+                    canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+                }
             }
         }
     }
@@ -230,10 +254,15 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     {
         paint.setAntiAlias(true);
         paint.setColor(Color.RED);
+        paint.setAlpha(150);
         paint.setTextSize(52.0f);
-        paint.setStrokeWidth(1.0f);
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawText("12:55", 35f, 35f, paint);
+        //Calendar calendar = Calendar.getInstance();
+        //GameView.currentTime = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("m:ss");
+        Date temp_date = new Date();
+        temp_date.setTime(currentTime - startTime);
+        canvas.drawText(sdf.format(temp_date), 50f, 100f, paint);
+        canvas.drawText(String.valueOf((int)user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
     }
 
     @Override
@@ -250,9 +279,24 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             case MotionEvent.ACTION_MOVE:
                 downX = event.getX() / scaling;
                 downY = event.getY() / scaling;
+                user.setIsMoved(true);
+                if( Math.abs(downX - begDownX) < 1f && Math.abs(downY - begDownY) < 1f)
+                {
+                    Log.v("Action Up", "Pst=Pfn");
+                    deltaX = 0f;
+                    deltaY = 0f;
+                    user.setIsMoved(false);
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 isTouch = false;
+                if(downX == begDownX && downY == begDownY)
+                {
+                    Log.v("Action Up", "Pst=Pfn");
+                    deltaX = 0f;
+                    deltaY = 0f;
+                    user.setIsMoved(false);
+                }
                 //  bulk.setIsMoved(false);
                 break;
             case MotionEvent.ACTION_CANCEL:

@@ -74,7 +74,7 @@ public class GameMap
                             getRandomY((int) startSectorY, (int) diffSectorY),
                             getRandomRadius(),
                             getColor(),//update
-                            5);//update
+                            Settings.FoodDefaultFeed);//update
                     boolean flagCorrect;
                     do//update infinity loop
                     {

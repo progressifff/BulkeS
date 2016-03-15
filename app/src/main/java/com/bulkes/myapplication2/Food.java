@@ -5,7 +5,16 @@ package com.bulkes.myapplication2;
  */
 public class Food extends Unit
 {
+
     private  int feed;
+    public int getFeed() {
+        return feed;
+    }
+
+    public void setFeed(int feed) {
+        this.feed = feed;
+    }
+
 
     public Food(int feed) {
         super();
