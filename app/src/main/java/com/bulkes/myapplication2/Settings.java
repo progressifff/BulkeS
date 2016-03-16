@@ -8,9 +8,9 @@ public final class Settings
     final static int    ScreenWidthDefault         = 1920;
     final static int    ScreenHeightDefault        = 1080;
     final static float  StartSizeUser              = 100f;
-    final static int    MinFoodInSector            = 3;
-    final static int    MaxFoodInSector            = 15;
-    final static int    MinFoodSize                = 5;
+    final static int    MinFoodInSector            = 0;
+    final static int    MaxFoodInSector            = 7;
+    final static int    MinFoodSize                = 20;
     final static int    MaxFoodSize                = 40;
     final static int    CountSectorX               = 4;
     final static int    CountSectorY               = 2;

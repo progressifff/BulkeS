@@ -28,7 +28,7 @@ public class GoGaming extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         display = getWindowManager().getDefaultDisplay();
         size = new Point();
-        display.getSize(size);
+        display.getRealSize(size);
         setContentView(new GameView(this, size));
     }
 
@@ -62,15 +62,13 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private Paint paint;
     private boolean runFlag = false;
     private User user;
-    private Bulk bulk;
-
     Indicator user_indicator;
     //%%%%%%%%%%%%%%%%%%%%%%%%%%
     private Boolean isTouch;
     private float begDownX;
     private float begDownY;
-    private float deltaX, deltaY;
     private GameMap gameMap;
+    private JoyStick stick;
     //%%%%%%%%%%%%%%%%%%%%%%%%%
 
     public GameView(Context context,Point size) {
@@ -83,14 +81,16 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Holder.addCallback(this);
         this.setFocusable(true);
         scaling = (float)ScreenHeight / Settings.ScreenHeightDefault;
-        Log.v("Scale", String.valueOf(scaling));
         matrix = new Matrix();
         matrix.setScale(scaling, scaling);
         user = new User(ScreenWidth / 2 / scaling, ScreenHeight/2 / scaling, Settings.StartSizeUser,Color.RED);
-        gameMap = new GameMap();
+        stick = new JoyStick(120/scaling,60/scaling);
+        gameMap = new GameMap(3,3);
+
+        gameMap.setRelativeUnit(ScreenWidth / 2 / scaling, ScreenHeight / 2 / scaling);
+
+     //   gameMap.setMapAxis(ScreenWidth, ScreenHeight);
         isTouch = false;
-        deltaX = 0;
-        deltaY = 0;
     }
 
     @Override
@@ -153,48 +153,21 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
         drawMap(canvas);
-        drawScores(canvas);
+        //drawScores(canvas);
         drawUser(canvas);
         drawJoyStick(canvas);
     }
 
     private void drawJoyStick(Canvas canvas)
     {
-        float stickX;
-        float stickY;
-        float joyStickRadiusOut = 120;
-        float joyStickRadiusIn = 60;
-        float k;
         if(isTouch)
         {
+            stick.getParameters(begDownX,begDownY,downX,downY);
             paint.setColor(Color.GRAY);
             paint.setAlpha(125);
-            canvas.drawCircle(begDownX, begDownY, joyStickRadiusOut, paint); // foundation (big circle with Radius = 100) is more transparent
+            canvas.drawCircle(stick.getX0(), stick.getY0(), stick.getRadiusOut(), paint);
             paint.setAlpha(240);
-            if(Math.sqrt(Math.pow((downX - begDownX), 2) + Math.pow((downY - begDownY), 2)) > joyStickRadiusOut)
-            {
-                if((downX - begDownX) != 0)
-                {
-                    k = (downY-begDownY)/(downX - begDownX);
-                    deltaX = (float)Math.sqrt(Math.pow(joyStickRadiusOut,2)/(Math.pow(k,2)+1f));
-                    deltaY = (float)Math.sqrt((Math.pow(joyStickRadiusOut,2) * Math.pow(k,2))/(1f + Math.pow(k,2)));
-                }
-                else
-                {
-                    deltaX = 0;
-                    deltaY = joyStickRadiusOut;
-                }
-                deltaX = (downX < begDownX) ? (- deltaX) : (deltaX);
-                deltaY = (downY < begDownY) ? (- deltaY) : (deltaY);
-            }
-            else
-            {
-                deltaX = downX-begDownX;
-                deltaY = downY-begDownY;
-            }
-            stickX = begDownX + deltaX;
-            stickY = begDownY + deltaY;
-            canvas.drawCircle(stickX, stickY, joyStickRadiusIn, paint); // stick(small circle with Radius = 40) is less transparent
+            canvas.drawCircle(stick.getX(), stick.getY(), stick.getRadiusIn(), paint);
         }
     }
 
@@ -203,20 +176,60 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
-        user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
+        user_indicator = user.getIndicatorPosition(user.getX() + stick.getdX(), user.getY() + stick.getdY());
         paint.setColor(Color.GRAY);
         paint.setAlpha(240);
         canvas.drawPath(user.getTriangle(), paint);
+    //    gameMap.moveRelativeUnit(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
+     //   Log.v("FDFDFSDFDS", String.valueOf(gameMap.getY0()));
     }
 
     private void drawMap(Canvas canvas)
     {
         Unit point;
-        for(int i = 0; i < gameMap.getSize();i++)
+        float X = 0, Y = 0;
+        Boolean turn = false;
+        gameMap.changeMapOfs(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
+        if(gameMap.getY0() <= -gameMap.getMapSize().k*ScreenHeight)
+        {
+            Y = gameMap.getY0();
+            gameMap.setY0(0);
+            turn = true;
+        }
+        else if(gameMap.getY0()>= 0)
+        {
+            Y = gameMap.getMapSize().k*ScreenHeight;
+            turn = true;
+            gameMap.setY0(-gameMap.getMapSize().k * ScreenHeight);
+        }
+        if(gameMap.getX0() <= -gameMap.getMapSize().m*ScreenWidth)
+        {
+            X = gameMap.getX0();
+            turn = true;
+            gameMap.setX0(0);
+        }
+        else if(gameMap.getX0()>= 0)
+        {
+           // Log.v("DDSDSSDD", String.valueOf(gameMap.getX0()));
+            X = (gameMap.getMapSize().m) * ScreenWidth;
+            turn = true;
+            gameMap.setX0(-gameMap.getMapSize().m * ScreenWidth);
+        }
+        for(int i = 0; i < gameMap.getUnitsCount();i++)
         {
             point = gameMap.getMapUnit(i);
             paint.setColor(point.color);
-            point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
+            //  if(user.isOverlapped(point) || Math.abs(user.getX() - point.getY())>= 4*Settings.ScreenWidthDefault  / Settings.CountSectorX / scaling
+            //          || Math.abs(user.getY() - point.getY()) >= 4*Settings.ScreenHeightDefault  / Settings.CountSectorY /scaling)
+            if(user.isOverlapped(point))
+                gameMap.removeUnit(i);
+            if(!turn)
+                point.move(-stick.getdX() * user.getSpeed(),-stick.getdY() * user.getSpeed());
+            else
+            {
+                point.setX(point.getX() - X);
+                point.setY(point.getY() - Y);
+            }
             canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
         }
     }
@@ -248,7 +261,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 break;
             case MotionEvent.ACTION_UP:
                 isTouch = false;
-                //  bulk.setIsMoved(false);
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
