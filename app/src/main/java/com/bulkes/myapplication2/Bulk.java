@@ -4,13 +4,14 @@ package com.bulkes.myapplication2;
  */
 public class Bulk extends Unit
 {
-    protected  float speed;
-    protected  Boolean isMoved;
+    protected float speed;
+    protected Boolean isMoved;
+    protected float offsetCenter;
     public Bulk(float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
         isMoved = false;
-        speed = 10;
+        speed = 0.1f;
     }
     public Bulk( float _x, float _y, float _radius)
     {
