@@ -34,6 +34,11 @@ public class Unit
         is_deleted = flag;
     }
     protected float radius;
+
+    public int getColor() {
+        return color;
+    }
+
     protected int color;
     protected boolean is_deleted;
     public Unit()

@@ -12,6 +12,17 @@ public class Bulk extends Unit
     protected  boolean      isMoved;
     protected  float        mass;
 
+    public float getDx() {
+        return dx;
+    }
+
+    public void setDx(float dx) {
+        this.dx = dx;
+    }
+
+    protected  float        dx;
+    protected  float        dy;
+
     protected Indicator indicator;
 
 
@@ -20,6 +31,9 @@ public class Bulk extends Unit
         super(_x,_y, _radius, _color);
         mass = (float)Math.PI * radius * radius;
         isMoved = false;
+        indicator = new Indicator();
+        dx = 0f;
+        dy = 0f;
     }
     public Bulk( float _x, float _y, float _radius)
     {
@@ -45,7 +59,7 @@ public class Bulk extends Unit
     }
     public void addMass(int feed)
     {
-        setMass((float)feed + mass);
+        setMass((float) feed + mass);
     }
     public float getMass() {
         return mass;
@@ -61,10 +75,10 @@ public class Bulk extends Unit
     public Indicator getIndicatorPosition(float x_end, float y_end)
     {
         indicator.getParameters(x,y,radius + 15, x_end, y_end);
-        return indicator;
+        return indicator;//update
     }
-    public Path getTriangle()
-    {
+    public Path getTriangle(float x_end, float y_end) {
+        indicator.getParameters(x,y,radius + 15, x_end, y_end);
         return indicator.getTriangle(x, y, radius + 5 );
     }
 }

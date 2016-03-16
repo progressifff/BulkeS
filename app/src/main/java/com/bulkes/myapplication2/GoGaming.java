@@ -17,7 +17,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,7 +67,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private Paint paint;
     private boolean runFlag = false;
     private User user;
-    private Bulk bulk;
+    private Enemy enemy;
 
     Indicator user_indicator;
     //%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,6 +108,8 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         timer.schedule(timerTask, 0, 1000);
         Calendar calendar = Calendar.getInstance();
         startTime = calendar.getTimeInMillis();
+        enemy = new Enemy(250f, 500f, 100f);
+        gameMap.addUnit(enemy);
     }
 
     @Override
@@ -171,7 +172,12 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         canvas.drawPaint(paint);
         drawMap();
         drawScores();
-        drawUser();
+        drawBulk(user);
+        enemy.setIsMoved(true);
+        enemy.setDx(0.1f);
+        enemy.move(5f, 0f);
+        drawBulk(enemy);
+        //drawUser();
         drawJoyStick();
     }
 
@@ -215,16 +221,16 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawUser()
+    private void drawBulk(Bulk bulk)
     {
-        paint.setColor(Color.RED);
+        paint.setColor(bulk.getColor());
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
-        user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
+        canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getRadius(), paint);
+        //user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
         paint.setColor(Color.GRAY);
         paint.setAlpha(240);
-        if(user.getIsMoved())
-            canvas.drawPath(user.getTriangle(), paint);
+        if(bulk.getIsMoved())
+            canvas.drawPath(bulk.getTriangle(bulk.getX() + deltaX, bulk.getY() + deltaY), paint);
     }
 
     private void drawMap()

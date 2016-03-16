@@ -16,6 +16,9 @@ public class GameMap
         generateSmartMap();
         //this(15);
     }
+
+
+
     public GameMap(int count)
     {
         map = new ArrayList<>();
@@ -47,7 +50,10 @@ public class GameMap
     {
         return (float)random.nextInt(Settings.MaxFoodSize - Settings.MinFoodSize) + Settings.MinFoodSize;
     }
-
+    public void addUnit(Unit unit)
+    {
+        map.add(unit);
+    }
     // 8 sectors; each contains [min;max] Food with [min;max] Size
     public void generateSmartMap()
     {
