@@ -84,6 +84,8 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private Timer timer;//timer for tick time and generate new food
     private TimerTasks timerTask;
 
+    private Canvas canvas;
+
     public GameView(Context context,Point size) {
         super(context);
         ScreenWidth = size.x;
@@ -130,14 +132,13 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     @Override
     public void run()
     {
-        Canvas canva;
         while(runFlag)
         {
-            canva = null;
+            canvas = null;
             try
             {
-                canva = Holder.lockCanvas();
-                if(canva!=null)
+                canvas = Holder.lockCanvas();
+                if(canvas!=null)
                 {
                     try {
                         Thread.sleep(5);
@@ -148,33 +149,33 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     }
                     synchronized (Holder)
                     {
-                        canva.setMatrix(matrix);
-                        Draw(canva);
+                        canvas.setMatrix(matrix);
+                        Draw();
                     }
                 }
             }
             finally
             {
-                if(canva != null)
+                if(canvas != null)
                 {
-                    Holder.unlockCanvasAndPost(canva);
+                    Holder.unlockCanvasAndPost(canvas);
                 }
             }
         }
     }
 
-    public void Draw(Canvas canvas)
+    public void Draw()
     {
 //------------------------Draw Field------------------------------------------------------------
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
-        drawMap(canvas);
-        drawScores(canvas);
-        drawUser(canvas);
-        drawJoyStick(canvas);
+        drawMap();
+        drawScores();
+        drawUser();
+        drawJoyStick();
     }
 
-    private void drawJoyStick(Canvas canvas)
+    private void drawJoyStick()
     {
         float stickX;
         float stickY;
@@ -214,7 +215,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawUser(Canvas canvas)
+    private void drawUser()
     {
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
@@ -226,7 +227,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             canvas.drawPath(user.getTriangle(), paint);
     }
 
-    private void drawMap(Canvas canvas)
+    private void drawMap()
     {
         Unit point;
         for(int i = 0; i < gameMap.getSize();i++)
@@ -250,7 +251,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawScores(Canvas canvas)
+    private void drawScores()
     {
         paint.setAntiAlias(true);
         paint.setColor(Color.RED);

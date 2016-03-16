@@ -12,7 +12,7 @@ public final class Settings
     final static int    ScreenWidthDefault         = 1920;
     final static int    ScreenHeightDefault        = 1080;
     final static float  UserStartSize              = 70f;
-    final static float  UserDefaultSpeed           = 10f;
+    final static float  UserDefaultSpeed           = 0.1f;
     final static int    UserDefaultColor           = Color.RED;
     final static int    MinFoodInSector            = 3;
     final static int    MaxFoodInSector            = 15;
@@ -21,6 +21,8 @@ public final class Settings
     final static int    CountSectorX               = 4;
     final static int    CountSectorY               = 2;
     final static int    FoodDefaultFeed            = 500;
+    final static float  EnemyDefaultSpeed          = 0.1f;
+    final static int    EnemyDefaultColor          = Color.MAGENTA;
     final static int    ColorList[] = {
             Color.rgb(0xFF,0xA5,0x00),//#FFA500 orange
             Color.rgb(0x1F,0x57,0xB3),//#1f57b3 blue

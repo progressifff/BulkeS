@@ -1,5 +1,6 @@
 package com.bulkes.myapplication2;
 
+import android.graphics.Path;
 import android.util.Log;
 
 /**
@@ -11,12 +12,14 @@ public class Bulk extends Unit
     protected  boolean      isMoved;
     protected  float        mass;
 
+    protected Indicator indicator;
+
+
     public Bulk(float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
         mass = (float)Math.PI * radius * radius;
         isMoved = false;
-        speed = Settings.UserDefaultSpeed;
     }
     public Bulk( float _x, float _y, float _radius)
     {
@@ -48,10 +51,20 @@ public class Bulk extends Unit
         return mass;
     }
 
-    public void setMass(float mass) {
+    public void setMass(float mass)
+    {
         this.mass = mass;
         Log.v("Mass: ", String.valueOf(mass));
         setRadius((float) Math.sqrt((double) mass / Math.PI));
         Log.v("Radius: ", String.valueOf(radius));
+    }
+    public Indicator getIndicatorPosition(float x_end, float y_end)
+    {
+        indicator.getParameters(x,y,radius + 15, x_end, y_end);
+        return indicator;
+    }
+    public Path getTriangle()
+    {
+        return indicator.getTriangle(x, y, radius + 5 );
     }
 }
