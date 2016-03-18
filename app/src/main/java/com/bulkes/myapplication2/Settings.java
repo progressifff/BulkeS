@@ -22,7 +22,9 @@ public final class Settings
     final static int    CountSectorY               = 2;
     final static int    FoodDefaultFeed            = 500;
     final static float  EnemyDefaultSpeed          = 0.1f;
+    final static float  EnemyStepValue             = 5f;
     final static int    EnemyDefaultColor          = Color.MAGENTA;
+    final static int    CountBulkes                = 1;
     final static int    ColorList[] = {
             Color.rgb(0xFF,0xA5,0x00),//#FFA500 orange
             Color.rgb(0x1F,0x57,0xB3),//#1f57b3 blue

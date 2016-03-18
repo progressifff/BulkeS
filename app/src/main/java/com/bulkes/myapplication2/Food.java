@@ -6,27 +6,27 @@ package com.bulkes.myapplication2;
 public class Food extends Unit
 {
 
-    private  int feed;
-    public int getFeed() {
+    private  float feed;
+    public float getFeed() {
         return feed;
     }
 
-    public void setFeed(int feed) {
+    public void setFeed(float feed) {
         this.feed = feed;
     }
 
 
-    public Food(int feed) {
+    public Food(float feed) {
         super();
         this.feed = feed;
     }
 
-    public Food(float _x, float _y, float _radius, int _color, int feed) {
+    public Food(float _x, float _y, float _radius, int _color, float feed) {
         super(_x, _y, _radius, _color);
         this.feed = feed;
     }
 
-    public Food(float _x, float _y, float _radius, int feed) {
+    public Food(float _x, float _y, float _radius, float feed) {
         super(_x, _y, _radius);
         this.feed = feed;
     }

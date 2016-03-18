@@ -18,6 +18,7 @@ import android.view.SurfaceView;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
@@ -68,6 +69,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private boolean runFlag = false;
     private User user;
     private Enemy enemy;
+    private ArrayList<Bulk> bulkesMap;
 
     Indicator user_indicator;
     //%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,8 +110,11 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         timer.schedule(timerTask, 0, 1000);
         Calendar calendar = Calendar.getInstance();
         startTime = calendar.getTimeInMillis();
-        enemy = new Enemy(250f, 500f, 100f);
+        enemy = new Enemy(1250f, 500f, 100f);
         gameMap.addUnit(enemy);
+        bulkesMap = new ArrayList<Bulk>(Settings.CountBulkes + 1);//1 - for user
+        bulkesMap.add(user);
+        bulkesMap.add(enemy);
     }
 
     @Override
@@ -173,9 +178,13 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         drawMap();
         drawScores();
         drawBulk(user);
+        /*
         enemy.setIsMoved(true);
         enemy.setDx(0.1f);
         enemy.move(5f, 0f);
+        */
+        enemy.setTarget(user);
+        enemy.updateState(gameMap);
         drawBulk(enemy);
         //drawUser();
         drawJoyStick();
@@ -223,14 +232,20 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 
     private void drawBulk(Bulk bulk)
     {
-        paint.setColor(bulk.getColor());
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getRadius(), paint);
-        //user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
-        paint.setColor(Color.GRAY);
-        paint.setAlpha(240);
-        if(bulk.getIsMoved())
-            canvas.drawPath(bulk.getTriangle(bulk.getX() + deltaX, bulk.getY() + deltaY), paint);
+        if(bulk.getIsDeleted() == false) {
+            paint.setColor(bulk.getColor());
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getRadius(), paint);
+            //user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
+            paint.setColor(Color.GRAY);
+            paint.setAlpha(240);
+            if (bulk.getIsMoved()) {
+                if (bulk == user)
+                    canvas.drawPath(bulk.getTriangle(bulk.getX() + deltaX, bulk.getY() + deltaY), paint);
+                else
+                    canvas.drawPath(((Enemy) bulk).getTriangleToTarget(), paint);
+            }
+        }
     }
 
     private void drawMap()
@@ -239,22 +254,26 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         for(int i = 0; i < gameMap.getSize();i++)
         {
             point = gameMap.getMapUnit(i);
-            if(point.is_deleted == false)
-            {
-                paint.setColor(point.color);
-                if(user.isEated(point))
-                {
-                    user.addMass(((Food) point).getFeed());
-                    point.setIsDeleted(true);
+           if(point.getIsDeleted() == false)
+                for (Bulk bulk: bulkesMap ) {
+                    if (point != bulk && bulk.isEated(point)) {
+                        if(bulk.getRadius() > point.getRadius()) {
+                            bulk.addMass(point.getFeed());
+                            point.setIsDeleted(true);
+                        }//update else
+                        break;
+                    }
                 }
-                else
-                {
-                    if(user.getIsMoved())
-                        point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
-                    canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
-                }
+            paint.setColor(point.color);
+            if(point.getIsDeleted() == false) {
+                if (user.getIsMoved())//previous lopp can change isDeleted
+                    point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
+                canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
             }
         }
+        //for(Bulk bulk : bulkesMap)
+            //if(bulk != user)
+                //bulk.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
     }
 
     private void drawScores()

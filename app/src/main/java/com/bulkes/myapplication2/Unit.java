@@ -9,6 +9,9 @@ public class Unit
 {
     protected float x;
     protected float y;
+    protected float radius;
+    protected int color;
+    protected boolean is_deleted;
 
     public void setX(float x)
     {
@@ -18,6 +21,11 @@ public class Unit
     public void setY(float y)
     {
         this.y = y;
+    }
+
+    public float getFeed()//this method must override in all class
+    {
+        return 0f;
     }
 
     public void setRadius(float radius)
@@ -33,14 +41,17 @@ public class Unit
     {
         is_deleted = flag;
     }
-    protected float radius;
+    public boolean getIsDeleted()
+    {
+        return is_deleted;
+    }
+
 
     public int getColor() {
         return color;
     }
 
-    protected int color;
-    protected boolean is_deleted;
+
     public Unit()
     {
         x = 0f;
@@ -90,6 +101,11 @@ public class Unit
     public boolean isEated(Unit unit)
     {
         return (Math.pow((double)unit.getX() - x, 2.0) +  Math.pow((double)unit.getY() - y, 2.0)) < Math.pow((float)radius, 2.0);
+    }
+    public void setPosition(float _x, float _y)
+    {
+        x = _x;
+        y = _y;
     }
 
 }

@@ -12,17 +12,6 @@ public class Bulk extends Unit
     protected  boolean      isMoved;
     protected  float        mass;
 
-    public float getDx() {
-        return dx;
-    }
-
-    public void setDx(float dx) {
-        this.dx = dx;
-    }
-
-    protected  float        dx;
-    protected  float        dy;
-
     protected Indicator indicator;
 
 
@@ -32,8 +21,6 @@ public class Bulk extends Unit
         mass = (float)Math.PI * radius * radius;
         isMoved = false;
         indicator = new Indicator();
-        dx = 0f;
-        dy = 0f;
     }
     public Bulk( float _x, float _y, float _radius)
     {
@@ -57,9 +44,9 @@ public class Bulk extends Unit
     {
         isMoved = flag;
     }
-    public void addMass(int feed)
+    public void addMass(float feed)
     {
-        setMass((float) feed + mass);
+        setMass(feed + mass);
     }
     public float getMass() {
         return mass;
@@ -71,6 +58,11 @@ public class Bulk extends Unit
         Log.v("Mass: ", String.valueOf(mass));
         setRadius((float) Math.sqrt((double) mass / Math.PI));
         Log.v("Radius: ", String.valueOf(radius));
+    }
+    @Override
+    public float getFeed()
+    {
+        return mass;
     }
     public Indicator getIndicatorPosition(float x_end, float y_end)
     {
