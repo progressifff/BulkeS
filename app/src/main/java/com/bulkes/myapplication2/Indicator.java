@@ -50,7 +50,7 @@ public class Indicator
         float x2;
         float y2;
         float alpha2;
-        alpha2 = alpha + 0.3f;
+        alpha2 = alpha +  0.3f;
         x2 = (float)Math.cos(alpha2) * R + x0;
         y2 = (float)Math.sin(alpha2) * R + y0;
         path.lineTo(x2, y2);
