@@ -152,7 +152,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
         drawMap(canvas);
-        //drawScores(canvas);
+        drawScores(canvas);
         drawUser(canvas);
         drawJoyStick(canvas);
     }
@@ -179,7 +179,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setColor(Color.GRAY);
         paint.setAlpha(240);
         canvas.drawPath(user.getTriangle(), paint);
-    //    gameMap.moveRelativeUnit(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
      //   Log.v("FDFDFSDFDS", String.valueOf(gameMap.getY0()));
     }
 

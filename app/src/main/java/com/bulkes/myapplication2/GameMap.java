@@ -66,14 +66,7 @@ public class GameMap
         Unit unit;
         for(int i = 0;i<countFoodToDraw;i++)
         {
-                /*
-                unit = new Food(
-                        getRandomX((int) 0, (int) (Settings.ScreenWidthDefault)),
-                        getRandomY((int) 0, (int) (Settings.ScreenHeightDefault)),
-                        getRandomRadius(),
-                        getColor(random.nextInt(10)),
-                        5);
-                */
+
         }
     }
 
