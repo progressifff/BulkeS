@@ -11,12 +11,54 @@ public class Unit
     protected float y;
     protected float radius;
     protected int color;
+    protected boolean is_deleted;
+
+    public void setX(float x)
+    {
+        this.x = x;
+    }
+
+    public void setY(float y)
+    {
+        this.y = y;
+    }
+
+    public float getFeed()//this method must override in all class
+    {
+        return 0f;
+    }
+
+    public void setRadius(float radius)
+    {
+        this.radius = radius;
+    }
+
+    public void setColor(int color)
+    {
+        this.color = color;
+    }
+    public void setIsDeleted(boolean flag)
+    {
+        is_deleted = flag;
+    }
+    public boolean getIsDeleted()
+    {
+        return is_deleted;
+    }
+
+
+    public int getColor() {
+        return color;
+    }
+
+
     public Unit()
     {
         x = 0f;
         y = 0f;
         radius = 0f;
         color = Color.RED;
+        is_deleted = false;
     }
     public Unit(float _x, float _y, float _radius, int _color)
     {
@@ -24,20 +66,23 @@ public class Unit
         y = _y;
         radius = _radius;
         color = _color;
+        is_deleted = false;
     }
     public Unit(float _x, float _y, float _radius) {
         x = _x;
         y = _y;
         radius = _radius;
         color = Color.RED;
+        is_deleted = false;
     }
-
     float getX()
     {
         return x;
     }
     float getY()
-    {return y;}
+    {
+        return y;
+    }
     float getRadius()
     {
         return radius;
@@ -49,16 +94,18 @@ public class Unit
     }
     public boolean isOverlapped(Unit unit)
     {
-        Indicator pointOut = new Indicator();//point on radius external circle
+        Indicator pointOut= new Indicator();//point on radius external circle
         pointOut.getParameters(unit.getX(), unit.getY(), unit.getRadius(),x, y);//(x;y) - center current unit
         return (Math.pow((double)pointOut.getX() - x, 2.0) +  Math.pow((double)pointOut.getY() - y, 2.0)) < Math.pow((float)radius, 2.0);
     }
-    public void setX(float x)
-    {this.x = x;}
-    public void setY(float y)
-    {this.y = y;}
-    public void setRadius(float radius)
-    {this.radius = radius;}
-    public void setColor(int color)
-    {this.color = color;}
+    public boolean isEated(Unit unit)
+    {
+        return (Math.pow((double)unit.getX() - x, 2.0) +  Math.pow((double)unit.getY() - y, 2.0)) < Math.pow((float)radius, 2.0);
+    }
+    public void setPosition(float _x, float _y)
+    {
+        x = _x;
+        y = _y;
+    }
+
 }

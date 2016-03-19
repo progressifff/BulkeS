@@ -85,9 +85,12 @@ public class GameMap
     public int getM()
     {return m;}
 
-    private int getColor(int count)
+
+    private int getColor()
     {
-        return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+        Log.v("Color ", String.valueOf(Settings.getCountColors()));
+        return Settings.ColorList[random.nextInt(Settings.getCountColors())];
+        //return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
     private float getRandomX(int startSectorX, int diffSectorX)
     {
@@ -142,7 +145,7 @@ public class GameMap
                         }
                     }while(flagCorrect == false);
                     map[i][j].add(unit);
-                }
+                    
                 for(int e = 0; e < map[i][j].size()-1; e++)
                 {
                     for(int t = e + 1; t<map[i][j].size(); t++)
@@ -151,10 +154,7 @@ public class GameMap
                             map[i][j].remove(map[i][j].get(t));
                     }
                 }
-                startSectorX += diffSectorX;
-            }
-            startSectorY += diffSectorY;
-        }
+                
     }
     /*
         public void checkPointSector(int i, int j, Unit point, Iterator<Unit> iterator)
