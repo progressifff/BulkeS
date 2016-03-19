@@ -28,7 +28,7 @@ public class GoGaming extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         display = getWindowManager().getDefaultDisplay();
         size = new Point();
-        display.getRealSize(size);
+        display.getSize(size);
         setContentView(new GameView(this, size));
     }
 
