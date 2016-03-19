@@ -10,12 +10,13 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+
+import java.util.Iterator;
 
 /**
  * Created by progr on 08.03.2016.
@@ -87,8 +88,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         stick = new JoyStick(120/scaling,60/scaling);
         gameMap = new GameMap(3,3);
 
-        gameMap.setRelativeUnit(ScreenWidth / 2 / scaling, ScreenHeight / 2 / scaling);
-
      //   gameMap.setMapAxis(ScreenWidth, ScreenHeight);
         isTouch = false;
     }
@@ -153,7 +152,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
         drawMap(canvas);
-        //drawScores(canvas);
+        drawScores(canvas);
         drawUser(canvas);
         drawJoyStick(canvas);
     }
@@ -180,57 +179,37 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setColor(Color.GRAY);
         paint.setAlpha(240);
         canvas.drawPath(user.getTriangle(), paint);
-    //    gameMap.moveRelativeUnit(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
      //   Log.v("FDFDFSDFDS", String.valueOf(gameMap.getY0()));
     }
 
     private void drawMap(Canvas canvas)
     {
-        Unit point;
-        float X = 0, Y = 0;
-        Boolean turn = false;
-        gameMap.changeMapOfs(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
-        if(gameMap.getY0() <= -gameMap.getMapSize().k*ScreenHeight)
-        {
-            Y = gameMap.getY0();
-            gameMap.setY0(0);
-            turn = true;
-        }
-        else if(gameMap.getY0()>= 0)
-        {
-            Y = gameMap.getMapSize().k*ScreenHeight;
-            turn = true;
-            gameMap.setY0(-gameMap.getMapSize().k * ScreenHeight);
-        }
-        if(gameMap.getX0() <= -gameMap.getMapSize().m*ScreenWidth)
-        {
-            X = gameMap.getX0();
-            turn = true;
-            gameMap.setX0(0);
-        }
-        else if(gameMap.getX0()>= 0)
-        {
-           // Log.v("DDSDSSDD", String.valueOf(gameMap.getX0()));
-            X = (gameMap.getMapSize().m) * ScreenWidth;
-            turn = true;
-            gameMap.setX0(-gameMap.getMapSize().m * ScreenWidth);
-        }
-        for(int i = 0; i < gameMap.getUnitsCount();i++)
-        {
-            point = gameMap.getMapUnit(i);
-            paint.setColor(point.color);
-            //  if(user.isOverlapped(point) || Math.abs(user.getX() - point.getY())>= 4*Settings.ScreenWidthDefault  / Settings.CountSectorX / scaling
-            //          || Math.abs(user.getY() - point.getY()) >= 4*Settings.ScreenHeightDefault  / Settings.CountSectorY /scaling)
-            if(user.isOverlapped(point))
-                gameMap.removeUnit(i);
-            if(!turn)
-                point.move(-stick.getdX() * user.getSpeed(),-stick.getdY() * user.getSpeed());
-            else
-            {
-                point.setX(point.getX() - X);
-                point.setY(point.getY() - Y);
+        for(int i = 0; i < gameMap.getLines(); i++) {
+            for (int j = 0; j < gameMap.getColumns(); j++) {
+                Iterator<Unit> iterator = gameMap.getMap()[i][j].iterator();
+                while (iterator.hasNext())
+                {
+                    Unit point = iterator.next();
+                    paint.setColor(point.color);
+                    if(user.isOverlapped(point))
+                    {
+                        iterator.remove();
+                        continue;
+                    }
+                    if(point.getX() >= gameMap.getX0() + gameMap.getM() *Settings.ScreenWidthDefault)
+                        point.setX(point.getX() - gameMap.getM() * Settings.ScreenWidthDefault);
+                    else if(point.getX() <=gameMap.getX0())
+                        point.setX(gameMap.getM() * Settings.ScreenWidthDefault + point.getX());
+                    if(point.getY() >= gameMap.getY0() + gameMap.getK()*Settings.ScreenHeightDefault)
+                        point.setY(point.getY() - gameMap.getK() * Settings.ScreenHeightDefault);
+                    else if(point.getY() <= gameMap.getY0())
+                        point.setY(gameMap.getK() *Settings.ScreenHeightDefault + point.getY());
+                   // gameMap.checkPointSector(i,j,point,iterator);
+                    if(point.getX()<=Settings.ScreenWidthDefault+80 && point.getX() >= -80&&point.getY()<=Settings.ScreenHeightDefault+80&&point.getY()>=-80)
+                        canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+                    point.move(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
+                }
             }
-            canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
         }
     }
 
