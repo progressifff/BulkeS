@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -101,14 +102,13 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Log.v("Scale", String.valueOf(scaling));
         matrix = new Matrix();
         matrix.setScale(scaling, scaling);
-        user = new User(ScreenWidth / 2 / scaling, ScreenHeight/2 / scaling, Settings.StartSizeUser,Color.RED);
+        user = new User(ScreenWidth / 2 / scaling, ScreenHeight/2 / scaling, Settings.UserStartSize, Settings.UserDefaultColor);
         stick = new JoyStick(120,60);
         gameMap = new GameMap(3,3);
 
      //   gameMap.setMapAxis(ScreenWidth, ScreenHeight);
         isTouch = false;
-        deltaX = 0;
-        deltaY = 0;
+
         timer = new Timer();
         timerTask = new TimerTasks();
         timer.schedule(timerTask, 0, 1000);
@@ -207,28 +207,23 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawBulk(Bulk bulk)
-    {
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(user.getX(), user.getY(), user.getRadius(), paint);
-        user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
-        paint.setColor(Color.GRAY);
-        paint.setAlpha(240);
-        canvas.drawPath(user.getTriangle(), paint);
-    }
-
-    private void drawMap()
-    {
-        Unit point;
-        for(int i = 0; i < gameMap.getSize();i++)
-        {
-            point = gameMap.getMapUnit(i);
-            paint.setColor(point.color);
-            point.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
-            canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+    private void drawBulk(Bulk bulk) {
+        if (bulk.getIsDeleted() == false) {
+            paint.setColor(bulk.getColor());
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getRadius(), paint);
+            //user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
+            paint.setColor(Color.GRAY);
+            paint.setAlpha(240);
+            if (bulk.getIsMoved()) {
+                if (bulk == user)
+                    canvas.drawPath(bulk.getTriangle(user.getX() + stick.getdX(),user.getY() + stick.getdY()), paint);
+                else
+                    canvas.drawPath(((Enemy) bulk).getTriangleToTarget(), paint);
+            }
         }
     }
+
 /* private void drawMap()
     {
         Unit point;
@@ -256,6 +251,47 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             //if(bulk != user)
                 //bulk.move(-deltaX * user.getSpeed(), -deltaY * user.getSpeed());
     }*/
+private void drawMap()
+{
+    for(int i = 0; i < gameMap.getLines(); i++) {
+        for (int j = 0; j < gameMap.getColumns(); j++) {
+            Iterator<Unit> iterator = gameMap.getMap()[i][j].iterator();
+            while (iterator.hasNext())
+            {
+                Unit point = iterator.next();
+
+                if(point.getIsDeleted() == false)
+                    for (Bulk bulk: bulkesMap ) {
+                        if (point != bulk && bulk.isEated(point)) {
+                            if(bulk.getRadius() > point.getRadius()) {
+                                bulk.addMass(point.getFeed());
+                                point.setIsDeleted(true);
+                            }//update else
+                            break;
+                        }
+                    }
+                if(point.getIsDeleted() == false) {
+                    if (user.getIsMoved())//previous lopp can change isDeleted
+                        point.move(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
+                    paint.setColor(point.color);
+
+                    if (point.getX() >= gameMap.getX0() + gameMap.getM() * Settings.ScreenWidthDefault)
+                        point.setX(point.getX() - gameMap.getM() * Settings.ScreenWidthDefault);
+                    else if (point.getX() <= gameMap.getX0())
+                        point.setX(gameMap.getM() * Settings.ScreenWidthDefault + point.getX());
+                    if (point.getY() >= gameMap.getY0() + gameMap.getK() * Settings.ScreenHeightDefault)
+                        point.setY(point.getY() - gameMap.getK() * Settings.ScreenHeightDefault);
+                    else if (point.getY() <= gameMap.getY0())
+                        point.setY(gameMap.getK() * Settings.ScreenHeightDefault + point.getY());
+                    // gameMap.checkPointSector(i,j,point,iterator);
+                    if (point.getX() <= Settings.ScreenWidthDefault + 80 && point.getX() >= -80 && point.getY() <= Settings.ScreenHeightDefault + 80 && point.getY() >= -80)
+                        canvas.drawCircle(point.getX(), point.getY(), point.getRadius(), paint);
+
+                }
+            }
+        }
+    }
+}
     private void drawScores()
     {
         paint.setAntiAlias(true);
@@ -289,8 +325,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 if( Math.abs(downX - begDownX) < 1f && Math.abs(downY - begDownY) < 1f)
                 {
                     Log.v("Action Up", "Pst=Pfn");
-                    deltaX = 0f;
-                    deltaY = 0f;
                     user.setIsMoved(false);
                 }
                 break;
@@ -299,8 +333,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 if(downX == begDownX && downY == begDownY)
                 {
                     Log.v("Action Up", "Pst=Pfn");
-                    deltaX = 0f;
-                    deltaY = 0f;
                     user.setIsMoved(false);
                 }
                 //  bulk.setIsMoved(false);

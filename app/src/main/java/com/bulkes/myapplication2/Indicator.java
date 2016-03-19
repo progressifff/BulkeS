@@ -43,7 +43,7 @@ public class Indicator
             else
                 alpha = (float) Math.acos((x - x0) / R);
         }
-      //  Log.v("Indicator ", String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(alpha) + " " + String.valueOf(x1) + " " + String.valueOf(y1));
+        //  Log.v("Indicator ", String.valueOf(x) + " " + String.valueOf(y) + " " + String.valueOf(alpha) + " " + String.valueOf(x1) + " " + String.valueOf(y1));
     }
 
     public float getAlpha() {
@@ -64,7 +64,7 @@ public class Indicator
         float x2;
         float y2;
         float alpha2;
-        alpha2 = alpha +  0.3f;
+        alpha2 = alpha + 0.3f;
         x2 = (float)Math.cos(alpha2) * R + x0;
         y2 = (float)Math.sin(alpha2) * R + y0;
         path.lineTo(x2, y2);

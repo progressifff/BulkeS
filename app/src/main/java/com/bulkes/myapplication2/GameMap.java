@@ -2,6 +2,8 @@ package com.bulkes.myapplication2;
 
 import android.graphics.Color;
 import android.os.CountDownTimer;
+import android.util.Log;
+
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -127,8 +129,8 @@ public class GameMap
                             getRandomX((int)startSectorX, (int)diffSectorX),
                             getRandomY((int)startSectorY, (int) diffSectorY),
                             getRandomRadius(),
-                            getColor(random.nextInt(10)),
-                            5);
+                            getColor(),
+                            Settings.FoodDefaultFeed);
                     boolean flagCorrect;
                     do
                     {
@@ -145,7 +147,7 @@ public class GameMap
                         }
                     }while(flagCorrect == false);
                     map[i][j].add(unit);
-                    
+                }
                 for(int e = 0; e < map[i][j].size()-1; e++)
                 {
                     for(int t = e + 1; t<map[i][j].size(); t++)
@@ -154,7 +156,10 @@ public class GameMap
                             map[i][j].remove(map[i][j].get(t));
                     }
                 }
-                
+                startSectorX += diffSectorX;
+            }
+            startSectorY += diffSectorY;
+        }
     }
     /*
         public void checkPointSector(int i, int j, Unit point, Iterator<Unit> iterator)
@@ -239,5 +244,9 @@ public class GameMap
     public LinkedList<Unit>[][] getMap()
     {
         return map;
+    }
+    public void addUnit(Unit unit)
+    {
+        map[1][1].add(unit);//update index
     }
 }
