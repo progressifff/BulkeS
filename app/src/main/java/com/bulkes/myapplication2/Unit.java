@@ -96,11 +96,19 @@ public class Unit
     {
         Indicator pointOut= new Indicator();//point on radius external circle
         pointOut.getParameters(unit.getX(), unit.getY(), unit.getRadius(),x, y);//(x;y) - center current unit
-        return (Math.pow((double)pointOut.getX() - x, 2.0) +  Math.pow((double)pointOut.getY() - y, 2.0)) < Math.pow((float)radius, 2.0);
+        float dx;
+        float dy;
+        dx = pointOut.getX() - x;
+        dy = pointOut.getY() - y;
+        return (dx*dx + dy*dy) < (radius * radius);
     }
     public boolean isEated(Unit unit)
     {
-        return (Math.pow((double)unit.getX() - x, 2.0) +  Math.pow((double)unit.getY() - y, 2.0)) < Math.pow((float)radius, 2.0);
+        float dx;
+        float dy;
+        dx = unit.getX() - x;
+        dy = unit.getY() - y;
+        return (dx*dx + dy*dy) < (radius * radius);
     }
     public void setPosition(float _x, float _y)
     {
