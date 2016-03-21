@@ -2,8 +2,6 @@ package com.bulkes.myapplication2;
 
 import android.graphics.Color;
 
-import java.util.ArrayList;
-
 /**
  * Created by 1 on 14.03.16.
  */
@@ -14,12 +12,17 @@ public final class Settings
     final static float  UserStartSize              = 70f;
     final static float  UserDefaultSpeed           = 0.1f;
     final static int    UserDefaultColor           = Color.RED;
-    final static int    MinFoodInSector            = 3;
-    final static int    MaxFoodInSector            = 15;
+    final static int    MinFoodInSector            = 0;
+    final static int    MaxFoodInSector            = 5;
     final static int    MinFoodSize                = 20;
     final static int    MaxFoodSize                = 40;
     final static int    CountSectorX               = 4;
     final static int    CountSectorY               = 2;
+    final static int    MapSizeX                   = 3;
+    final static int    MapSizeY                   = 3;
+    final static int    MaxFoodCountOnMap          = CountSectorX*MapSizeX*CountSectorY*MapSizeY*MaxFoodInSector;
+    final static int    MinFoodCountOnMap          = (int)0.3*MaxFoodCountOnMap;
+    final static float  StepRadius                 = 0.6f;
     final static int    FoodDefaultFeed            = 500;
     final static float  EnemyDefaultSpeed          = 0.1f;
     final static float  EnemyStepValue             = 5f;

@@ -256,11 +256,9 @@ private void drawMap()
     for(int i = 0; i < gameMap.getLines(); i++) {
         for (int j = 0; j < gameMap.getColumns(); j++) {
             Iterator<Unit> iterator = gameMap.getMap()[i][j].iterator();
-            float speed = user.getSpeed();
             while (iterator.hasNext())
             {
                 Unit point = iterator.next();
-
 
                 if(point.getIsDeleted() == false)
                     for (Bulk bulk: bulkesMap ) {
@@ -274,7 +272,7 @@ private void drawMap()
                     }
                 if(point.getIsDeleted() == false) {
                     if (user.getIsMoved())//previous lopp can change isDeleted
-                        point.move(-stick.getdX() * speed, -stick.getdY() * speed);
+                        point.move(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
                     paint.setColor(point.color);
 
                     if (point.getX() >= gameMap.getX0() + gameMap.getM() * Settings.ScreenWidthDefault)

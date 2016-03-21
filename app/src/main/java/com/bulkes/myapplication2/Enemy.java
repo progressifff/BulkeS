@@ -50,7 +50,7 @@ public class Enemy extends Bulk
                 newY = getY() - Settings.EnemyStepValue;
             setPosition(solveX(newY), newY);
         }
-        //Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
+        Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
     }
     private float solveY(float _x)
     {

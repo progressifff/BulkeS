@@ -1,6 +1,5 @@
 package com.bulkes.myapplication2;
 
-import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.util.Log;
 
@@ -74,9 +73,8 @@ public class GameMap
 
     private void setMapAxis()
     {
-        X0 = (m%2 == 0) ? (-0.5f*Settings.ScreenWidthDefault*(m - 1)) : (-m/2*Settings.ScreenWidthDefault);
-        Y0 = (k%2 == 0) ? (-0.5f*Settings.ScreenHeightDefault*(k - 1)) : (-k/2*Settings.ScreenHeightDefault);
-        Log.v("X0 Y0", String.valueOf(X0) + " " + String.valueOf(Y0));
+        X0 = (m%2 == 0) ? (-0.5f*Settings.ScreenWidthDefault*(m - 1)/Settings.ScreenWidthDefault) : (-m/2*Settings.ScreenWidthDefault/Settings.ScreenWidthDefault);
+        Y0 = (k%2 == 0) ? (-0.5f*Settings.ScreenHeightDefault*(k - 1)/Settings.ScreenHeightDefault) : (-k/2*Settings.ScreenHeightDefault/Settings.ScreenHeightDefault);
     }
 
     public float getX0()
@@ -91,6 +89,7 @@ public class GameMap
 
     private int getColor()
     {
+        Log.v("Color ", String.valueOf(Settings.getCountColors()));
         return Settings.ColorList[random.nextInt(Settings.getCountColors())];
         //return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }

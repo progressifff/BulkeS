@@ -12,45 +12,7 @@ public class Unit
     protected float radius;
     protected int color;
     protected boolean is_deleted;
-
-    public void setX(float x)
-    {
-        this.x = x;
-    }
-
-    public void setY(float y)
-    {
-        this.y = y;
-    }
-
-    public float getFeed()//this method must override in all class
-    {
-        return 0f;
-    }
-
-    public void setRadius(float radius)
-    {
-        this.radius = radius;
-    }
-
-    public void setColor(int color)
-    {
-        this.color = color;
-    }
-    public void setIsDeleted(boolean flag)
-    {
-        is_deleted = flag;
-    }
-    public boolean getIsDeleted()
-    {
-        return is_deleted;
-    }
-
-
-    public int getColor() {
-        return color;
-    }
-
+    private   float targetRadius;
 
     public Unit()
     {
@@ -59,6 +21,7 @@ public class Unit
         radius = 0f;
         color = Color.RED;
         is_deleted = false;
+        targetRadius = 0;
     }
     public Unit(float _x, float _y, float _radius, int _color)
     {
@@ -67,6 +30,7 @@ public class Unit
         radius = _radius;
         color = _color;
         is_deleted = false;
+        targetRadius = 0;
     }
     public Unit(float _x, float _y, float _radius) {
         x = _x;
@@ -74,18 +38,40 @@ public class Unit
         radius = _radius;
         color = Color.RED;
         is_deleted = false;
+        targetRadius = 0;
     }
     float getX()
-    {
-        return x;
-    }
+    {return x;}
     float getY()
-    {
-        return y;
-    }
+    {return y;}
     float getRadius()
+    {return radius;}
+    float getAnimationRadius()
     {
-        return radius;
+        if(targetRadius<radius)
+        {
+            targetRadius += Settings.StepRadius;
+            return targetRadius;
+        }
+        else
+            return radius;
+    }
+    public void setX(float x)
+    {this.x = x;}
+    public void setY(float y)
+    {this.y = y;}
+    public float getFeed()//this method must override in all class
+    {return 0f;}
+    public void setRadius(float radius)
+    {this.radius = radius;}
+    public void setColor(int color)
+    {this.color = color;}
+    public boolean getIsDeleted()
+    {
+        return is_deleted;
+    }
+    public int getColor() {
+        return color;
     }
     void move(float dx, float dy)
     {
