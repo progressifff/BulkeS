@@ -70,7 +70,7 @@ public class Bulk extends Unit
         return indicator;//update
     }
     public Path getTriangle(float x_end, float y_end) {
-        indicator.getParameters(x,y,radius + 15, x_end, y_end);
-        return indicator.getTriangle(x, y, radius + 5 );
+        indicator.getParameters(x,y,radius + Settings.IndicatorTopOffset / (Settings.UserStartSize / radius), x_end, y_end);
+        return indicator.getTriangle(x, y, radius + (Settings.IndicatorBaseOffset / (Settings.UserStartSize / radius)));
     }
 }

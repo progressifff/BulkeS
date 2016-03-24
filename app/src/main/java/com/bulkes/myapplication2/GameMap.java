@@ -94,13 +94,13 @@ public class GameMap
         return Settings.ColorList[random.nextInt(Settings.getCountColors())];
         //return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
-    private float getRandomX(int startSectorX, int diffSectorX)
+    private float getRandomX(int startSectorX, int diffSectorX, float radius)
     {
-        return startSectorX + random.nextInt(diffSectorX);
+        return  startSectorX + radius + random.nextInt(diffSectorX - (int)radius*2);//2 for right side
     }
-    private float getRandomY(int startSectorY, int diffSectorY)
+    private float getRandomY(int startSectorY, int diffSectorY, float radius)
     {
-        return startSectorY + random.nextInt(diffSectorY);
+        return startSectorY + radius + random.nextInt(diffSectorY - (int)radius*2);//2 for bottom side
     }
     private float getRandomRadius()
     {
@@ -125,12 +125,13 @@ public class GameMap
                 int foodInGroup = random.nextInt(Settings.MaxFoodInSector - Settings.MinFoodInSector) + Settings.MinFoodInSector;
                 for(int t = 0; t < foodInGroup; t++)
                 {
+                    float radius = getRandomRadius();
                     unit = new Food(
-                            getRandomX((int)startSectorX, (int)diffSectorX),
-                            getRandomY((int)startSectorY, (int) diffSectorY),
-                            getRandomRadius(),
+                            getRandomX((int)startSectorX, (int)diffSectorX, radius),
+                            getRandomY((int)startSectorY, (int) diffSectorY, radius),
+                            radius,
                             getColor(),
-                            Settings.FoodDefaultFeed);
+                            Settings.FoodFeedForRadius * radius);
                     boolean flagCorrect;
                     do
                     {
@@ -139,9 +140,10 @@ public class GameMap
                         {
                             if (temp.isOverlapped(unit))
                             {
-                                unit.setX(getRandomX((int) startSectorX, (int) diffSectorX));
-                                unit.setY(getRandomY((int) startSectorY, (int) diffSectorY));
-                                unit.setRadius(getRandomRadius());
+                                radius = getRandomRadius();
+                                unit.setX(getRandomX((int) startSectorX, (int) diffSectorX, radius));
+                                unit.setY(getRandomY((int) startSectorY, (int) diffSectorY, radius));
+                                unit.setRadius(radius);
                                 flagCorrect = false;
                             }
                         }
@@ -161,76 +163,7 @@ public class GameMap
             startSectorY += diffSectorY;
         }
     }
-    /*
-        public void checkPointSector(int i, int j, Unit point, Iterator<Unit> iterator)
-        {
-            boolean isTurn = false;
-            float sectorY = Y0 + i*diffSectorY;
-            float sectorX = X0 + j*diffSectorX;
-            int columns = getColumns();
-            int lines = getLines();
-            if(point.getX() >= sectorX + diffSectorX)
-            {
-                Log.v("A","1111");
-                iterator.remove();
-                point.setX(point.getX() - m * Settings.ScreenWidthDefault);
-                map[i][0].add(point);
-                isTurn = true;
-            }
-            else if(point.getX() < X0)
-            {
-                Log.v("A","2222");
-                iterator.remove();
-                point.setX(m * Settings.ScreenWidthDefault + point.getX());
-                map[i][columns-1].add(point);
-                isTurn = true;
-            }
-            if(point.getY() >= sectorY + diffSectorY)
-            {
-                Log.v("A", "3333");
-                iterator.remove();
-                point.setY(point.getY() - k * Settings.ScreenHeightDefault);
-                map[0][j].add(point);
-                isTurn = true;
-            }
-            else if(point.getY() <= Y0)
-            {
-                Log.v("A","4444");
-                iterator.remove();
-                point.setY(k * Settings.ScreenHeightDefault + point.getY());
-                map[lines-1][j].add(point);
-                isTurn = true;
-            }
 
-
-            if(!isTurn) {
-                if (point.getX() < sectorX && point.getY() < sectorY) {
-                    Log.v("A","1111");
-                    iterator.remove();
-                    map[i - 1][j - 1].add(point);
-                } else if (point.getX() < sectorX && point.getY() > sectorY + diffSectorY) {
-                    Log.v("A","2222");
-                    iterator.remove();
-                    map[i + 1][j - 1].add(point);
-                } else if (point.getX() > sectorX + diffSectorX && point.getY() < sectorY) {
-                    Log.v("A","3333");
-                    iterator.remove();
-                    map[i - 1][j + 1].add(point);
-                } else if (point.getX() > sectorX + diffSectorX && point.getY() > sectorY + diffSectorY) {
-                    Log.v("A","4444");
-                    iterator.remove();
-                    map[i + 1][j + 1].add(point);
-                } else if (point.getX() < sectorX) {
-                    Log.v("A","5555");
-                    ListIterator<Unit> iterat = getMap()[i][j-1].listIterator();
-                    iterat.add(point);
-                    //iterator.remove();
-                }
-            }
-
-
-        }
-     */
     public int getLines()
     {
         return k* Settings.CountSectorY;

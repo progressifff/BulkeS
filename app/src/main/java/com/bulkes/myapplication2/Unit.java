@@ -94,13 +94,19 @@ public class Unit
     }
     public boolean isOverlapped(Unit unit)
     {
-        Indicator pointOut= new Indicator();//point on radius external circle
-        pointOut.getParameters(unit.getX(), unit.getY(), unit.getRadius(),x, y);//(x;y) - center current unit
-        float dx;
-        float dy;
-        dx = pointOut.getX() - x;
-        dy = pointOut.getY() - y;
-        return (dx*dx + dy*dy) < (radius * radius);
+        if(       unit.getX() < x - (radius + unit.radius)
+                ||unit.getX() > x + (radius + unit.radius)
+                ||unit.getY() < y - (radius + unit.radius)
+                ||unit.getY() > y + (radius + unit.radius))
+            return false;
+
+            Indicator pointOut = new Indicator();//point on radius external circle
+            pointOut.getParameters(unit.getX(), unit.getY(), unit.getRadius(), x, y);//(x;y) - center current unit
+            float dx;
+            float dy;
+            dx = pointOut.getX() - x;
+            dy = pointOut.getY() - y;
+            return (dx * dx + dy * dy) < (radius * radius);
     }
     public boolean isEated(Unit unit)
     {
