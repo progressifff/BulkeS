@@ -72,6 +72,7 @@ public class GameMap
         }
     }
 
+
     private void setMapAxis()
     {
         X0 = (m%2 == 0) ? (-0.5f*Settings.ScreenWidthDefault*(m - 1)) : (-m/2*Settings.ScreenWidthDefault);
@@ -122,7 +123,7 @@ public class GameMap
             for(int j = 0;j < m*Settings.CountSectorX; j++)
             {
                 map[i][j] = new LinkedList<>();
-                int foodInGroup = random.nextInt(Settings.MaxFoodInSector - Settings.MinFoodInSector) + Settings.MinFoodInSector;
+                int foodInGroup = random.nextInt(Settings.MaxFoodInSector + 1 - Settings.MinFoodInSector) + Settings.MinFoodInSector;
                 for(int t = 0; t < foodInGroup; t++)
                 {
                     float radius = getRandomRadius();

@@ -5,6 +5,8 @@ import android.graphics.Path;
 import android.util.Log;
 
 import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by 1 on 16.03.16.
@@ -60,24 +62,28 @@ public class Enemy extends Bulk
             int minimumPriority = Integer.MAX_VALUE;
             float minimumDistance = (float) Integer.MAX_VALUE;
             int currentPriority;
+            float maxFeedByDistance = -1f;//warning default
             for (int i = 0; i < gameMap.getLines(); i++) {
                 for (int j = 0; j < gameMap.getColumns(); j++) {
                     Iterator<Unit> iterator = gameMap.getMap()[i][j].iterator();
                     while (iterator.hasNext()) {
                         Unit point = iterator.next();
                         if (point != this && !point.is_deleted)
-                            if (Math.abs(x - point.getX()) < Settings.EnemyFindOffset && Math.abs(y - point.getY()) < Settings.EnemyFindOffset) {
+                            if (Math.abs(x - point.getX()) < Settings.EnemyFindOffset + radius && Math.abs(y - point.getY()) < Settings.EnemyFindOffset + radius) {
                                 currentPriority = sectors.getPriorityForUnit(point);
                                 if (currentPriority < minimumPriority) {
                                     minimumPriority = sectors.getPriorityForUnit(point);
                                     float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
+                                    float feedByDistance = point.getFeed() / distance;
+                                    maxFeedByDistance = feedByDistance;
                                     target = point;
-                                    minimumDistance = distance;
+                                    //minimumDistance = distance;
                                 } else {
                                     if (currentPriority == minimumPriority) {
                                         float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                                        if (distance < minimumDistance) {
-                                            minimumDistance = distance;
+                                        float feedByDistance = point.getFeed() / distance;
+                                        if (feedByDistance > maxFeedByDistance) {
+                                           maxFeedByDistance = feedByDistance;
                                             target = point;
                                         }
                                     }
@@ -87,8 +93,7 @@ public class Enemy extends Bulk
                 }
             }
         }
-        if(target == null)
-           // target = new Unit(x+100, y + 200, 0);
+        if(target == null) //no unit near bulk
             isMoved = false;//update find random
         else
             target.setColor(Color.BLACK);

@@ -38,6 +38,9 @@ public class SectorHolder
         column  = (int)tempX / (Settings.ScreenWidthDefault / Settings.CountSectorX);
        // Log.v("Sector XY ", String.valueOf(tempY) + " " + String.valueOf(tempX));
       // Log.v("Sector ", String.valueOf(line) + " " + String.valueOf(column));
+        if( line >= countLine || column >= countColumn  ) {
+            Log.e("Sector error ", unit.toString());
+        }
         return sector_map[line][column];
     }
     public void restartChecking()

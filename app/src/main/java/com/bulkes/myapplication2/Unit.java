@@ -87,6 +87,10 @@ public class Unit
     {
         return radius;
     }
+    float getDrawRadius()
+    {
+        return radius * Settings.UserScale;
+    }
     void move(float dx, float dy)
     {
         x += dx;
@@ -120,6 +124,11 @@ public class Unit
     {
         x = _x;
         y = _y;
+    }
+    @Override
+    public String toString()
+    {
+        return String.valueOf(x) + " "  + String.valueOf(y) + " " + String.valueOf(radius) + " is_del" + String.valueOf(is_deleted);
     }
 
 }

@@ -196,20 +196,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
         drawMap();
-        drawScores();
-        //drawBulk(user);
-        /*
-        enemy.setIsMoved(true);
-        enemy.setDx(0.1f);
-        enemy.move(5f, 0f);
-        */
-        //enemy.setTarget(user);
-      //  enemy.updateState(gameMap, sectors);
-        //sectors.findSectorToMove(enemy);
-
-       // sectors.checkUnit(enemy);
-        //drawBulk(enemy);
-        //drawUser();
         for ( Bulk bulk : bulkesMap  )
         {
             if( !bulk.is_deleted ) {
@@ -219,6 +205,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             }
         }
         drawJoyStick();
+        drawScores();
         drawFPS();
     }
     private void drawFPS()
@@ -274,28 +261,29 @@ private void drawMap()
             while (iterator.hasNext())
             {
                 Unit point = iterator.next();
-                sectors.checkUnit(point);
-                if(point instanceof User)
-                    continue;
+
 
                 if(point.getIsDeleted() == false)
-                    for (Bulk bulk: bulkesMap ) {
+                {
+                    sectors.checkUnit(point);//update: what with deleted items
+                    if(point instanceof User)
+                        continue;
+                    for (Bulk bulk : bulkesMap) {
                         if (point != bulk && !bulk.getIsDeleted() && bulk.isEated(point)) {
-                            if(bulk.getRadius() > point.getRadius()) {
-                            bulk.addMass(point.getFeed());
-                            point.setIsDeleted(true);
-                           if(bulk instanceof Enemy && ((Enemy)bulk).isTarget(point))
-                                bulk.setIsMoved(false);
+                            if (bulk.getRadius() > point.getRadius()) {
+                                bulk.addMass(point.getFeed());
+                                point.setIsDeleted(true);
+                                if (bulk instanceof Enemy && ((Enemy) bulk).isTarget(point))
+                                    bulk.setIsMoved(false);
 
-                            }
-                            else
-                            {
-                                if( bulk instanceof User)
+                            } else {
+                                if (bulk instanceof User)
                                     drawEndGame();//update
                             }
                             break;
                         }
                     }
+                }
                 if(point.getIsDeleted() == false) {
                     if (user.getIsMoved())//previous loop can change isDeleted
                         point.move(-stick.getdX() * speed, -stick.getdY() * speed);
@@ -323,7 +311,7 @@ private void drawMap()
     {
         paint.setAntiAlias(true);
         paint.setColor(Color.RED);
-        paint.setAlpha(150);
+        paint.setAlpha(170);
         paint.setTextSize(52.0f);
         //Calendar calendar = Calendar.getInstance();
         //GameView.currentTime = calendar.getTime();
