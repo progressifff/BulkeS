@@ -1,14 +1,13 @@
 package com.bulkes.myapplication2;
 
 import android.graphics.Path;
-import android.util.Log;
 
 /**
  * Created by 1 on 16.03.16.
  */
 public class Enemy extends Bulk
 {
-    Unit    target;//goal for eating
+    //Unit    target;//goal for eating
     public Enemy( float _x, float _y, float _radius)
     {
         this(_x, _y, _radius, Settings.EnemyDefaultColor);
@@ -20,10 +19,11 @@ public class Enemy extends Bulk
         indicator = new Indicator();
         setSpeed(Settings.EnemyDefaultSpeed);
     }
-    public void setTarget(Unit unit)
+    public void setTarget(Bulk unit)
     {
         target = unit;
     }
+
     public void updateState(GameMap gameMap)
     {
         setIsMoved(true);
@@ -50,8 +50,9 @@ public class Enemy extends Bulk
                 newY = getY() - Settings.EnemyStepValue;
             setPosition(solveX(newY), newY);
         }
-        Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
+       // Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
     }
+    /*
     private float solveY(float _x)
     {
         float k;
@@ -68,6 +69,7 @@ public class Enemy extends Bulk
             return (_y - getY()) / k + getX();
         }
     }
+    */
     public Path getTriangleToTarget() {
         return getTriangle(target.getX(), target.getY());
     }

@@ -1,62 +1,63 @@
 package com.bulkes.myapplication2;
 
 import android.os.CountDownTimer;
-import android.util.Log;
 
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Random;
 
 public class GameMap
 {
-    private LinkedList<Unit>[][]map;
+    private LinkedList<Unit>map;
     private Random random;
-    private float X0;
-    private float Y0;
+    private int X0;
+    private int Y0;
     private float diffSectorX;
     private float diffSectorY;
-    private int k;
-    private int m;
-    private Unit unit;
     private int delFoodCount;
-
-    public GameMap(int _k, int _m)
+    private LinkedList<Unit> addFood;
+    private boolean needAddFood;
+    private int maxFoodCountOnMap;
+    private int minFoodCountOnMap;
+    public GameMap()
     {
         random = new Random();
-        k = _k;
-        m = _m;
-        map = new LinkedList[k*Settings.CountSectorY][m*Settings.CountSectorX];
+        map = new LinkedList<>();
+        addFood = new LinkedList<>();
+        maxFoodCountOnMap = Settings.CountSectorX*Settings.MapSizeX*Settings.CountSectorY*Settings.MapSizeY*Settings.MaxFoodInSector;
+        minFoodCountOnMap = Math.round(maxFoodCountOnMap/4);
         X0 = 0;
         Y0 = 0;
         delFoodCount = 0;
-        unit = new Unit();
+        needAddFood = false;
         setMapAxis();
         generateSmartMap();
-   //     checkFoodTimer();
+        startFoodTimer();
     }
 
-    private void checkFoodTimer()
+    private void setMapAxis()
     {
-        final CountDownTimer addFoodTimer = new CountDownTimer(5000,1000)
+        X0 = (Settings.MapSizeX%2 == 0) ? (int)(-0.5f*Settings.ScreenWidthDefault*(Settings.MapSizeX - 1)) : (-Settings.MapSizeX/2*Settings.ScreenWidthDefault);
+        Y0 = (Settings.MapSizeY%2 == 0) ? (int)(-0.5f*Settings.ScreenHeightDefault*(Settings.MapSizeY - 1)) : (-Settings.MapSizeY/2*Settings.ScreenHeightDefault);
+    }
+
+    private void startFoodTimer()
+    {
+        final CountDownTimer addFoodTimer = new CountDownTimer(7000,1000)
         {
-            int tempCount = 0;
-            boolean onStart = true;
             @Override
             public void onTick(long millisUntilFinished)
-            {
-                if(onStart)
-                {
-                    tempCount = delFoodCount;
-                    onStart = false;
-                }
-            }
-
+            {}
             @Override
             public void onFinish()
             {
-                tempCount = delFoodCount - tempCount;
-                if(tempCount != 0)
-                    addUnitRandomly(tempCount);
-                onStart = true;
+                if(delFoodCount != 0)
+                {
+                    addUnitRandomly(delFoodCount);
+                    delFoodCount = 0;
+                    needAddFood = true;
+                }
                 start();
             }
         }.start();
@@ -64,34 +65,129 @@ public class GameMap
 
     public void addUnitRandomly(int countFoodToDraw)
     {
-        Unit unit;
-        for(int i = 0;i<countFoodToDraw;i++)
-        {
-
+        Unit food;
+        float distance;
+        Iterator<Unit> foodIterator;
+        int mapSize = map.size();
+        float scaleValue = (float)Math.floor(((0.6+Math.random()*(1.3-0.6))*10))/10;
+        if(mapSize>=minFoodCountOnMap && mapSize<=maxFoodCountOnMap)
+            countFoodToDraw = Math.round((float)countFoodToDraw*scaleValue);
+        else if(mapSize + Math.round((float)countFoodToDraw*scaleValue) < minFoodCountOnMap)
+            countFoodToDraw = Math.round((maxFoodCountOnMap - minFoodCountOnMap)/2);
+        else if(mapSize > maxFoodCountOnMap)
+            countFoodToDraw = 0;
+        if(countFoodToDraw !=0) {
+            for (int i = 0; i < countFoodToDraw; i++)
+            {
+                food = new Food(
+                        getRandomX(X0, Settings.MapSizeX * Settings.ScreenWidthDefault),
+                        getRandomY(Y0, Settings.MapSizeY * Settings.ScreenHeightDefault),
+                        getRandomRadius(),
+                        getColor(),
+                        500);
+                if (i != 0)
+                {
+                    boolean flagCorrect;
+                    do
+                    {
+                        flagCorrect = true;
+                        for (Unit temp : addFood)
+                        {
+                            distance = food.getRadius()+temp.getRadius()+18;
+                            if((Math.abs(food.getX() - temp.getX())<distance)&&(Math.abs(food.getY()-temp.getY())<distance))
+                            {
+                                food.setX(getRandomX(X0, Settings.MapSizeX * Settings.ScreenWidthDefault));
+                                food.setY(getRandomY(Y0, Settings.MapSizeY * Settings.ScreenHeightDefault));
+                                food.setRadius(getRandomRadius());
+                                flagCorrect = false;
+                            }
+                        }
+                    }while(flagCorrect == false);
+                    addFood.add(food);
+                }
+                else
+                    addFood.add(food);
+            }
+            for(Iterator<Unit> mapIterator = map.iterator(); mapIterator.hasNext();){
+                Unit point = mapIterator.next();
+                for (foodIterator = addFood.iterator(); foodIterator.hasNext(); ) {
+                    food = foodIterator.next();
+                    distance = point.getRadius() + food.getRadius() + 18;
+                    if ((Math.abs(point.getX() - food.getX()) < distance) && (Math.abs(point.getY() - food.getY()) < distance))
+                        foodIterator.remove();
+                }
+            }
         }
     }
 
-    private void setMapAxis()
+    public void checkForFoodAdd(ListIterator<Unit> iterator)
     {
-        X0 = (m%2 == 0) ? (-0.5f*Settings.ScreenWidthDefault*(m - 1)/Settings.ScreenWidthDefault) : (-m/2*Settings.ScreenWidthDefault/Settings.ScreenWidthDefault);
-        Y0 = (k%2 == 0) ? (-0.5f*Settings.ScreenHeightDefault*(k - 1)/Settings.ScreenHeightDefault) : (-k/2*Settings.ScreenHeightDefault/Settings.ScreenHeightDefault);
+        if(!addFood.isEmpty()&&needAddFood)
+        {
+            for(Unit food : addFood)
+            {
+                iterator.add(food);
+            }
+            needAddFood = false;
+            addFood.clear();
+        }
     }
 
-    public float getX0()
-    {return X0;}
-    public float getY0()
-    {return Y0;}
-    public int getK()
-    {return k;}
-    public int getM()
-    {return m;}
-
+    public void generateSmartMap()
+    {
+        Unit unit;
+        float startSectorX;
+        float startSectorY;
+        LinkedList<Unit> sectorMap = new LinkedList<>();
+        diffSectorX = Settings.ScreenWidthDefault  / Settings.CountSectorX;
+        diffSectorY = Settings.ScreenHeightDefault / Settings.CountSectorY;
+        startSectorY = Y0;
+        while (startSectorY < (Y0 + Settings.MapSizeY*Settings.ScreenHeightDefault))
+        {
+            startSectorX = X0;
+            while (startSectorX < (X0 + Settings.MapSizeX*Settings.ScreenWidthDefault))
+            {
+                int foodInGroup = random.nextInt(Settings.MaxFoodInSector - Settings.MinFoodInSector) + Settings.MinFoodInSector;
+                sectorMap.clear();
+                for(int i = 0; i < foodInGroup; i++)
+                {
+                    unit = new Food(
+                            getRandomX((int)(startSectorX + 20), (int)(diffSectorX - 20)),
+                            getRandomY((int)(startSectorY + 20), (int)(diffSectorY - 20)),
+                            getRandomRadius(),
+                            getColor(),//update
+                            500);//update
+                    boolean flagCorrect;
+                    do//update infinity loop
+                    {
+                        flagCorrect = true;
+                        for (Unit temp : sectorMap)
+                        {
+                            float distance = unit.getRadius()+temp.getRadius()+12;
+                            if((Math.abs(unit.getX() - temp.getX())<distance)&&(Math.abs(unit.getY()-temp.getY())<distance))
+                            {
+                                unit.setX(getRandomX((int) startSectorX, (int) diffSectorX));
+                                unit.setY(getRandomY((int) startSectorY, (int) diffSectorY));
+                                unit.setRadius(getRandomRadius());
+                                flagCorrect = false;
+                            }
+                        }
+                    }while(flagCorrect == false);
+                    sectorMap.add(unit);
+                }
+                for (Unit t: sectorMap)//loop for adding
+                {
+                    map.add(t);
+                }
+                startSectorX += diffSectorX;
+            }
+            startSectorY += diffSectorY;
+        }
+    }
 
     private int getColor()
     {
-        Log.v("Color ", String.valueOf(Settings.getCountColors()));
         return Settings.ColorList[random.nextInt(Settings.getCountColors())];
-        //return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
     private float getRandomX(int startSectorX, int diffSectorX)
     {
@@ -106,130 +202,29 @@ public class GameMap
         return (float)random.nextInt(Settings.MaxFoodSize - Settings.MinFoodSize) + Settings.MinFoodSize;
     }
 
-    public void generateSmartMap()
+    public void delFood(Iterator<Unit> iterator)
     {
-        Unit unit;
-        //LinkedList <Unit> sector_map;
-        float startSectorX;
-        float startSectorY;
-        diffSectorX = Settings.ScreenWidthDefault  / Settings.CountSectorX;
-        diffSectorY = Settings.ScreenHeightDefault / Settings.CountSectorY;
-        startSectorY = Y0;
-        for(int i = 0; i < k*Settings.CountSectorY;i++)
-        {
-            startSectorX = X0;
-            for(int j = 0;j < m*Settings.CountSectorX; j++)
-            {
-                map[i][j] = new LinkedList<>();
-                int foodInGroup = random.nextInt(Settings.MaxFoodInSector - Settings.MinFoodInSector) + Settings.MinFoodInSector;
-                for(int t = 0; t < foodInGroup; t++)
-                {
-                    unit = new Food(
-                            getRandomX((int)startSectorX, (int)diffSectorX),
-                            getRandomY((int)startSectorY, (int) diffSectorY),
-                            getRandomRadius(),
-                            getColor(),
-                            Settings.FoodDefaultFeed);
-                    boolean flagCorrect;
-                    do
-                    {
-                        flagCorrect = true;
-                        for (Unit temp : map[i][j])
-                        {
-                            if (temp.isOverlapped(unit))
-                            {
-                                unit.setX(getRandomX((int) startSectorX, (int) diffSectorX));
-                                unit.setY(getRandomY((int) startSectorY, (int) diffSectorY));
-                                unit.setRadius(getRandomRadius());
-                                flagCorrect = false;
-                            }
-                        }
-                    }while(flagCorrect == false);
-                    map[i][j].add(unit);
-                }
-                for(int e = 0; e < map[i][j].size()-1; e++)
-                {
-                    for(int t = e + 1; t<map[i][j].size(); t++)
-                    {
-                        if (map[i][j].get(e).isOverlapped(map[i][j].get(t)))
-                            map[i][j].remove(map[i][j].get(t));
-                    }
-                }
-                startSectorX += diffSectorX;
-            }
-            startSectorY += diffSectorY;
-        }
+        iterator.remove();
+        delFoodCount++;
     }
-    /*
-        public void checkPointSector(int i, int j, Unit point, Iterator<Unit> iterator)
-        {
-            boolean isTurn = false;
-            float sectorY = Y0 + i*diffSectorY;
-            float sectorX = X0 + j*diffSectorX;
-            int columns = getColumns();
-            int lines = getLines();
-            if(point.getX() >= sectorX + diffSectorX)
-            {
-                Log.v("A","1111");
-                iterator.remove();
-                point.setX(point.getX() - m * Settings.ScreenWidthDefault);
-                map[i][0].add(point);
-                isTurn = true;
-            }
-            else if(point.getX() < X0)
-            {
-                Log.v("A","2222");
-                iterator.remove();
-                point.setX(m * Settings.ScreenWidthDefault + point.getX());
-                map[i][columns-1].add(point);
-                isTurn = true;
-            }
-            if(point.getY() >= sectorY + diffSectorY)
-            {
-                Log.v("A", "3333");
-                iterator.remove();
-                point.setY(point.getY() - k * Settings.ScreenHeightDefault);
-                map[0][j].add(point);
-                isTurn = true;
-            }
-            else if(point.getY() <= Y0)
-            {
-                Log.v("A","4444");
-                iterator.remove();
-                point.setY(k * Settings.ScreenHeightDefault + point.getY());
-                map[lines-1][j].add(point);
-                isTurn = true;
-            }
+
+    public LinkedList<Unit> getMap()
+    {
+        return map;
+    }
+    public void addUnit(Unit unit)
+    {
+        map.add(unit);//update index
+    }
+
+    public int getX0()
+    {return X0;}
+    public int getY0()
+    {return Y0;}
 
 
-            if(!isTurn) {
-                if (point.getX() < sectorX && point.getY() < sectorY) {
-                    Log.v("A","1111");
-                    iterator.remove();
-                    map[i - 1][j - 1].add(point);
-                } else if (point.getX() < sectorX && point.getY() > sectorY + diffSectorY) {
-                    Log.v("A","2222");
-                    iterator.remove();
-                    map[i + 1][j - 1].add(point);
-                } else if (point.getX() > sectorX + diffSectorX && point.getY() < sectorY) {
-                    Log.v("A","3333");
-                    iterator.remove();
-                    map[i - 1][j + 1].add(point);
-                } else if (point.getX() > sectorX + diffSectorX && point.getY() > sectorY + diffSectorY) {
-                    Log.v("A","4444");
-                    iterator.remove();
-                    map[i + 1][j + 1].add(point);
-                } else if (point.getX() < sectorX) {
-                    Log.v("A","5555");
-                    ListIterator<Unit> iterat = getMap()[i][j-1].listIterator();
-                    iterat.add(point);
-                    //iterator.remove();
-                }
-            }
+   /*
 
-
-        }
-     */
     public int getLines()
     {
         return k* Settings.CountSectorY;
@@ -239,13 +234,9 @@ public class GameMap
     {
         return m* Settings.CountSectorX;
     }
+    public void getFoodSector(Unit point)
+    {
 
-    public LinkedList<Unit>[][] getMap()
-    {
-        return map;
     }
-    public void addUnit(Unit unit)
-    {
-        map[1][1].add(unit);//update index
-    }
+    */
 }

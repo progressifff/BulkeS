@@ -3,7 +3,8 @@ package com.bulkes.myapplication2;
 /**
  * Created by progr on 14.03.2016.
  */
-public class JoyStick {
+public class JoyStick
+{
     private float X;
     private float Y;
     private float X0;
@@ -64,8 +65,16 @@ public class JoyStick {
     {return dX;}
     public float getdY()
     {return dY;}
+
+    public void setdXdY(int a, int b)
+    {
+        dX = a;
+        dY = b;
+    }
+
     public float getRadiusIn()
     {return radiusIn;}
     public float getRadiusOut()
     {return radiusOut;}
+
 }

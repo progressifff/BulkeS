@@ -1,6 +1,5 @@
 package com.bulkes.myapplication2;
 
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.TimerTask;
 
@@ -9,7 +8,6 @@ import java.util.TimerTask;
  */
 public class TimerTasks extends TimerTask
 {
-
     @Override
     public void run()
     {

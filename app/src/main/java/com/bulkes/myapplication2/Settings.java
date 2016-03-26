@@ -20,9 +20,7 @@ public final class Settings
     final static int    CountSectorY               = 2;
     final static int    MapSizeX                   = 3;
     final static int    MapSizeY                   = 3;
-    final static int    MaxFoodCountOnMap          = CountSectorX*MapSizeX*CountSectorY*MapSizeY*MaxFoodInSector;
-    final static int    MinFoodCountOnMap          = (int)0.3*MaxFoodCountOnMap;
-    final static float  StepRadius                 = 0.6f;
+    final static float  StepRadius                 = 0.05f;
     final static int    FoodDefaultFeed            = 500;
     final static float  EnemyDefaultSpeed          = 0.1f;
     final static float  EnemyStepValue             = 5f;

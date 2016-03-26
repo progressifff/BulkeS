@@ -6,5 +6,7 @@
     <color name="Marengo">#4c5866</color>
     <color name="Pang">#cceeff</color>
     <color name="black_overlay">#66000000</color>
+    <color name="part_transparent">#80000000</color>
+    <color name="full_transparent">#00000000</color>
 
 </resources>
