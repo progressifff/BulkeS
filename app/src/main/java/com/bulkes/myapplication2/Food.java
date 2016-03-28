@@ -16,7 +16,6 @@ public class Food extends Unit
         this.feed = feed;
     }
 
-
     public Food(float feed) {
         super();
         this.feed = feed;

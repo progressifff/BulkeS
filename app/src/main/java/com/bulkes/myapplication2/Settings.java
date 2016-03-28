@@ -16,7 +16,7 @@ public final class Settings
     final static int    UserDefaultColor           = Color.RED;
     final static float  UserScale                  = 0.5f;
     final static int    MinFoodInSector            = 0;
-    final static int    MaxFoodInSector            = 5;
+    final static int    MaxFoodInSector            = 10;
     final static int    MinFoodSize                = 20;
     final static int    MaxFoodSize                = 40;
     final static int    BaseFoodSize               = (MaxFoodSize - MinFoodSize) / 2;
@@ -24,20 +24,27 @@ public final class Settings
     final static int    FoodFeedForRadius          = 20;
     final static int    CountSectorX               = 3;
     final static int    CountSectorY               = 3;
+    final static int    MapSizeX                   = 3;
+    final static int    MapSizeY                   = 3;
+    final static float  StepRadius                 = 0.05f;
+
 
     final static int    MaxTotalFeed               = MaxFoodSize * FoodFeedForRadius * MaxFoodInSector * 2 ;
 
-    final static float  BulkOffsetRadius           = 1f;
+    final static float  BulkOffsetRadius           = 5f;//min difference
+
+    final static int    EnemyMaxStepToTarget       = 30;
     final static int    EnemyFindOffset            = 500;
     final static float  EnemyDefaultSpeed          = 0.1f;
     final static float  EnemyStepValue             = 5f;
     final static int    EnemyDefaultColor          = Color.MAGENTA;
+
     final static float  IndicatorTopOffset         = 15f;
     final static float  IndicatorBaseOffset        = 5f;
     final static float  IndicatorBaseAlpha         = 0.3f;
     final static float  JoyStickRadiusOut          = 120f;
     final static float  JoyStickRadiusIn           = 60f;
-    final static int    CountBulkes                = 5;
+    final static int    CountBulkes                = 10;
     final static int    ColorList[] = {
             Color.rgb(0xFF,0xA5,0x00),//#FFA500 orange
             Color.rgb(0x1F,0x57,0xB3),//#1f57b3 blue

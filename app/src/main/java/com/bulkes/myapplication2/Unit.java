@@ -11,7 +11,9 @@ public class Unit
     protected float y;
     protected float radius;
     protected int color;
-    protected boolean is_deleted;
+    protected boolean isDeleted;
+    private   float targetRadius;
+    protected Bulk    target;
 
     public void setX(float x)
     {
@@ -39,11 +41,11 @@ public class Unit
     }
     public void setIsDeleted(boolean flag)
     {
-        is_deleted = flag;
+        isDeleted = flag;
     }
     public boolean getIsDeleted()
     {
-        return is_deleted;
+        return isDeleted;
     }
 
 
@@ -58,7 +60,8 @@ public class Unit
         y = 0f;
         radius = 0f;
         color = Color.RED;
-        is_deleted = false;
+        isDeleted = false;
+        targetRadius = 0f;
     }
     public Unit(float _x, float _y, float _radius, int _color)
     {
@@ -66,14 +69,16 @@ public class Unit
         y = _y;
         radius = _radius;
         color = _color;
-        is_deleted = false;
+        isDeleted = false;
+        targetRadius = 0f;
     }
     public Unit(float _x, float _y, float _radius) {
         x = _x;
         y = _y;
         radius = _radius;
         color = Color.RED;
-        is_deleted = false;
+        isDeleted = false;
+        targetRadius = 0f;
     }
     float getX()
     {
@@ -87,14 +92,25 @@ public class Unit
     {
         return radius;
     }
-    float getDrawRadius()
+    float getAnimationRadius()
     {
-        return radius * Settings.UserScale;
+        if(targetRadius<radius)
+        {
+            targetRadius += Settings.StepRadius*radius;
+            return targetRadius;
+        }
+        else
+            return radius;
     }
     void move(float dx, float dy)
     {
         x += dx;
         y += dy;
+    }
+    public void setIsDeleted(boolean isDeleted, Bulk whatBulk)
+    {
+        target = whatBulk;
+        this.isDeleted = isDeleted;
     }
     public boolean isOverlapped(Unit unit)
     {
@@ -112,6 +128,55 @@ public class Unit
             dy = pointOut.getY() - y;
             return (dx * dx + dy * dy) < (radius * radius);
     }
+    public boolean insideBulk()
+    {
+        //  float k;
+        float newX;
+        float newY;
+        float dx;
+        float dy;
+        float stepY;
+        float stepX;
+        dx = target.getX() - x;
+        dy = target.getY() - y;
+        stepX = 10f;
+        stepY = 10f;
+        if(Math.sqrt(Math.pow(dx, 2.0) +  Math.pow(dy, 2.0))<=(target.getRadius()-radius))
+            return true;
+        else {
+            //    k = dy/dx;
+            if(Math.abs(dx)>=Math.abs(dy))
+            {
+                newX = x + ((dx > 0)? stepX : (-stepX));
+                //newY = k*(newX - x) + y;
+                newY = solveY(newX);
+            }
+            else
+            {
+                newY = y + ((dy > 0)? stepY : (-stepY));
+                //  newX = (newY - y)/k + x;
+                newX = solveX(newY);
+            }
+            setPosition(newX,newY);
+            return false;
+        }
+    }
+    private float solveY(float _x)
+    {
+        float k;
+        k = (target.getY() - getY()) / (target.getX() - getX());
+        return k * _x - k * getX() + getY();
+    }
+    private float solveX(float _y)
+    {
+        float k;
+        if(Math.abs(target.getX() - getX()) < 0.001f )
+            return getX();
+        else {
+            k = (target.getY() - getY()) / (target.getX() - getX());
+            return (_y - getY()) / k + getX();
+        }
+    }
     public boolean isEated(Unit unit)
     {
         float dx;
@@ -128,7 +193,7 @@ public class Unit
     @Override
     public String toString()
     {
-        return String.valueOf(x) + " "  + String.valueOf(y) + " " + String.valueOf(radius) + " is_del" + String.valueOf(is_deleted);
+        return String.valueOf(x) + " "  + String.valueOf(y) + " " + String.valueOf(radius) + " is_del " + String.valueOf(isDeleted);
     }
 
 }

@@ -14,89 +14,97 @@ import java.util.Set;
 public class Enemy extends Bulk
 {
     Unit    target;//goal for eating
-
+    int     stepToTarget;
     public Enemy( float _x, float _y, float _radius)
     {
         this(_x, _y, _radius, Settings.EnemyDefaultColor);
     }
-
     public Enemy( float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
         indicator = new Indicator();
         setSpeed(Settings.EnemyDefaultSpeed);
+        stepToTarget = 0;
     }
     public void setTarget(Unit unit)
     {
         target = unit;
     }
-    public void updateState(GameMap gameMap, SectorHolder sectors)
+    private void findNewTarget(GameMap gameMap, SectorHolder sectors)
     {
-        if(isMoved && !target.is_deleted) {//other enemy can target eat
-            float dx;
-            float dy;
-            float newX;
-            float newY;
-            dx = target.getX() - getX();
-            dy = target.getY() - getY();
-            if (Math.abs(dx) < 0.001f && Math.abs(dy) < 0.001f)
-                setIsMoved(false);
-            if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > 0)
-                    newX = getX() + Settings.EnemyStepValue;
-                else
-                    newX = getX() - Settings.EnemyStepValue;
-                setPosition(newX, solveY(newX));
-            } else {
-                if (dy > 0)
-                    newY = getY() + Settings.EnemyStepValue;
-                else
-                    newY = getY() - Settings.EnemyStepValue;
-                setPosition(solveX(newY), newY);
-            }
-        }
-        else {
-            isMoved = true;
-            sectors.findSectorToMove(this);
-            target = null;
-            int minimumPriority = Integer.MAX_VALUE;
-            float minimumDistance = (float) Integer.MAX_VALUE;
-            int currentPriority;
-            float maxFeedByDistance = -1f;//warning default
-            for (int i = 0; i < gameMap.getLines(); i++) {
-                for (int j = 0; j < gameMap.getColumns(); j++) {
-                    Iterator<Unit> iterator = gameMap.getMap()[i][j].iterator();
-                    while (iterator.hasNext()) {
-                        Unit point = iterator.next();
-                        if (point != this && !point.is_deleted)
-                            if (Math.abs(x - point.getX()) < Settings.EnemyFindOffset + radius && Math.abs(y - point.getY()) < Settings.EnemyFindOffset + radius) {
-                                currentPriority = sectors.getPriorityForUnit(point);
-                                if (currentPriority < minimumPriority) {
-                                    minimumPriority = sectors.getPriorityForUnit(point);
+        stepToTarget = 0;
+        target = null;
+
+        sectors.findSectorToMove(this);
+
+        int minimumPriority = Integer.MAX_VALUE;
+        float minimumDistance = (float) Integer.MAX_VALUE;
+        int currentPriority;
+        float maxFeedByDistance = -1f;//warning default
+                Iterator<Unit> iterator = gameMap.getMap().iterator();
+                while (iterator.hasNext()) {
+                    Unit point = iterator.next();
+                    if (point != this && !point.isDeleted)
+                        if (Math.abs(x - point.getX()) < Settings.EnemyFindOffset + radius && Math.abs(y - point.getY()) < Settings.EnemyFindOffset + radius && radius > point.radius) {
+                            currentPriority = sectors.getPriorityForUnit(point);
+                            if (currentPriority < minimumPriority) {
+                                minimumPriority = sectors.getPriorityForUnit(point);
+                                float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
+                                float feedByDistance = point.getFeed() / distance;
+                                maxFeedByDistance = feedByDistance;
+                                target = point;
+                                //minimumDistance = distance;
+                            } else {
+                                if (currentPriority == minimumPriority) {
                                     float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
                                     float feedByDistance = point.getFeed() / distance;
-                                    maxFeedByDistance = feedByDistance;
-                                    target = point;
-                                    //minimumDistance = distance;
-                                } else {
-                                    if (currentPriority == minimumPriority) {
-                                        float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                                        float feedByDistance = point.getFeed() / distance;
-                                        if (feedByDistance > maxFeedByDistance) {
-                                           maxFeedByDistance = feedByDistance;
-                                            target = point;
-                                        }
+                                    if (feedByDistance > maxFeedByDistance) {
+                                        maxFeedByDistance = feedByDistance;
+                                        target = point;
                                     }
                                 }
                             }
-                    }
+                        }
                 }
-            }
+
+
+    }
+    private void moveToTarget()
+    {
+        float dx;
+        float dy;
+        float newX;
+        float newY;
+        stepToTarget++;
+        dx = target.getX() - getX();
+        dy = target.getY() - getY();
+        if (Math.abs(dx) < 0.001f && Math.abs(dy) < 0.001f)
+            setIsMoved(false);
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0)
+                newX = getX() + Settings.EnemyStepValue;
+            else
+                newX = getX() - Settings.EnemyStepValue;
+            setPosition(newX, solveY(newX));
+        } else {
+            if (dy > 0)
+                newY = getY() + Settings.EnemyStepValue;
+            else
+                newY = getY() - Settings.EnemyStepValue;
+            setPosition(solveX(newY), newY);
+        }
+    }
+    public void updateState(GameMap gameMap, SectorHolder sectors)
+    {
+        if(stepToTarget == Settings.EnemyMaxStepToTarget || target == null) {
+            findNewTarget(gameMap, sectors);
         }
         if(target == null) //no unit near bulk
-            isMoved = false;//update find random
-        else
+            target = gameMap.getAnyUnit();
+        //update: if field is empty
+            moveToTarget();
             target.setColor(Color.BLACK);
+
         //Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
     }
     private float solveY(float _x)
