@@ -11,10 +11,12 @@ public final class Settings
 {
     final static int    ScreenWidthDefault         = 1920;
     final static int    ScreenHeightDefault        = 1080;
-    final static float  UserStartSize              = 50f;
-    final static float  UserDefaultSpeed           = 0.1f;
+    final static float  UserStartSize              = 150f;
+    final static float  UserSpeedCoefficient       = 0.1f;
+    final static float  UserMaxRadius              = 200f;
     final static int    UserDefaultColor           = Color.RED;
-    final static float  UserScale                  = 0.5f;
+    final static float  UserBaseSize               = 100f;//for indicator
+          static float  UserScale                  = 1f;
     final static int    MinFoodInSector            = 0;
     final static int    MaxFoodInSector            = 10;
     final static int    MinFoodSize                = 20;
@@ -28,20 +30,23 @@ public final class Settings
     final static int    MapSizeY                   = 3;
     final static float  StepRadius                 = 0.05f;
 
+    final static float  UnitToTargetCoefficient    = 1.5f;
 
     final static int    MaxTotalFeed               = MaxFoodSize * FoodFeedForRadius * MaxFoodInSector * 2 ;
 
+    final static int    BulkDefaultColor           = Color.YELLOW;
     final static float  BulkOffsetRadius           = 5f;//min difference
 
     final static int    EnemyMaxStepToTarget       = 30;
     final static int    EnemyFindOffset            = 500;
-    final static float  EnemyDefaultSpeed          = 0.1f;
     final static float  EnemyStepValue             = 5f;
     final static int    EnemyDefaultColor          = Color.MAGENTA;
 
     final static float  IndicatorTopOffset         = 15f;
     final static float  IndicatorBaseOffset        = 5f;
-    final static float  IndicatorBaseAlpha         = 0.3f;
+    final static float  IndicatorMaxTopOffset      = IndicatorTopOffset * 2f;
+    final static float  IndicatorMaxBaseOffset     = IndicatorBaseOffset * 2f;
+    final static float  IndicatorBaseAlpha         = 0.5f;
     final static float  JoyStickRadiusOut          = 120f;
     final static float  JoyStickRadiusIn           = 60f;
     final static int    CountBulkes                = 10;

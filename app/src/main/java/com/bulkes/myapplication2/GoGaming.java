@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ListIterator;
-import java.util.Random;
 import java.util.Timer;
 
 /**
@@ -346,6 +344,17 @@ public GameView(Context context) {
                 }
             }
             drawJoyStick();
+            if(user.getRadius() > Settings.UserMaxRadius) {
+                Settings.UserScale /= 2f;
+                Log.v("User Scale ", String.valueOf(Settings.UserScale));
+                for (Unit unit : gameMap.getMap()) {
+                    // if(unit instanceof Bulk)
+                    //   ((Bulk) unit).setMass( ((Bulk) unit).getMass() / 2f);
+                    //else
+                    unit.updateRadius();
+                    //update something with feed
+                }
+            }
             drawScores();
             drawFPS();
         }
@@ -385,9 +394,9 @@ public GameView(Context context) {
             paint.setAlpha(240);
             if (bulk.getIsMoved()) {
                 if (bulk instanceof User)
-                    canvas.drawPath(bulk.getTriangle(user.getX() + stick.getdX(),user.getY() + stick.getdY()), paint);
-                else
-                    canvas.drawPath(((Enemy) bulk).getTriangleToTarget(), paint);
+                    canvas.drawPath(bulk.getIndicator(user.getX() + stick.getdX(), user.getY() + stick.getdY()), paint);
+                //else
+                  //  canvas.drawPath(((Enemy) bulk).getIndicatorToTarget(), paint);
             }
         }
     }
@@ -397,7 +406,11 @@ private void drawMap()
 {
     sectors.restartChecking();
     //sectors.checkUnit(user);
-    float speed = user.speed;
+    float speedX = stick.getdX() * Settings.UserSpeedCoefficient;
+    float speedY = stick.getdY() * Settings.UserSpeedCoefficient;
+    user.setSpeed(speedX, speedY);
+    speedX = -speedX;//user stand and other unit moved
+    speedY = -speedY;
     int leftBorder = gameMap.getX0();
     int rightBorder = gameMap.getX0() + Settings.MapSizeX * Settings.ScreenWidthDefault;
     int upBorder = gameMap.getY0();
@@ -418,6 +431,7 @@ private void drawMap()
                             if (bulk.getRadius() > point.getRadius()) {
                                 bulk.addMass(point.getFeed());
                                 point.setIsDeleted(true, bulk);
+                                point.setSpeed(bulk.getSpeedX() * Settings.UnitToTargetCoefficient, bulk.getSpeedY() * Settings.UnitToTargetCoefficient);
                                 if (bulk instanceof Enemy && ((Enemy) bulk).isTarget(point))
                                     ((Enemy) bulk).setTarget(null);
 
@@ -439,16 +453,16 @@ private void drawMap()
                 }
                     gameMap.checkForFoodAdd(iterator);
                     if (user.getIsMoved())//previous loop can change isDeleted
-                        point.move(-stick.getdX() * speed, -stick.getdY() * speed);
+                        point.move( speedX,  speedY);
                     paint.setColor(point.color);
 
-                    if (point.getX() >= rightBorder)
+                    if (point.getX() > rightBorder)
                         point.setX(point.getX() - Settings.MapSizeX * Settings.ScreenWidthDefault);
-                    else if (point.getX() <= leftBorder)
+                    else if (point.getX() < leftBorder)
                         point.setX(Settings.MapSizeX * Settings.ScreenWidthDefault + point.getX());
-                    if (point.getY() >= downBorder)
+                    if (point.getY() > downBorder)
                         point.setY(point.getY() - Settings.MapSizeY * Settings.ScreenHeightDefault);
-                    else if (point.getY() <= upBorder)
+                    else if (point.getY() < upBorder)
                         point.setY(Settings.MapSizeY * Settings.ScreenHeightDefault + point.getY());
                     // gameMap.checkPointSector(i,j,point,iterator);
                     if(!(point instanceof Bulk))

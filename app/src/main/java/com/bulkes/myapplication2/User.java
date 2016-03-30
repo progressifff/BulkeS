@@ -13,7 +13,8 @@ public class User extends Bulk
     public User( float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
-        indicator = new Indicator();
-        setSpeed(Settings.UserDefaultSpeed);
+        speedX = 0;//user is always in center
+        speedY = 0;
     }
+
 }

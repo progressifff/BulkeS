@@ -204,6 +204,7 @@ public class GameMap
 
     public void delFood(Iterator<Unit> iterator)
     {
+
         iterator.remove();
         delFoodCount++;
     }
@@ -228,17 +229,4 @@ public class GameMap
         return null;
     }
 
-   /*
-    public int getLines()
-    {
-        return k* Settings.CountSectorY;
-    }
-    public int getColumns()
-    {
-        return m* Settings.CountSectorX;
-    }
-    public void getFoodSector(Unit point)
-    {
-    }
-    */
 }

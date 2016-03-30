@@ -1,116 +1,138 @@
 package com.bulkes.myapplication2;
 
 import android.graphics.Color;
+import android.util.Log;
 
 /**
- * Created by 1 on 09.03.16.
+ This is a base unit for all game element
  */
 public class Unit
 {
     protected float x;
     protected float y;
     protected float radius;
-    protected int color;
+    private   float animationRadius;
     protected boolean isDeleted;
-    private   float targetRadius;
-    protected Bulk    target;
+    protected int color;
+    protected Unit    target;
 
-    public void setX(float x)
-    {
-        this.x = x;
+    public float getSpeedX() {
+        return speedX;
     }
 
-    public void setY(float y)
-    {
-        this.y = y;
+    public float getSpeedY() {
+        return speedY;
     }
 
-    public float getFeed()//this method must override in all class
-    {
-        return 0f;
-    }
+    protected  float        speedX;
+    protected  float        speedY;
 
-    public void setRadius(float radius)
-    {
-        this.radius = radius;
-    }
-
-    public void setColor(int color)
-    {
-        this.color = color;
-    }
-    public void setIsDeleted(boolean flag)
-    {
-        isDeleted = flag;
-    }
-    public boolean getIsDeleted()
-    {
-        return isDeleted;
-    }
-
-
-    public int getColor() {
-        return color;
-    }
-
-
+    //constructors
     public Unit()
     {
-        x = 0f;
-        y = 0f;
-        radius = 0f;
-        color = Color.RED;
-        isDeleted = false;
-        targetRadius = 0f;
+        this(0f, 0f, 0f);
+    }
+    public Unit(float _x, float _y, float _radius) {
+        this(_x, _y, _radius, Color.GRAY);
     }
     public Unit(float _x, float _y, float _radius, int _color)
     {
         x = _x;
         y = _y;
-        radius = _radius;
+        radius = _radius * Settings.UserScale;
         color = _color;
         isDeleted = false;
-        targetRadius = 0f;
+        animationRadius = 0f;
     }
-    public Unit(float _x, float _y, float _radius) {
+
+    //setters
+    public void setX(float x)
+    {
+        this.x = x;
+    }
+    public void setY(float y)
+    {
+        this.y = y;
+    }
+    public void setRadius(float radius)
+    {
+        this.radius = radius * Settings.UserScale;
+    }
+    public void updateRadius()
+    {
+        radius *= Settings.UserScale;
+    }
+    public void setSpeed(float _speedX, float _speedY)
+    {
+        speedX = _speedX;
+        speedY = _speedY;
+    }
+    public void setColor(int color)
+    {
+        this.color = color;
+    }
+    public void setPosition(float _x, float _y)
+    {
         x = _x;
         y = _y;
-        radius = _radius;
-        color = Color.RED;
-        isDeleted = false;
-        targetRadius = 0f;
     }
-    float getX()
-    {
-        return x;
-    }
-    float getY()
-    {
-        return y;
-    }
-    float getRadius()
-    {
-        return radius;
-    }
-    float getAnimationRadius()
-    {
-        if(targetRadius<radius)
-        {
-            targetRadius += Settings.StepRadius*radius;
-            return targetRadius;
-        }
-        else
-            return radius;
-    }
-    void move(float dx, float dy)
-    {
-        x += dx;
-        y += dy;
-    }
-    public void setIsDeleted(boolean isDeleted, Bulk whatBulk)
+    public void setIsDeleted(boolean isDeleted, Unit whatBulk)
     {
         target = whatBulk;
         this.isDeleted = isDeleted;
+    }
+
+    //getters
+    public float getX()
+    {
+        return x;
+    }
+    public float getY()
+    {
+        return y;
+    }
+    public float getRadius()
+    {
+        return radius;
+    }
+    public float getAnimationRadius()
+    {
+        if(animationRadius < radius)
+        {
+            animationRadius += Settings.StepRadius*radius;
+            if(animationRadius < radius)
+                return animationRadius;
+            else
+                animationRadius = radius;
+        }
+        else
+            if(animationRadius > radius)
+            {
+                animationRadius -= Settings.StepRadius*radius;
+                if(animationRadius >= radius)
+                    return animationRadius;
+                else
+                    animationRadius = radius;
+            }
+        return radius;
+    }
+    public float getFeed()//this method must override in all class
+    {
+        return 0f;
+    }
+    public boolean getIsDeleted()
+    {
+        return isDeleted;
+    }
+    public int getColor() {
+        return color;
+    }
+
+    //public methods
+    public void move(float dx, float dy)
+    {
+        x += dx;
+        y += dy;
     }
     public boolean isOverlapped(Unit unit)
     {
@@ -128,6 +150,72 @@ public class Unit
             dy = pointOut.getY() - y;
             return (dx * dx + dy * dy) < (radius * radius);
     }
+    public boolean isEated(Unit unit)
+    {
+        float dx;
+        float dy;
+        dx = unit.getX() - x;
+        dy = unit.getY() - y;
+        return (dx*dx + dy*dy) < (radius * radius);
+    }
+    @Override
+    public String toString()
+    {
+        return String.valueOf(x) + " "  + String.valueOf(y) + " " + String.valueOf(radius) + " is_del " + String.valueOf(isDeleted);
+    }
+
+    //protected
+    protected boolean moveToTarget()
+    {
+        float dx;
+        float dy;
+        float newX;
+        float newY;
+        dx = target.getX() - getX();
+        dy = target.getY() - getY();
+        if ( dx*dx + dy*dy < (target.getRadius()-radius) * (target.getRadius()-radius) )
+            return true;
+            //catchTarget();
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0)
+                newX = x + speedX;
+            else
+                newX = x - speedX;
+            setPosition(newX, solveY(newX));
+        } else {
+            if (dy > 0)
+                newY = y + speedY;
+            else
+                newY = y - speedY;
+            setPosition(solveX(newY), newY);
+        }
+        return false;
+    }
+
+    //private
+    private float solveY(float _x)//x  - increment; y = f(x)
+    {
+        float k;
+        k = (target.getY() - getY()) / (target.getX() - getX());
+        return k * _x - k * getX() + getY();
+    }
+    private float solveX(float _y)//y  - increment; x = f(y)
+    {
+        float k;
+        if(Math.abs(target.getX() - getX()) < 0.001f )
+            return getX();
+        else {
+            k = (target.getY() - getY()) / (target.getX() - getX());
+            return (_y - getY()) / k + getX();
+        }
+    }
+
+
+
+
+
+
+
     public boolean insideBulk()
     {
         //  float k;
@@ -141,7 +229,7 @@ public class Unit
         dy = target.getY() - y;
         stepX = 10f;
         stepY = 10f;
-        if(Math.sqrt(Math.pow(dx, 2.0) +  Math.pow(dy, 2.0))<=(target.getRadius()-radius))
+        if(Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0))<=(target.getRadius()-radius))
             return true;
         else {
             //    k = dy/dx;
@@ -160,40 +248,6 @@ public class Unit
             setPosition(newX,newY);
             return false;
         }
-    }
-    private float solveY(float _x)
-    {
-        float k;
-        k = (target.getY() - getY()) / (target.getX() - getX());
-        return k * _x - k * getX() + getY();
-    }
-    private float solveX(float _y)
-    {
-        float k;
-        if(Math.abs(target.getX() - getX()) < 0.001f )
-            return getX();
-        else {
-            k = (target.getY() - getY()) / (target.getX() - getX());
-            return (_y - getY()) / k + getX();
-        }
-    }
-    public boolean isEated(Unit unit)
-    {
-        float dx;
-        float dy;
-        dx = unit.getX() - x;
-        dy = unit.getY() - y;
-        return (dx*dx + dy*dy) < (radius * radius);
-    }
-    public void setPosition(float _x, float _y)
-    {
-        x = _x;
-        y = _y;
-    }
-    @Override
-    public String toString()
-    {
-        return String.valueOf(x) + " "  + String.valueOf(y) + " " + String.valueOf(radius) + " is_del " + String.valueOf(isDeleted);
     }
 
 }
