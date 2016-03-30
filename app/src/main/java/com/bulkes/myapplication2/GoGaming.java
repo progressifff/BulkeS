@@ -1,5 +1,7 @@
 package com.bulkes.myapplication2;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
@@ -18,12 +20,15 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Timer;
 
@@ -34,13 +39,17 @@ public class GoGaming extends AppCompatActivity {
     private GameView gameView;
     private static boolean isPause;
     private boolean onFinish;
+    public static Activity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onFinish = false;
+
+        activity = this;
+
         int orientation=this.getResources().getConfiguration().orientation;
         if(orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if(!isPause) {
+            if (!isPause) {
                 gameView = new GameView(this);
                 setContentView(gameView);
                 gameView.pauseGame(false);
@@ -53,7 +62,6 @@ public class GoGaming extends AppCompatActivity {
     @Override
     protected void onResume()
     {
-      //  Log.v("onResume", "onResume");
         super.onResume();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setFullScreenMode();
@@ -69,6 +77,7 @@ public class GoGaming extends AppCompatActivity {
                                     gameView.pauseGame(false);
                                     isPause = false;
                                     dialog.cancel();
+                                    gameView.setStartTime();
                                 }
                             });
             AlertDialog alert = builder.create();
@@ -111,7 +120,7 @@ public class GoGaming extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        if(gameView!=null)
+        if (gameView!=null)
         {
             CriticalData.lastTime += gameView.getLastTime();
         }
@@ -130,7 +139,7 @@ public class GoGaming extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Would you like to finish the game?")
                     .setCancelable(false)
-                    .setPositiveButton("Ok",
+                    .setPositiveButton("Yes",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     onFinish = true;
@@ -138,7 +147,7 @@ public class GoGaming extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             gameView.pauseGame(false);
                             setFullScreenMode();
@@ -153,75 +162,32 @@ public class GoGaming extends AppCompatActivity {
     }
 }
 
-/*
-class SavedObject implements Parcelable
-{
-   ArrayList<Object> objects;
-    public SavedObject(ArrayList<Object> object) {
-        this.objects = object;
-    }
-    private SavedObject(Parcel in) {
-        objects = new ArrayList<Object>();
-        in.readList(objects,Object.class.getClassLoader());
-    }
-
-    public int describeContents() {
-        return 0;
-    }
-
-    public ArrayList<Object> getObject()
-    {
-        return objects;
-    }
-
-    @Override
-    public String toString() {
-        return "isOk";
-    }
-
-    public void writeToParcel(Parcel out, int flags)
-    {
-        out.writeList(objects);
-    }
-
-    public static final Parcelable.Creator<SavedObject> CREATOR = new Parcelable.Creator<SavedObject>() {
-        public SavedObject createFromParcel(Parcel in) {
-            return new SavedObject(in);
-        }
-        public SavedObject[] newArray(int size) {
-            return new SavedObject[size];
-        }
-    };
-}
-*/
-
-
 class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 {
     private SurfaceHolder Holder;
+    private int ScreenWidth;
+    private int ScreenHeight;
+    private float scaling;
     private Matrix matrix;
     private float downX;
     private float downY;
     private Paint paint;
     private boolean runFlag = false;
     private User user;
-    private Enemy enemy;
     private ArrayList<Bulk> bulkesMap;
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%
+    private SectorHolder    sectors;
     private Boolean isTouch;
     private float begDownX;
     private float begDownY;
     private GameMap gameMap;
     private JoyStick stick;
-    //%%%%%%%%%%%%%%%%%%%%%%%%%
     static long currentTime;//action for pause
     static long startTime;
     private Timer timer;//timer for tick time and generate new food
     private TimerTasks timerTask;
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%
-    private Canvas canvas;
     private boolean isPaused = false;
+    private Canvas canvas;
+    private  long previous = -1;//for fps
 
     public GameView(Context context) {
         super(context);
@@ -231,30 +197,40 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Holder = this.getHolder();
         Holder.addCallback(this);
         this.setFocusable(true);
+        scaling = (float)ScreenHeight / Settings.ScreenHeightDefault;
+        //   Log.v("Scale", String.valueOf(scaling));
         matrix = new Matrix();
         matrix.setScale(CriticalData.scaling, CriticalData.scaling);
         isTouch = false;
-  //      Log.v("GameView","GameView");
+        stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
+        gameMap = CriticalData.gameMap;
+        bulkesMap = CriticalData.bulkesMap;
+        user = CriticalData.user;
+        sectors = new SectorHolder();
+        sectors.setOffsets(-gameMap.getOffsetTopLeftX(), - gameMap.getOffsetTopLeftY());
+        isTouch = false;
         timer = new Timer();
         timerTask = new TimerTasks();
         timer.schedule(timerTask, 0, 1000);
+        setStartTime();
 
-        Calendar calendar = Calendar.getInstance();
-        startTime = calendar.getTimeInMillis();
-
-        stick = new JoyStick(120,60);
-        gameMap = CriticalData.gameMap;
-        user = CriticalData.user;
-        enemy = CriticalData.enemy;
-
-        bulkesMap = new ArrayList<>(Settings.CountBulkes + 1);//1 - for user
-        bulkesMap.add(user);
-        bulkesMap.add(enemy);
+        //enemy = new Enemy(1250f, 500f, 100f);
+        //gameMap.addUnit(enemy);
+        //enemy = CriticalData.enemy;
+        // bulkesMap = new ArrayList<>(Settings.CountBulkes + 1);//1 - for user
+        // bulkesMap.add(user);
+        //bulkesMap.add(enemy);
     }
 
     public void pauseGame(boolean isPaused)
     {
         this.isPaused = isPaused;
+    }
+
+    public void setStartTime()
+    {
+        Calendar calendar = Calendar.getInstance();
+        startTime = calendar.getTimeInMillis();
     }
 
     public long getLastTime()
@@ -263,8 +239,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder)
-    {
+    public void surfaceCreated(SurfaceHolder holder) {
         new Thread(this).start();
     }
 
@@ -286,17 +261,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     {
         while(runFlag)
         {
-        /*    while(runFlag&&isPaused)
-            {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            */
-            if(!Holder.getSurface().isValid())
-                continue;
             canvas = null;
             try
             {
@@ -325,26 +289,36 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 //------------------------Draw Field------------------------------------------------------------
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
-        if(!isPaused)
-        {drawMap();
-        drawScores();
-        drawBulk(user);
-        enemy.setTarget(user);
-        enemy.updateState(gameMap);
-        drawBulk(enemy);
-
-        /*
-        enemy.setIsMoved(true);
-        enemy.setDx(0.1f);
-        enemy.move(5f, 0f);
-        */
-        drawJoyStick();}
+        if(!isPaused) {
+            drawMap();
+            for (Bulk bulk : bulkesMap) {
+                if (!bulk.isDeleted) {
+                    if (bulk instanceof Enemy)
+                        ((Enemy) bulk).updateState(gameMap, sectors);
+                    drawBulk(bulk);
+                }
+            }
+            drawJoyStick();
+            drawScores();
+            drawFPS();
+        }
     }
-
+    private void drawFPS()
+    {
+        long current = System.currentTimeMillis();
+        if( previous != -1)
+        {
+            long fps = 1000 / (current - previous);
+            paint.setColor(Color.BLACK);
+            canvas.drawText(String.valueOf(fps), 100f, (float) Settings.ScreenHeightDefault - 100, paint);
+        }
+        previous = current;
+    }
     private void drawJoyStick()
     {
         if(isTouch)
         {
+            //Log.v("Stick ", " OK");
             stick.getParameters(begDownX, begDownY, downX, downY);
             paint.setColor(Color.GRAY);
             paint.setAlpha(125);
@@ -358,12 +332,12 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         if (bulk.getIsDeleted() == false) {
             paint.setColor(bulk.getColor());
             paint.setStyle(Paint.Style.FILL);
+            //update if bulk is not in screen area
             canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getAnimationRadius(), paint);
-            //user_indicator = user.getIndicatorPosition(user.getX() + deltaX, user.getY() + deltaY);
             paint.setColor(Color.GRAY);
             paint.setAlpha(240);
             if (bulk.getIsMoved()) {
-                if (bulk == user)
+                if (bulk instanceof User)
                     canvas.drawPath(bulk.getTriangle(user.getX() + stick.getdX(),user.getY() + stick.getdY()), paint);
                 else
                     canvas.drawPath(((Enemy) bulk).getTriangleToTarget(), paint);
@@ -371,75 +345,87 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawMap()
-    {
-        int leftBorder = gameMap.getX0();
-        int rightBorder = gameMap.getX0() + Settings.MapSizeX * Settings.ScreenWidthDefault;
-        int upBorder = gameMap.getY0();
-        int downBorder = gameMap.getY0() + Settings.MapSizeY * Settings.ScreenHeightDefault;
-        ListIterator<Unit> iterator = gameMap.getMap().listIterator();
-        while(iterator.hasNext())
+    private void drawMap() {
+        sectors.restartChecking();
+        float speed = user.speed;
+        int leftBorder = gameMap.getOffsetTopLeftX();
+        int rightBorder = gameMap.getOffsetTopLeftX() + Settings.MapWidthP;
+        int upBorder = gameMap.getOffsetTopLeftY();
+        int downBorder = gameMap.getOffsetTopLeftY() + Settings.MapHeightP;
+        LinkedList<Unit> map = gameMap.getMap();
+        synchronized (map)
         {
-            Unit point = iterator.next();
-            for (Bulk bulk : bulkesMap )
-            {
-                if(!point.getIsDeleted()) {
-                    if (bulk.isEated(point)) {
-                        if (bulk.getRadius() > point.getRadius()) {
-                            bulk.addMass(point.getFeed());
-                            if (bulk == enemy) {
-                                if ((bulk.getX() >= Settings.ScreenWidthDefault + bulk.getRadius() || bulk.getX() <= -bulk.getRadius()) && (bulk.getY() >= Settings.ScreenHeightDefault + bulk.getRadius() || bulk.getY() <= -bulk.getRadius()))
-                                    gameMap.delFood(iterator);
-                                else
-                                    point.setIsDeleted(true, bulk);
-                            } else
+            ListIterator<Unit> iterator = map.listIterator();
+            while (iterator.hasNext()) {
+                Unit point = iterator.next();
+                if (point.getIsDeleted() == false) {
+                    sectors.checkUnit(point);//update: what with deleted items
+                    if (point instanceof User)
+                        continue;
+                    for (Bulk bulk : bulkesMap) {
+                        if (point != bulk && !bulk.getIsDeleted() && bulk.isEated(point)) {
+                            if (bulk.getRadius() > point.getRadius()) {
+                                bulk.addMass(point.getFeed());
                                 point.setIsDeleted(true, bulk);
+                                if (bulk instanceof Enemy && ((Enemy) bulk).isTarget(point))
+                                    ((Enemy) bulk).setTarget(null);
+                            } else if (bulk instanceof User)
+                            {
+                                drawEndGame();
+                                //  new EndDialog(GoGaming.activity).show();
+                            }
+                            break;
                         }
                     }
                 }
-                else
-                {
-                    if(point.insideBulk(stick.getdX(), stick.getdY()))
-                    {
-                        gameMap.delFood(iterator);
-                        break;
-                    }
+                else if (point.insideBulk()) {
+                    if(point instanceof Bulk)
+                        bulkesMap.remove(point);
+                    else
+                        gameMap.incDeletedFood();
+                    iterator.remove();
                 }
+                gameMap.checkForFoodAdd(iterator);
+                if (user.getIsMoved())//previous loop can change isDeleted
+                    point.move(-stick.getdX() * speed, -stick.getdY() * speed);
+                paint.setColor(point.color);
+                if (point.getX() > rightBorder)
+                    point.setX(point.getX() - Settings.MapWidthP);
+                else if (point.getX() < leftBorder)
+                    point.setX(point.getX() + Settings.MapWidthP);
+                if (point.getY() > downBorder)
+                    point.setY(point.getY() - Settings.MapHeightP);
+                else if (point.getY() < upBorder)
+                    point.setY(point.getY() + Settings.MapHeightP);
+                // gameMap.checkPointSector(i,j,point,iterator);
+                if (!(point instanceof Bulk))
+                    if (point.getX() <= Settings.ScreenWidthDefault + point.getRadius() && point.getX() >= -point.getRadius()
+                            && point.getY() <= Settings.ScreenHeightDefault + point.getRadius() && point.getY() >= -point.getRadius())
+                        canvas.drawCircle(point.getX(), point.getY(), point.getAnimationRadius(), paint);
             }
-
-            gameMap.checkForFoodAdd(iterator);
-            if (user.getIsMoved())//previous lopp can change isDeleted
-                point.move(-stick.getdX() * user.getSpeed(), -stick.getdY() * user.getSpeed());
-            paint.setColor(point.color);
-
-            if (point.getX() >= rightBorder)
-                point.setX(point.getX() - Settings.MapSizeX * Settings.ScreenWidthDefault);
-            else if (point.getX() <= leftBorder)
-                point.setX(Settings.MapSizeX * Settings.ScreenWidthDefault + point.getX());
-            if (point.getY() >= downBorder)
-                point.setY(point.getY() - Settings.MapSizeY * Settings.ScreenHeightDefault);
-            else if (point.getY() <= upBorder)
-                point.setY(Settings.MapSizeY * Settings.ScreenHeightDefault + point.getY());
-
-            if (point.getX() <= Settings.ScreenWidthDefault + 80 && point.getX() >= -80 && point.getY() <= Settings.ScreenHeightDefault + 80 && point.getY() >= -80)
-                canvas.drawCircle(point.getX(), point.getY(), point.getAnimationRadius(), paint);
         }
     }
+
     private void drawScores()
     {
         paint.setAntiAlias(true);
         paint.setColor(Color.RED);
-        paint.setAlpha(150);
+        paint.setAlpha(170);
         paint.setTextSize(52.0f);
-        //Calendar calendar = Calendar.getInstance();
-        //GameView.currentTime = calendar.getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("m:ss");
         Date temp_date = new Date();
-     //   Log.v("drawScores",String.valueOf(tempTime));
         temp_date.setTime(CriticalData.lastTime + (currentTime - startTime));
         canvas.drawText(sdf.format(temp_date), 50f, 100f, paint);
-        canvas.drawText(String.valueOf((int)user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
+        canvas.drawText(String.valueOf((int) user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
     }
+    private void drawEndGame()
+    {
+        paint.setAntiAlias(true);
+        paint.setColor(Color.RED);
+        paint.setTextSize(52.0f);
+        canvas.drawText("End Game", 900f, 500f, paint);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -455,24 +441,54 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 downX = event.getX() / CriticalData.scaling;
                 downY = event.getY() / CriticalData.scaling;
                 user.setIsMoved(true);
-                if( Math.abs(downX - begDownX) < 1f && Math.abs(downY - begDownY) < 1f)
-                {
-                    Log.v("Action Up", "Pst=Pfn");
-                    user.setIsMoved(false);
-                }
+                if( Math.abs(downX - begDownX) < 1f && Math.abs(downY - begDownY) < 1f) {user.setIsMoved(false);}
                 break;
             case MotionEvent.ACTION_UP:
                 isTouch = false;
-                if(downX == begDownX && downY == begDownY)
-                {
-                    Log.v("Action Up", "Pst=Pfn");
-                    user.setIsMoved(false);
-                }
-                //  bulk.setIsMoved(false);
+                if(downX == begDownX && downY == begDownY) {user.setIsMoved(false);}
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
         }
         return true;
+    }
+}
+
+
+class EndDialog extends Dialog {
+    Button closeGameBtn;
+    Button repeatGameBtn;
+    Activity activity;
+    public EndDialog(Activity activity) {
+        super(activity);
+        this.activity = activity;
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // hide notification bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.end_game_dialog);
+        closeGameBtn = (Button) findViewById(R.id.closeGameView);
+        closeGameBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                activity.finish();
+                cancel();
+            }
+        });
+        repeatGameBtn = (Button) findViewById(R.id.repeatGame);
+        repeatGameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                CriticalData.createNewField();
+
+                activity.finish();
+                cancel();
+            }
+        });
     }
 }

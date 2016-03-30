@@ -7,25 +7,50 @@ import android.graphics.Color;
  */
 public final class Settings
 {
+    //------------------ScreenParameters--------------------
     final static int    ScreenWidthDefault         = 1920;
     final static int    ScreenHeightDefault        = 1080;
-    final static float  UserStartSize              = 70f;
+    //------------------User--------------------------------
+    final static float  UserStartSize              = 50f;
     final static float  UserDefaultSpeed           = 0.1f;
     final static int    UserDefaultColor           = Color.RED;
+    final static float  UserScale                  = 0.5f;
+    //------------------Food--------------------------------
     final static int    MinFoodInSector            = 0;
-    final static int    MaxFoodInSector            = 5;
+    final static int    MaxFoodInSector            = 6;
+    final static float  MinAddFoodScaleValue       = 0.6f;
+    final static float  MaxAddFoodScaleValue       = 1.3f;
     final static int    MinFoodSize                = 20;
     final static int    MaxFoodSize                = 40;
-    final static int    CountSectorX               = 4;
-    final static int    CountSectorY               = 2;
+    final static int    BaseFoodSize               = (MaxFoodSize - MinFoodSize) / 2;
+    final static int    FoodDefaultFeed            = 500;
+    final static int    FoodFeedForRadius          = 20;
+    //------------------Map----------------------------------
+    final static int    CountSectorX               = 3;
+    final static int    CountSectorY               = 3;
     final static int    MapSizeX                   = 3;
     final static int    MapSizeY                   = 3;
+    final static int    MapWidthP                  = Settings.MapSizeX * Settings.ScreenWidthDefault;
+    final static int    MapHeightP                 = Settings.MapSizeY * Settings.ScreenHeightDefault;
+
+    final static int    CountBulkes                = 10;
+    final static float  BulkOffsetRadius           = 5f;//min difference
     final static float  StepRadius                 = 0.05f;
-    final static int    FoodDefaultFeed            = 500;
+    final static int    MaxTotalFeed               = MaxFoodSize * FoodFeedForRadius * MaxFoodInSector * 2 ;
+
+    //------------------Enemy--------------------------------
+    final static int    EnemyMaxStepToTarget       = 30;
+    final static int    EnemyFindOffset            = 500;
     final static float  EnemyDefaultSpeed          = 0.1f;
     final static float  EnemyStepValue             = 5f;
     final static int    EnemyDefaultColor          = Color.MAGENTA;
-    final static int    CountBulkes                = 1;
+    //------------------JoyStick/Indicator--------------------------------
+    final static float  IndicatorTopOffset         = 15f;
+    final static float  IndicatorBaseOffset        = 5f;
+    final static float  IndicatorBaseAlpha         = 0.3f;
+    final static float  JoyStickRadiusOut          = 120f;
+    final static float  JoyStickRadiusIn           = 60f;
+    //------------------Colors----------------------------------
     final static int    ColorList[] = {
             Color.rgb(0xFF,0xA5,0x00),//#FFA500 orange
             Color.rgb(0x1F,0x57,0xB3),//#1f57b3 blue

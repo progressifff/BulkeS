@@ -7,6 +7,7 @@ public class Food extends Unit
 {
 
     private  float feed;
+    @Override
     public float getFeed() {
         return feed;
     }
