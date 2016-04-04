@@ -86,9 +86,6 @@ public class GoGaming extends AppCompatActivity {
         {
             if(!isDialogOpened) {
                 gameView.pauseGame(true);
-
-
-               // EndGameDialog endGamedialog = new EndGameDialog(activity);
                 endGamedialog.show();
                 isDialogOpened = true;
                 isEndDialog = true;
@@ -149,8 +146,6 @@ public class GoGaming extends AppCompatActivity {
                 isPause = false;
                 isEndDialog = false;
                 gameView.setStartTime();
-
-
                 break;
             }
             case Settings.DialogGameOverID:
@@ -164,19 +159,6 @@ public class GoGaming extends AppCompatActivity {
         setFullScreenMode();
         gameView.pauseGame(false);
         isDialogOpened = false;
-    }
-}
-
-class Test
-{
-    private JoyStick stick;
-    public Test()
-    {
-        stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
-    }
-    public JoyStick getStick()
-    {
-        return stick;
     }
 }
 
@@ -214,7 +196,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 
     private Timer timer;//timer for tick time and generate new food
     private TimerTasks timerTask;
-  //  private boolean gamePaused;
 
     private boolean gamePaused;
     private Canvas canvas;
@@ -222,12 +203,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     //-------------
     private Context context;
     private Thread thread;
-
     private Handler mainHandler;
-
-
-   // private GameLogicThread gameLogicThread;
-   // Test t;
 
     public GameView(Context context) {
         super(context);
@@ -259,11 +235,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         timer.schedule(timerTask, 0, 1000);
         setStartTime();
         stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
-
-
-
-     //   t = new Test();
-     //   stick = t.getStick();
 
         mainHandler = new Handler();
         /*
@@ -360,11 +331,21 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         if(!gamePaused) {
             drawMap();
             for (Bulk bulk : bulkesMap) {
-                if (bulk instanceof Enemy)
+                if (!bulk.isDeleted && bulk instanceof Enemy)
+                {
                     ((Enemy) bulk).updateState(gameMap, sectors);
-                 drawBulk(bulk);
+                    // drawBulk(bulk);
+                }
             }
+            drawUser();
             drawJoyStick();
+            if(user.getRadius() > Settings.UserMaxRadius && user.getRadius() == user.getAnimationRadius()) {
+                Settings.UserScale /= 2f;
+                Log.v("User Scale ", String.valueOf(Settings.UserScale));
+                for (Unit unit : gameMap.getMap()) {
+                    unit.updatePosition(user);
+                }
+            }
             drawScores();
             drawFPS();
         }
@@ -394,29 +375,33 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     }
 
     private void drawBulk(Bulk bulk) {
-        if (bulk.getIsDeleted() == false) {
-            paint.setColor(bulk.getColor());
-            paint.setStyle(Paint.Style.FILL);
-            //update if bulk is not in screen area
+        paint.setColor(bulk.getColor());
+        paint.setStyle(Paint.Style.FILL);
+        //update if bulk is not in screen area
+        if (bulk.isOnMainScreen())
             canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getAnimationRadius(), paint);
-            paint.setColor(Color.GRAY);
-            paint.setAlpha(240);
-            if (bulk.getIsMoved()) {
-                if (bulk instanceof User)
-                    canvas.drawPath(bulk.getTriangle(user.getX() + stick.getdX(),user.getY() + stick.getdY()), paint);
-                else
-                    canvas.drawPath(((Enemy) bulk).getTriangleToTarget(), paint);
-            }
-        }
+    }
+
+    private void drawUser()
+    {
+        drawBulk(user);
+        paint.setColor(Color.GRAY);
+        paint.setAlpha(240);
+        canvas.drawPath(user.getIndicator(user.getX() + stick.getdX(), user.getY() + stick.getdY()), paint);
     }
 
     private void drawMap() {
         sectors.restartChecking();
-        float speed = user.speed;
-        int leftBorder = gameMap.getOffsetTopLeftX();
-        int rightBorder = gameMap.getOffsetTopLeftX() + Settings.MapWidthP;
-        int upBorder = gameMap.getOffsetTopLeftY();
-        int downBorder = gameMap.getOffsetTopLeftY() + Settings.MapHeightP;
+        //sectors.checkUnit(user);
+        float speedX = stick.getdX() * Settings.UserSpeedCoefficient;
+        float speedY = stick.getdY() * Settings.UserSpeedCoefficient;
+        user.setSpeed(Math.abs(speedX), Math.abs(speedY));
+        speedX = -speedX;//user stand and other unit moved
+        speedY = -speedY;
+        int leftBorder      = gameMap.getOffsetTopLeftX() + 1;
+        int rightBorder     = gameMap.getOffsetTopLeftX() + Settings.MapWidthP - 1;
+        int upBorder        = gameMap.getOffsetTopLeftY() + 1;
+        int downBorder      = gameMap.getOffsetTopLeftY() + Settings.MapHeightP - 1;
         LinkedList<Unit> map = gameMap.getMap();
         synchronized (map)
         {
@@ -428,7 +413,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     if (point instanceof User)
                         continue;
                     for (Bulk bulk : bulkesMap) {
-                        if (point != bulk && !bulk.getIsDeleted() && bulk.isEated(point)) {
+                        if (point != bulk && !bulk.getIsDeleted() && bulk.isEaten(point)) {
                             if (bulk.getRadius() > point.getRadius()) {
                                 bulk.addMass(point.getFeed());
                                 point.setIsDeleted(true, bulk);
@@ -437,48 +422,48 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                             } else
                             if (bulk instanceof User)
                             {
-                                if (bulk.getRadius() < point.getRadius()) {
-                                    user.setIsMoved(false);
-                                    bulk.setIsMoved(false);
-                                    //Handler mHandler = new Handler(Looper.getMainLooper());
-                                    mainHandler.post(new Runnable() {
+                                user.setIsMoved(false);
+                                bulk.setIsMoved(false);
+                                //Handler mHandler = new Handler(Looper.getMainLooper());
+                                mainHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                                GameOverDialog gameOverDialog = new GameOverDialog(context);
-                                                gameOverDialog.show();
-                                                GoGaming.isDialogOpened = true;
-                                        }
+                                            GameOverDialog gameOverDialog = new GameOverDialog(context);
+                                            gameOverDialog.show();
+                                            GoGaming.isDialogOpened = true;}
                                     });
-                                    surfaceDestroyed(Holder);
-                                }
+                                surfaceDestroyed(Holder);
                             }
-                            break;
                         }
+                        break;
                     }
                 }
-                else if (point.insideBulk(stick.getdX(), stick.getdY())) {
-                    if(point instanceof Bulk)
-                        bulkesMap.remove(point);
-                    else
-                        gameMap.incDeletedFood();
-                    iterator.remove();
+                else if(point.getIsDeleted()) {
+                    if (point.catchTarget()) {
+                        if (point instanceof Bulk)
+                            bulkesMap.remove(point);
+                        else
+                            gameMap.incDeletedFood();
+                        iterator.remove();
+                    }
                 }
                 gameMap.checkForFoodAdd(iterator);
                 if (user.getIsMoved())//previous loop can change isDeleted
-                    point.move(-stick.getdX() * speed, -stick.getdY() * speed);
+                    point.move( speedX,  speedY);
                 paint.setColor(point.color);
-                if (point.getX() > rightBorder)
-                    point.setX(point.getX() - Settings.MapWidthP);
-                else if (point.getX() < leftBorder)
-                    point.setX(point.getX() + Settings.MapWidthP);
-                if (point.getY() > downBorder)
-                    point.setY(point.getY() - Settings.MapHeightP);
-                else if (point.getY() < upBorder)
-                    point.setY(point.getY() + Settings.MapHeightP);
-               // if (!(point instanceof Bulk))
-                    if (point.getX() <= Settings.ScreenWidthDefault + point.getRadius() && point.getX() >= -point.getRadius()
-                            && point.getY() <= Settings.ScreenHeightDefault + point.getRadius() && point.getY() >= -point.getRadius())
-                        canvas.drawCircle(point.getX(), point.getY(), point.getAnimationRadius(), paint);
+                if (point.getX() >= rightBorder)
+                    point.setX(point.getX() - Settings.MapWidthP    + 2);
+                else if (point.getX() <= leftBorder)
+                    point.setX(point.getX() + Settings.MapWidthP    - 2);
+                if (point.getY() >= downBorder)
+                    point.setY(point.getY() - Settings.MapHeightP   + 2);
+                else if (point.getY() <= upBorder)
+                    point.setY(point.getY() + Settings.MapHeightP   - 2);
+                //5 - correction, if x or y near border
+                if(point.getX() >= 2 * Settings.ScreenWidthDefault || point.getY() >= 2 * Settings.ScreenHeightDefault )
+                    Log.e("Moving ", point.toString());
+                if (point.isOnMainScreen())
+                    canvas.drawCircle(point.getX(), point.getY(), point.getAnimationRadius(), paint);
             }
         }
     }
@@ -495,7 +480,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         canvas.drawText(sdf.format(temp_date), 50f, 100f, paint);
         canvas.drawText(String.valueOf((int) user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event)

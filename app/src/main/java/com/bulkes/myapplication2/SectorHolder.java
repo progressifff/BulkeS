@@ -12,6 +12,7 @@ public class SectorHolder
     private float dh;//offset y for translate center to left top angle; y - height
     private int countLine;
     private int countColumn;
+
     SectorHolder()
     {
         countLine = Settings.MapSizeY * Settings.CountSectorY;
@@ -22,12 +23,14 @@ public class SectorHolder
                 sector_map[line][column] = new Sector();
         Log.v("Sector Holder. L/C", String.valueOf(countLine) + " " + String.valueOf(countColumn));
     }
+
     public void setOffsets(float _dw, float _dh)
     {
         dw = _dw;
         dh = _dh;
         Log.v("Sector Holder. dw dh", String.valueOf(dw) + " " + String.valueOf(dh));
     }
+
     public Sector getSector(Unit unit)//update crash was here
     {
         float tempX;
@@ -67,6 +70,7 @@ public class SectorHolder
         currentSector = getSector(unit);
         return currentSector.getPriority();
     }
+
     private int basePriorityForSector(int line, int column, int coefficient)
     {
         if( line >=0 && line < countLine)
@@ -74,6 +78,7 @@ public class SectorHolder
                 return sector_map[line][column].getBasePriority() / coefficient;
         return 0;
     }
+
     public void findSectorToMove(Bulk bulk)
     {
         for (int line = 0; line < countLine; ++line )

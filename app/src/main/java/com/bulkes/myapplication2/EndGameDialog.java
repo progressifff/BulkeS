@@ -4,11 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
 /**
  * Created by progr on 31.03.2016.
@@ -32,9 +30,9 @@ public class EndGameDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.end_game_dialog);
 
-        FrameLayout endGameLayout = (FrameLayout)findViewById(R.id.end_game_layout);
-        if(endGameLayout == null)
-            Log.v("endGameLayout", "null");
+    //    FrameLayout endGameLayout = (FrameLayout)findViewById(R.id.end_game_layout);
+    //    if(endGameLayout == null)
+    //        Log.v("endGameLayout", "null");
 
      //  endGameLayout.setBackground(frameDrawable);
         getWindow().getAttributes().windowAnimations = R.style.GameDialogAnimation;

@@ -4,37 +4,64 @@
     android:background="#ffffff"
     android:weightSum="1"
     >
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="bottom"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="50dp"
+        >
+        <EditText
+            android:id = "@+id/nameField"
+            android:layout_width="200dp"
+            android:focusableInTouchMode="true"
+            android:layout_height="match_parent"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:text = "User1"
+            />
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/frameid"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="20dp"
+        android:gravity="center_horizontal|bottom"
+        android:layout_marginBottom="40dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <Button
+            style="@style/ButtonStyle"
             android:id="@+id/play_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Play Game" />
+            android:text="Play Game!"
+            />
 
         <Button
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Top Score"
+            android:layout_marginLeft="20dp"
             android:id="@+id/statistic_button"      />
 
         <Button
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Help"
+            android:layout_marginLeft="20dp"
             android:id="@+id/help_button" />
 
         <Button
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="About"
+            android:layout_marginLeft="20dp"
             android:id="@+id/about_button" />
     </LinearLayout>
     <include layout="@layout/about_content"/>

@@ -1,6 +1,7 @@
 package com.bulkes.myapplication2;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,8 +24,8 @@ public class GameMap
     public GameMap()
     {
         random = new Random();
-        map = new LinkedList<>();
-        addFood = new LinkedList<>();
+        map = new LinkedList<Unit>();
+        addFood = new LinkedList<Unit>();
         maxFoodCountOnMap = Settings.CountSectorX*Settings.MapSizeX*Settings.CountSectorY*Settings.MapSizeY*Settings.MaxFoodInSector;
         minFoodCountOnMap = Math.round(maxFoodCountOnMap/4);
         offsetTopLeftX = (Settings.MapSizeX%2 == 0) ? (int)(-0.5f*Settings.ScreenWidthDefault*(Settings.MapSizeX - 1)) : (-Settings.MapSizeX/2*Settings.ScreenWidthDefault);
@@ -37,7 +38,7 @@ public class GameMap
 
     private void startFoodTimer()
     {
-        final CountDownTimer addFoodTimer = new CountDownTimer(7000,1000)
+        final CountDownTimer addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000,Settings.TimeCreateNewFood * 1000)
         {
             @Override
             public void onTick(long millisUntilFinished)
@@ -45,6 +46,7 @@ public class GameMap
             @Override
             public void onFinish()
             {
+                Log.v("Timer ", "Tick");
                 if(delFoodCount != 0)
                 {
                     addUnitRandomly(delFoodCount);
@@ -73,18 +75,22 @@ public class GameMap
                 food = new Food(
                         getRandomX(offsetTopLeftX, Settings.MapWidthP, radius),
                         getRandomY(offsetTopLeftY, Settings.MapHeightP, radius),
-                        getRandomRadius(),
+                        radius,
                         getColor(),
                         Settings.FoodFeedForRadius * radius);
+                if(food.getX() >= 2 * Settings.ScreenWidthDefault || food.getY() >= 2 * Settings.ScreenHeightDefault )
+                    Log.e("Add1 wrong food", food.toString());
                 boolean flagCorrect;
                 do {
                     flagCorrect = true;
                     for (Unit temp : addFood) {
-                        radius = getRandomRadius();
                         if (temp.isOverlapped(food)) {
+                            radius = getRandomRadius();
                             food.setX(getRandomX(offsetTopLeftX, Settings.MapWidthP, radius));
                             food.setY(getRandomY(offsetTopLeftY, Settings.MapHeightP, radius));
-                            food.setRadius(getRandomRadius());
+                            food.setRadius(radius);
+                            if(food.getX() >= 2 * Settings.ScreenWidthDefault || food.getY() >= 2 * Settings.ScreenHeightDefault )
+                                Log.e("Add2 wrong food", food.toString());
                             flagCorrect = false;
                         }
                     }
@@ -139,11 +145,13 @@ public class GameMap
                 {
                     float radius = getRandomRadius();
                     unit = new Food(
-                            getRandomX((int)(startSectorX), (int)(diffSectorX),radius),
-                            getRandomY((int)(startSectorY), (int)(diffSectorY),radius),
+                            getRandomX((int) startSectorX, (int) diffSectorX,radius),
+                            getRandomY((int) startSectorY, (int) diffSectorY,radius),
                             radius,
-                            getColor(),//update
+                            /*getColor()*/Settings.ColorList[Math.abs((int)((startSectorX / diffSectorX + startSectorY / diffSectorY) % Settings.getCountColors()))],
                             Settings.FoodFeedForRadius * radius);
+                    if(unit.getX() >= 2 * Settings.ScreenWidthDefault || unit.getY() >= 2 * Settings.ScreenHeightDefault )
+                        Log.e("Smart Map1 wrong food", unit.toString());
                     boolean flagCorrect;
                     do
                     {
@@ -156,6 +164,8 @@ public class GameMap
                                 unit.setX(getRandomX((int) startSectorX, (int) diffSectorX, radius));
                                 unit.setY(getRandomY((int) startSectorY, (int) diffSectorY, radius));
                                 unit.setRadius(radius);
+                                if(unit.getX() >= 2 * Settings.ScreenWidthDefault || unit.getY() >= 2 * Settings.ScreenHeightDefault )
+                                    Log.e("Smart Map2 wrong food", unit.toString());
                                 flagCorrect = false;
                             }
                         }
@@ -171,8 +181,6 @@ public class GameMap
             startSectorY += diffSectorY;
         }
     }
-
-
 
     private int getColor()
     {
@@ -200,7 +208,7 @@ public class GameMap
     {
         return map;
     }
-    public void addUnit(Unit unit)
+    public void addUnit(Unit unit)//update check here
     {
         map.add(unit);
     }

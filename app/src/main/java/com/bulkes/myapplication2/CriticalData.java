@@ -6,7 +6,6 @@ import java.util.Random;
 /**
  * Created by progr on 25.03.2016.
  */
-
 public final class CriticalData {
     public static User user;
     public static GameMap gameMap;

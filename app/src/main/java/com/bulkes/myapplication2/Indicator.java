@@ -56,25 +56,27 @@ public class Indicator
     public float getY() {
         return y;
     }
-    public Path getTriangle(float x0, float y0, float R)
+    public Path getTriangle(float x0, float y0, float R, float coefficient)
     {
         Path path = new Path();
-        path.moveTo(x , y);
+        path.moveTo(x , y);//Top of triangle
         float x2;
         float y2;
         float alpha2;
-        alpha2 = alpha + 0.3f;
+        float alphaDiff;
+        alphaDiff = Settings.IndicatorBaseAlpha / coefficient;
+        alpha2 = alpha + alphaDiff;
         x2 = (float)Math.cos(alpha2) * R + x0;
         y2 = (float)Math.sin(alpha2) * R + y0;
-        path.lineTo(x2, y2);
+        path.lineTo(x2, y2);//Left Bottom
 
         float x3;
         float y3;
         float alpha3;
-        alpha3 = alpha - 0.3f;
+        alpha3 = alpha - alphaDiff;
         x3 = (float)Math.cos(alpha3) * R + x0;
         y3 = (float)Math.sin(alpha3) * R + y0;
-        path.lineTo(x3, y3);
+        path.lineTo(x3, y3);//Right Bottom
         return path;
     }
 }
