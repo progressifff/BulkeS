@@ -1,6 +1,7 @@
 package com.bulkes.myapplication2;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import java.util.Random;
 

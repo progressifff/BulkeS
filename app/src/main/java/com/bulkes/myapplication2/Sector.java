@@ -19,7 +19,7 @@ public class Sector
     final static int    BIG_BULK        =   10;
     Sector()
     {
-        bulkes = new ArrayList<>(Settings.CountBulkes + 1);//1 - for user
+        bulkes = new ArrayList<Bulk>(Settings.CountBulkes + 1);//1 - for user
         sumFeed = 0f;
         basePriority = 0;
     }

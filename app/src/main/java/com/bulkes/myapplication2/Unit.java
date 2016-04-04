@@ -58,9 +58,13 @@ public class Unit
     {
         this.radius = radius * Settings.UserScale;
     }
-    public void updateRadius()
+    public void updatePosition(Unit unit)//update location + radius
     {
         radius *= Settings.UserScale;
+        x = unit.x + ((x - unit.x) * Settings.UserScale);
+        y = unit.y + ((y - unit.y) * Settings.UserScale);
+        if(isOnMainScreen())
+            animationRadius = radius;
     }
     public void setSpeed(float _speedX, float _speedY)
     {
@@ -80,6 +84,10 @@ public class Unit
     {
         target = whatBulk;
         this.isDeleted = isDeleted;
+    }
+    public void setAnimationRadius(float animationRadius)
+    {
+        this.animationRadius = animationRadius;
     }
 
     //getters
@@ -150,7 +158,7 @@ public class Unit
             dy = pointOut.getY() - y;
             return (dx * dx + dy * dy) < (radius * radius);
     }
-    public boolean isEated(Unit unit)
+    public boolean isEaten(Unit unit)
     {
         float dx;
         float dy;
@@ -158,6 +166,7 @@ public class Unit
         dy = unit.getY() - y;
         return (dx*dx + dy*dy) < (radius * radius);
     }
+
     @Override
     public String toString()
     {
@@ -165,14 +174,32 @@ public class Unit
     }
 
     //protected
+    protected boolean isOnMainScreen()
+    {
+        if(x + radius < 0f || x - radius > Settings.ScreenWidthDefault)
+            return false;
+        if(y + radius < 0f || y - radius > Settings.ScreenHeightDefault)
+            return false;
+        return true;
+    }
+    protected boolean catchTarget()
+    {
+        if(isOnMainScreen()) {
+            speedX = Math.max(Settings.MinFoodSpeed, target.getSpeedX() * Settings.UnitToTargetCoefficient);
+            speedY = Math.max(Settings.MinFoodSpeed, target.getSpeedY() * Settings.UnitToTargetCoefficient);
+            return moveToTarget();
+        }
+        else
+            return true;
+    }
     protected boolean moveToTarget()
     {
         float dx;
         float dy;
         float newX;
         float newY;
-        dx = target.getX() - getX();
-        dy = target.getY() - getY();
+        dx = target.getX() - x;
+        dy = target.getY() - y;
         if ( dx*dx + dy*dy < (target.getRadius()-radius) * (target.getRadius()-radius) )
             return true;
             //catchTarget();
@@ -209,7 +236,6 @@ public class Unit
             return (_y - getY()) / k + getX();
         }
     }
-
 
 
 

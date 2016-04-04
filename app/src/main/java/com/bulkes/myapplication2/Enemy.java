@@ -38,33 +38,31 @@ public class Enemy extends Bulk
         float minimumDistance = (float) Integer.MAX_VALUE;
         int currentPriority;
         float maxFeedByDistance = -1f;//warning default
-                Iterator<Unit> iterator = gameMap.getMap().iterator();
-                while (iterator.hasNext()) {
-                    Unit point = iterator.next();
-                    if (point != this && !point.isDeleted)
-                        if (Math.abs(x - point.getX()) < Settings.EnemyFindOffset + radius && Math.abs(y - point.getY()) < Settings.EnemyFindOffset + radius && radius > point.radius) {
-                            currentPriority = sectors.getPriorityForUnit(point);
-                            if (currentPriority < minimumPriority) {
-                                minimumPriority = sectors.getPriorityForUnit(point);
-                                float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                                float feedByDistance = point.getFeed() / distance;
+        Iterator<Unit> iterator = gameMap.getMap().iterator();
+        while (iterator.hasNext()) {
+            Unit point = iterator.next();
+            if (point != this && !point.isDeleted)
+                if (Math.abs(x - point.getX()) < Settings.EnemyFindOffset + radius && Math.abs(y - point.getY()) < Settings.EnemyFindOffset + radius && radius > point.radius) {
+                    currentPriority = sectors.getPriorityForUnit(point);
+                    if (currentPriority < minimumPriority) {
+                        minimumPriority = sectors.getPriorityForUnit(point);
+                        float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
+                        float feedByDistance = point.getFeed() / distance;
+                        maxFeedByDistance = feedByDistance;
+                        target = point;
+                        //minimumDistance = distance;
+                    } else {
+                        if (currentPriority == minimumPriority) {
+                            float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
+                            float feedByDistance = point.getFeed() / distance;
+                            if (feedByDistance > maxFeedByDistance) {
                                 maxFeedByDistance = feedByDistance;
                                 target = point;
-                                //minimumDistance = distance;
-                            } else {
-                                if (currentPriority == minimumPriority) {
-                                    float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                                    float feedByDistance = point.getFeed() / distance;
-                                    if (feedByDistance > maxFeedByDistance) {
-                                        maxFeedByDistance = feedByDistance;
-                                        target = point;
-                                    }
-                                }
                             }
                         }
+                    }
                 }
-
-
+        }
     }
 
     public void updateState(GameMap gameMap, SectorHolder sectors)
