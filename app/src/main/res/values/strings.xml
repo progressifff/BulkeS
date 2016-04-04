@@ -2,4 +2,7 @@
     <string name="app_name">Bulkes</string>
     <string name="action_settings">Settings</string>
     <string name="resume_game">Game is on pause</string>
+    <string name="game_over">You lose. Try again</string>
+    <string name="end_game">Are You sure that\n you want to leave?</string>
+    <string name="pause_game">Game paused</string>
 </resources>

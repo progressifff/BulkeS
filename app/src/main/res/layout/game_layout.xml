@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="400dp"
-            card_view:cardBackgroundColor = "@color/Marengo"
+            card_view:cardBackgroundColor = "@color/colorMarengo"
             card_view:cardCornerRadius="10dp"
             card_view:cardPreventCornerOverlap = "false"
             card_view:contentPadding = "40dp"

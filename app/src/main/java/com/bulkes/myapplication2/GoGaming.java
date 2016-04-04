@@ -1,18 +1,13 @@
 package com.bulkes.myapplication2;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,7 +17,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,200 +25,267 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * Created by progr on 08.03.2016.
  */
 public class GoGaming extends AppCompatActivity {
-    private GameView gameView;
+    private static GameView gameView;
     private static boolean isPause;
-    private boolean onFinish;
-    public static Activity activity;
+    public static boolean onFinish;
+    private static Activity activity;
+    private static Window window;
+    public static boolean isDialogOpened;
+    private static boolean isEndDialog;
+    static PauseGameDialog pauseGameDialog;
+    static EndGameDialog endGamedialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("onCreate", "onCreate");
         onFinish = false;
-
         activity = this;
-
-        int orientation=this.getResources().getConfiguration().orientation;
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (!isPause) {
-                gameView = new GameView(this);
-                setContentView(gameView);
-                gameView.pauseGame(false);
-                Log.v("onCreate", "onCreate");
-            }
-        }
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        isPause = false;
+        isDialogOpened = false;
+        isEndDialog = false;
+        window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        pauseGameDialog = new PauseGameDialog(activity);
+        endGamedialog = new EndGameDialog(activity);
+        gameView = new GameView(this);
+        setContentView(gameView);
+        gameView.pauseGame(false);
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setFullScreenMode();
         if(isPause) {
             gameView = new GameView(this);
             setContentView(gameView);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Game is on pause")
-                    .setCancelable(false)
-                    .setPositiveButton("Start",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    gameView.pauseGame(false);
-                                    isPause = false;
-                                    dialog.cancel();
-                                    gameView.setStartTime();
-                                }
-                            });
-            AlertDialog alert = builder.create();
-            alert.show();
+            gameView.pauseGame(true);
+            if(!isDialogOpened) {
+                if(isEndDialog)
+                    endGamedialog.show();
+                else
+                    pauseGameDialog.show();
+                isDialogOpened = true;
+            }
         }
     }
 
-    private void setFullScreenMode()
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
     {
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            if(!isDialogOpened) {
+                gameView.pauseGame(true);
+
+
+               // EndGameDialog endGamedialog = new EndGameDialog(activity);
+                endGamedialog.show();
+                isDialogOpened = true;
+                isEndDialog = true;
+                CriticalData.lastTime += gameView.getLastTime();
+            }
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public static void setFullScreenMode()
+    {
+        window.getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
     }
 
     @Override
     public void onPause()
     {
-        isPause = true;
         super.onPause();
-        Log.v("onPause", "onPause");
+        //Log.v("onPause", "onPause");
     }
 
     @Override
     public void onStop()
     {
+        super.onStop();
         if(onFinish)
             isPause = false;
-        super.onStop();
-        Log.v("onStop", "onStop");
+        else
+            isPause = true;
+       // Log.v("onStop", "onStop");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        if (gameView!=null)
-        {
-            CriticalData.lastTime += gameView.getLastTime();
-        }
+        if (gameView!=null) {CriticalData.lastTime += gameView.getLastTime();}
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
+    static void dialogStartGame(int id)
     {
-        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        switch (id)
         {
-            gameView.pauseGame(true);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Would you like to finish the game?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    onFinish = true;
-                                    finish();
-                                    dialog.cancel();
-                                }
-                            })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            gameView.pauseGame(false);
-                            setFullScreenMode();
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-            return false;
+            case Settings.DialogPauseID:
+            case Settings.DialogEndID:
+            {
+                isPause = false;
+                isEndDialog = false;
+                gameView.setStartTime();
+
+
+                break;
+            }
+            case Settings.DialogGameOverID:
+                CriticalData.createNewField();
+                gameView = new GameView(activity);
+                activity.setContentView(gameView);
+
+                //isEndDialog = false;
+                break;
         }
-        return super.onKeyDown(keyCode, event);
+        setFullScreenMode();
+        gameView.pauseGame(false);
+        isDialogOpened = false;
+    }
+}
+
+class Test
+{
+    private JoyStick stick;
+    public Test()
+    {
+        stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
+    }
+    public JoyStick getStick()
+    {
+        return stick;
+    }
+}
+
+class TimerTasks extends TimerTask
+{
+    @Override
+    public void run()
+    {
+        Calendar calendar = Calendar.getInstance();
+        GameView.currentTime = calendar.getTimeInMillis();
     }
 }
 
 class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 {
     private SurfaceHolder Holder;
-    private int ScreenWidth;
-    private int ScreenHeight;
-    private float scaling;
+ //   private int ScreenWidth;
+ //   private int ScreenHeight;
+   // private float scaling;
     private Matrix matrix;
-    private float downX;
-    private float downY;
+    public static float downX;
+    public static float downY;
+    public static float begDownX;
+    public static float begDownY;
+    private Boolean isTouch;
     private Paint paint;
     private boolean runFlag = false;
     private User user;
     private ArrayList<Bulk> bulkesMap;
-    private SectorHolder    sectors;
-    private Boolean isTouch;
-    private float begDownX;
-    private float begDownY;
+    private SectorHolder sectors;
     private GameMap gameMap;
     private JoyStick stick;
     static long currentTime;//action for pause
     static long startTime;
+
     private Timer timer;//timer for tick time and generate new food
     private TimerTasks timerTask;
-    private boolean isPaused = false;
+  //  private boolean gamePaused;
+
+    private boolean gamePaused;
     private Canvas canvas;
-    private  long previous = -1;//for fps
+    private long previous = -1;//for fps
+    //-------------
+    private Context context;
+    private Thread thread;
+
+    private Handler mainHandler;
+
+
+   // private GameLogicThread gameLogicThread;
+   // Test t;
 
     public GameView(Context context) {
         super(context);
+       // Log.v("GameView", "GameView");
+        this.context = context;
         paint = new Paint();
         runFlag = true;
-        isPaused = true;
+        gamePaused = true;
         Holder = this.getHolder();
         Holder.addCallback(this);
         this.setFocusable(true);
-        scaling = (float)ScreenHeight / Settings.ScreenHeightDefault;
-        //   Log.v("Scale", String.valueOf(scaling));
+    //    scaling = (float)ScreenHeight / Settings.ScreenHeightDefault;
         matrix = new Matrix();
         matrix.setScale(CriticalData.scaling, CriticalData.scaling);
         isTouch = false;
-        stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
+
+
         gameMap = CriticalData.gameMap;
         bulkesMap = CriticalData.bulkesMap;
         user = CriticalData.user;
+
         sectors = new SectorHolder();
         sectors.setOffsets(-gameMap.getOffsetTopLeftX(), - gameMap.getOffsetTopLeftY());
+
+
         isTouch = false;
         timer = new Timer();
         timerTask = new TimerTasks();
         timer.schedule(timerTask, 0, 1000);
         setStartTime();
+        stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
 
-        //enemy = new Enemy(1250f, 500f, 100f);
-        //gameMap.addUnit(enemy);
-        //enemy = CriticalData.enemy;
-        // bulkesMap = new ArrayList<>(Settings.CountBulkes + 1);//1 - for user
-        // bulkesMap.add(user);
-        //bulkesMap.add(enemy);
+
+
+     //   t = new Test();
+     //   stick = t.getStick();
+
+        mainHandler = new Handler();
+        /*
+        {
+            @Override
+            public void handleMessage(Message msg) {
+                msg.getData();
+                synchronized (this)
+                {
+                stick = t.getStick();}
+            //    Log.v("TTTTTTTTTTTTT", String.valueOf(msg.getData()));
+            }
+        };
+        */
     }
 
     public void pauseGame(boolean isPaused)
     {
-        this.isPaused = isPaused;
+        synchronized (this) {
+            user.setIsMoved(false);
+            gamePaused = isPaused;
+        }
     }
 
     public void setStartTime()
@@ -240,7 +301,10 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        new Thread(this).start();
+        Log.v("surfaceCreated", "surfaceCreated");
+        this.setDrawingCacheEnabled(true);
+        thread = new Thread(this);
+        thread.start();
     }
 
     @Override
@@ -252,8 +316,11 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
+        this.setDrawingCacheEnabled(false);
+        Log.v("surfaceDestroyed", "surfaceDestroyed");
         CriticalData.user.setIsMoved(false);
         runFlag = false;
+        mainHandler.removeCallbacks(this);
     }
 
     @Override
@@ -281,6 +348,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     Holder.unlockCanvasAndPost(canvas);
                 }
             }
+        //mainHandler.postDelayed(this,2);
         }
     }
 
@@ -289,24 +357,22 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 //------------------------Draw Field------------------------------------------------------------
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
-        if(!isPaused) {
+        if(!gamePaused) {
             drawMap();
             for (Bulk bulk : bulkesMap) {
-                if (!bulk.isDeleted) {
-                    if (bulk instanceof Enemy)
-                        ((Enemy) bulk).updateState(gameMap, sectors);
-                    drawBulk(bulk);
-                }
+                if (bulk instanceof Enemy)
+                    ((Enemy) bulk).updateState(gameMap, sectors);
+                 drawBulk(bulk);
             }
             drawJoyStick();
             drawScores();
             drawFPS();
         }
     }
-    private void drawFPS()
-    {
+
+    private void drawFPS() {
         long current = System.currentTimeMillis();
-        if( previous != -1)
+        if (previous != -1)
         {
             long fps = 1000 / (current - previous);
             paint.setColor(Color.BLACK);
@@ -318,7 +384,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     {
         if(isTouch)
         {
-            //Log.v("Stick ", " OK");
             stick.getParameters(begDownX, begDownY, downX, downY);
             paint.setColor(Color.GRAY);
             paint.setAlpha(125);
@@ -369,16 +434,29 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                                 point.setIsDeleted(true, bulk);
                                 if (bulk instanceof Enemy && ((Enemy) bulk).isTarget(point))
                                     ((Enemy) bulk).setTarget(null);
-                            } else if (bulk instanceof User)
+                            } else
+                            if (bulk instanceof User)
                             {
-                                drawEndGame();
-                                //  new EndDialog(GoGaming.activity).show();
+                                if (bulk.getRadius() < point.getRadius()) {
+                                    user.setIsMoved(false);
+                                    bulk.setIsMoved(false);
+                                    //Handler mHandler = new Handler(Looper.getMainLooper());
+                                    mainHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                                GameOverDialog gameOverDialog = new GameOverDialog(context);
+                                                gameOverDialog.show();
+                                                GoGaming.isDialogOpened = true;
+                                        }
+                                    });
+                                    surfaceDestroyed(Holder);
+                                }
                             }
                             break;
                         }
                     }
                 }
-                else if (point.insideBulk()) {
+                else if (point.insideBulk(stick.getdX(), stick.getdY())) {
                     if(point instanceof Bulk)
                         bulkesMap.remove(point);
                     else
@@ -397,8 +475,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     point.setY(point.getY() - Settings.MapHeightP);
                 else if (point.getY() < upBorder)
                     point.setY(point.getY() + Settings.MapHeightP);
-                // gameMap.checkPointSector(i,j,point,iterator);
-                if (!(point instanceof Bulk))
+               // if (!(point instanceof Bulk))
                     if (point.getX() <= Settings.ScreenWidthDefault + point.getRadius() && point.getX() >= -point.getRadius()
                             && point.getY() <= Settings.ScreenHeightDefault + point.getRadius() && point.getY() >= -point.getRadius())
                         canvas.drawCircle(point.getX(), point.getY(), point.getAnimationRadius(), paint);
@@ -418,13 +495,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         canvas.drawText(sdf.format(temp_date), 50f, 100f, paint);
         canvas.drawText(String.valueOf((int) user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
     }
-    private void drawEndGame()
-    {
-        paint.setAntiAlias(true);
-        paint.setColor(Color.RED);
-        paint.setTextSize(52.0f);
-        canvas.drawText("End Game", 900f, 500f, paint);
-    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event)
@@ -451,44 +522,5 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 break;
         }
         return true;
-    }
-}
-
-
-class EndDialog extends Dialog {
-    Button closeGameBtn;
-    Button repeatGameBtn;
-    Activity activity;
-    public EndDialog(Activity activity) {
-        super(activity);
-        this.activity = activity;
-    }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // hide notification bar
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.end_game_dialog);
-        closeGameBtn = (Button) findViewById(R.id.closeGameView);
-        closeGameBtn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                activity.finish();
-                cancel();
-            }
-        });
-        repeatGameBtn = (Button) findViewById(R.id.repeatGame);
-        repeatGameBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                CriticalData.createNewField();
-
-                activity.finish();
-                cancel();
-            }
-        });
     }
 }

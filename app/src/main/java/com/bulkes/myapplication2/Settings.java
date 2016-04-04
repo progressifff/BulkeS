@@ -50,6 +50,10 @@ public final class Settings
     final static float  IndicatorBaseAlpha         = 0.3f;
     final static float  JoyStickRadiusOut          = 120f;
     final static float  JoyStickRadiusIn           = 60f;
+    //------------------Dialogs---------------------------------
+    final static int    DialogPauseID              = 0;
+    final static int    DialogEndID                = 1;
+    final static int    DialogGameOverID           = 2;
     //------------------Colors----------------------------------
     final static int    ColorList[] = {
             Color.rgb(0xFF,0xA5,0x00),//#FFA500 orange

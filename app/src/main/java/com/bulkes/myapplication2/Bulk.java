@@ -54,10 +54,11 @@ public class Bulk extends Unit
     public void setMass(float mass)
     {
         this.mass = mass;
-      //  Log.v("Mass: ", String.valueOf(mass));
+        //  Log.v("Mass: ", String.valueOf(mass));
         setRadius((float) Math.sqrt((double) mass / Math.PI));
-     //   Log.v("Radius: ", String.valueOf(radius));
+        //   Log.v("Radius: ", String.valueOf(radius));
     }
+
     @Override
     public float getFeed()
     {

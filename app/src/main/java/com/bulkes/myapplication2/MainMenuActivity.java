@@ -1,7 +1,6 @@
 package com.bulkes.myapplication2;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -30,18 +29,14 @@ public class MainMenuActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+     //   setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);    // Removes title bar
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);    // Removes title bar
         //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);    // Removes notification bar
 
         size = new Point();
@@ -59,11 +54,7 @@ public class MainMenuActivity extends AppCompatActivity{
 
             @Override
             public void onClick(View v) {
-                CriticalData.gameMap = new GameMap();
-                CriticalData.user = new User(size.x / 2 / CriticalData.scaling, size.y/2 / CriticalData.scaling, Settings.UserStartSize, Settings.UserDefaultColor);
-                CriticalData.enemy = new Enemy(1250f, 500f, 100f);
-                CriticalData.gameMap.addUnit(CriticalData.enemy);
-                CriticalData.lastTime = 0;
+                CriticalData.createNewField();
                 Intent intent = new Intent();
                 intent.setClass(MainMenuActivity.this,GoGaming.class);
                 MainMenuActivity.this.startActivityForResult(intent,1);
@@ -110,9 +101,9 @@ public class MainMenuActivity extends AppCompatActivity{
 
                 animation.setFillBefore(true);
                 cardHelp.startAnimation(animation);
-              //  cardHelp.setVisibility(View.VISIBLE);
+                //  cardHelp.setVisibility(View.VISIBLE);
 
-              //  cardAbout.setVisibility(View.INVISIBLE);
+                //  cardAbout.setVisibility(View.INVISIBLE);
             }
         });
         findViewById(R.id.about_button).setOnClickListener(new View.OnClickListener() {
@@ -165,7 +156,7 @@ public class MainMenuActivity extends AppCompatActivity{
     protected  void onResume()
     {
         super.onResume();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+       // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -176,6 +167,7 @@ public class MainMenuActivity extends AppCompatActivity{
         if (actionBar != null) {
             actionBar.hide();
         }
+
     }
 
 

@@ -3,10 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="Marengo">#4c5866</color>
-    <color name="Pang">#cceeff</color>
-    <color name="black_overlay">#66000000</color>
-    <color name="part_transparent">#80000000</color>
-    <color name="full_transparent">#00000000</color>
-
+    <color name="colorMarengo">#4c5866</color>
+    <color name="colorPang">#cceeff</color>
+    <color name="colorBlack_overlay">#66000000</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorPart_transparent">#80000000</color>
+    <color name="colorFull_transparent">#00000000</color>
 </resources>

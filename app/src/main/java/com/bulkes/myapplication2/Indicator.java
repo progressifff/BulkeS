@@ -1,7 +1,6 @@
 package com.bulkes.myapplication2;
 
 import android.graphics.Path;
-import android.util.Log;
 
 /**
  * Created by 1 on 10.03.16.

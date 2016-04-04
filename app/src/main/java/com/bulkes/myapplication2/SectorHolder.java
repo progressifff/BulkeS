@@ -12,19 +12,21 @@ public class SectorHolder
     private float dh;//offset y for translate center to left top angle; y - height
     private int countLine;
     private int countColumn;
-    SectorHolder(int lines, int columns )
+    SectorHolder()
     {
-        countLine = lines;
-        countColumn = columns;
-        sector_map = new Sector[lines][columns];
+        countLine = Settings.MapSizeY * Settings.CountSectorY;
+        countColumn = Settings.MapSizeX * Settings.CountSectorX;
+        sector_map = new Sector[countLine][countColumn];
         for (int line = 0; line < countLine; ++line )
             for (int column = 0; column < countColumn ; ++column)
                 sector_map[line][column] = new Sector();
+        Log.v("Sector Holder. L/C", String.valueOf(countLine) + " " + String.valueOf(countColumn));
     }
     public void setOffsets(float _dw, float _dh)
     {
         dw = _dw;
         dh = _dh;
+        Log.v("Sector Holder. dw dh", String.valueOf(dw) + " " + String.valueOf(dh));
     }
     public Sector getSector(Unit unit)//update crash was here
     {
@@ -36,10 +38,11 @@ public class SectorHolder
         int column;
         line    = (int)tempY / (Settings.ScreenHeightDefault / Settings.CountSectorY);
         column  = (int)tempX / (Settings.ScreenWidthDefault / Settings.CountSectorX);
-       // Log.v("Sector XY ", String.valueOf(tempY) + " " + String.valueOf(tempX));
-      // Log.v("Sector ", String.valueOf(line) + " " + String.valueOf(column));
+        // Log.v("Sector XY ", String.valueOf(tempY) + " " + String.valueOf(tempX));
+        // Log.v("Sector ", String.valueOf(line) + " " + String.valueOf(column));
         if( line >= countLine || column >= countColumn  ) {
             Log.e("Sector error ", unit.toString());
+            Log.e("Sector error L/C", String.valueOf(line) + " " + String.valueOf(column));
         }
         return sector_map[line][column];
     }
@@ -76,12 +79,12 @@ public class SectorHolder
         for (int line = 0; line < countLine; ++line )
             for (int column = 0; column < countColumn ; ++column) {
                 sector_map[line][column].findPriority(bulk);
-              //  Log.v("Priority ", String.valueOf(line) + " " + String.valueOf(column) + " = " + String.valueOf(sector_map[line][column].getBasePriority()));
+                //  Log.v("Priority ", String.valueOf(line) + " " + String.valueOf(column) + " = " + String.valueOf(sector_map[line][column].getBasePriority()));
             }
         for (int line = 0; line < countLine; ++line )
             for (int column = 0; column < countColumn ; ++column) {
                 sector_map[line][column].updatePriority(
-                                  basePriorityForSector(line + 1, column, 2)
+                        basePriorityForSector(line + 1, column, 2)
                                 + basePriorityForSector(line - 1, column, 2)
                                 + basePriorityForSector(line, column + 1, 2)
                                 + basePriorityForSector(line, column - 1, 2)

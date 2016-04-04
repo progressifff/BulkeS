@@ -5,7 +5,7 @@
     android:layout_gravity="right|center"
     android:layout_width="250dp"
     android:layout_height="270dp"
-    card_view:cardBackgroundColor = "@color/Pang"
+    card_view:cardBackgroundColor = "@color/colorPang"
     card_view:cardCornerRadius="10dp"
     style="@style/CardView">
     <TextView
