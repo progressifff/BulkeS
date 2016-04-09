@@ -13,14 +13,17 @@ public final class CriticalData {
     public static float scaling;
     public static long lastTime;
 
+    public static ArrayList<GraphPoint> graphPoints;
+
     public static void createNewField()
     {
+        graphPoints = new ArrayList();
         gameMap = new GameMap();
         user = new User(Settings.ScreenWidthDefault / 2, Settings.ScreenHeightDefault / 2, Settings.UserStartSize, Settings.UserDefaultColor);
-        bulkesMap = new ArrayList<Bulk>(Settings.CountBulkes + 1);//1 - for user
+        bulkesMap = new ArrayList<Bulk>(Settings.CountBulkes + 1);
         bulkesMap.add(user);
         Random random = new Random();
-        for(int i = 0; i < Settings.CountBulkes; ++i) {
+        for(int i = 0; i < Settings.CountBulkes; i++) {
             Enemy enemy = new Enemy(random.nextInt(1000), random.nextInt(1000), random.nextInt(50) + 50);
             bulkesMap.add(enemy);
             gameMap.addUnit(enemy);

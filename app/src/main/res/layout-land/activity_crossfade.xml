@@ -34,7 +34,7 @@
 
         <Button
             style="@style/ButtonStyle"
-            android:id="@+id/play_button"
+            android:id="@+id/play_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Play Game!"
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:text="Top Score"
             android:layout_marginLeft="20dp"
-            android:id="@+id/statistic_button"      />
+            android:id="@+id/statistic_btn"      />
 
         <Button
             style="@style/ButtonStyle"
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:text="Help"
             android:layout_marginLeft="20dp"
-            android:id="@+id/help_button" />
+            android:id="@+id/help_btn" />
 
         <Button
             style="@style/ButtonStyle"
@@ -62,8 +62,16 @@
             android:layout_height="wrap_content"
             android:text="About"
             android:layout_marginLeft="20dp"
-            android:id="@+id/about_button" />
+            android:id="@+id/about_btn" />
     </LinearLayout>
-    <include layout="@layout/about_content"/>
-    <include layout="@layout/help_content"/>
+=
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ShowGraph"
+        android:id="@+id/show_graph_btn"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

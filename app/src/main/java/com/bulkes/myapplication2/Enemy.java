@@ -81,7 +81,8 @@ public class Enemy extends Bulk
         }
         else
             stepToTarget++;
-        target.setColor(Color.BLACK);
+        if(target!=null)
+            target.setColor(Color.BLACK);
         //Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
     }
     private float solveY(float _x)

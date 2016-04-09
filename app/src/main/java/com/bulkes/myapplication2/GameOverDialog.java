@@ -27,7 +27,6 @@ public class GameOverDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     //   GoGaming.isDialogOpened = true;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.game_over_layout);
         getWindow().getAttributes().windowAnimations = R.style.GameDialogAnimation;
@@ -36,7 +35,6 @@ public class GameOverDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 cancel();
-                GoGaming.onFinish = true;
                 activity.finish();
             }
         });
@@ -44,7 +42,7 @@ public class GameOverDialog extends Dialog {
         repeatGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GoGaming.dialogStartGame(Settings.DialogGameOverID);
+                ((GoGaming)activity).dialogStartGame(Settings.DialogGameOverID);
                 cancel();
             }
         });

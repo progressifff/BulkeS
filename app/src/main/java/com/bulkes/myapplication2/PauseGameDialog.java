@@ -24,7 +24,6 @@ public class PauseGameDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     //   GoGaming.isDialogOpened = true;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.pause_game_dialog);
         getWindow().getAttributes().windowAnimations = R.style.GameDialogAnimation;
@@ -32,7 +31,7 @@ public class PauseGameDialog extends Dialog {
         resumeGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GoGaming.dialogStartGame(Settings.DialogPauseID);
+                ((GoGaming)activity).dialogStartGame(Settings.DialogPauseID);
                 cancel();
             }
         });

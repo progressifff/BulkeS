@@ -20,7 +20,7 @@ public final class Settings
     final   static float  UserBaseSize               = 100f;//for indicator
     final   static float  UserMaxRadius              = 200f;
     final   static float  UserSpeedCoefficient       = 0.1f;
-    static  float  UserScale                  = 1f;
+    static  float  UserScale                         = 1f;
     //------------------Food--------------------------------
     final   static int    MinFoodInSector            = 0;
     final   static int    MaxFoodInSector            = 6;
@@ -77,4 +77,5 @@ public final class Settings
     {
         return ColorList.length;
     }
+    final   static String FileBaseName               = "gameProgress.txt";
 }

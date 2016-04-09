@@ -21,6 +21,7 @@ public class GameMap
     private boolean needAddFood;
     private int maxFoodCountOnMap;
     private int minFoodCountOnMap;
+    private CountDownTimer addFoodTimer;
     public GameMap()
     {
         random = new Random();
@@ -33,12 +34,14 @@ public class GameMap
         delFoodCount = 0;
         needAddFood = false;
         generateSmartMap();
-        startFoodTimer();
+        initFoodTimer();
     }
 
-    private void startFoodTimer()
+    public void stopFoodTimer() {addFoodTimer.cancel();}
+    public void startFoodTimer() {addFoodTimer.start();}
+    public void initFoodTimer()
     {
-        final CountDownTimer addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000,Settings.TimeCreateNewFood * 1000)
+        addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000,Settings.TimeCreateNewFood * 1000)
         {
             @Override
             public void onTick(long millisUntilFinished)
@@ -46,7 +49,7 @@ public class GameMap
             @Override
             public void onFinish()
             {
-                Log.v("Timer ", "Tick");
+              //  Log.v("Timer ", "Tick");
                 if(delFoodCount != 0)
                 {
                     addUnitRandomly(delFoodCount);
