@@ -13,14 +13,16 @@ public final class Settings
     //--------------------Game--------------------
     final   static int    TimeCreateNewFood          = 5;
     final   static int    TimeDelayFirstNewFood      = 10;
+    final   static float  PriorityValue              = 0.5f;
     //--------------------User--------------------------------
-    final   static float  UserStartSize              = 100f;
+            static float  UserStartSize              = 100f;
     final   static float  UserDefaultSpeed           = 0.1f;
     final   static int    UserDefaultColor           = Color.RED;
-    final   static float  UserBaseSize               = 100f;//for indicator
+    final   static float  BulkBaseSize               = 100f;//for indicator and speed
     final   static float  UserMaxRadius              = 200f;
     final   static float  UserSpeedCoefficient       = 0.1f;
-    static  float  UserScale                  = 1f;
+            static float  UserScale                  = 1f;
+    final   static float  UserScaleStep              = 0.025f;
     //------------------Food--------------------------------
     final   static int    MinFoodInSector            = 0;
     final   static int    MaxFoodInSector            = 6;
@@ -43,9 +45,9 @@ public final class Settings
     final   static float  MinFoodSpeed               = 2f;
     final   static int    MaxTotalFeed               = MaxFoodSize * FoodFeedForRadius * MaxFoodInSector * 2 ;
     final   static int    BulkDefaultColor           = Color.YELLOW;
-    final   static float  BulkOffsetRadius           = 5f;//min difference
+    final   static float  BulkOffsetRadius           = 2f;//min difference between bulkes for move
     //------------------Enemy--------------------------------
-    final   static int    EnemyMaxStepToTarget       = 30;
+    final   static int    EnemyMaxStepToTarget       = 10;
     final   static int    EnemyFindOffset            = 500;
     final   static float  EnemyStepValue             = 5f;
     final   static int    EnemyDefaultColor          = Color.MAGENTA;
@@ -55,7 +57,7 @@ public final class Settings
     final   static float  IndicatorBaseAlpha         = 0.3f;
     final   static float  JoyStickRadiusOut          = 120f;
     final   static float  JoyStickRadiusIn           = 60f;
-    final   static int    CountBulkes                = 10;
+            static int    CountBulkes                = 10;
     //------------------Dialogs---------------------------------
     final   static int    DialogPauseID              = 0;
     final   static int    DialogEndID                = 1;

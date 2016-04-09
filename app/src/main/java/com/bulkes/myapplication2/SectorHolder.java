@@ -79,7 +79,7 @@ public class SectorHolder
         return 0;
     }
 
-    public void findSectorToMove(Bulk bulk)
+    public void solveSectorToMove(Bulk bulk)
     {
         for (int line = 0; line < countLine; ++line )
             for (int column = 0; column < countColumn ; ++column) {

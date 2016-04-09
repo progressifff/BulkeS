@@ -26,6 +26,23 @@ public class Bulk extends Unit
         this(_x, _y, _radius, Settings.BulkDefaultColor);
     }
 
+    public float getSpeedCoefficient()
+    {
+        return Math.min(Settings.BulkBaseSize / radius, 2f);
+    }
+
+    @Override
+    public float getSpeedX()
+    {
+        return speedX * getSpeedCoefficient();
+    }
+
+    @Override
+    public float getSpeedY()
+    {
+        return speedY * getSpeedCoefficient();
+    }
+
     public boolean getIsMoved()
     {
         return isMoved;
@@ -63,7 +80,7 @@ public class Bulk extends Unit
 
     public Path getIndicator(float x_end, float y_end)
     {
-        float coefficient = Math.max(radius / Settings.UserBaseSize, 2f);
+        float coefficient = Math.max(radius / Settings.BulkBaseSize, 2f);
         indicator.getParameters(x,y,getAnimationRadius() + Settings.IndicatorTopOffset * coefficient, x_end, y_end);
         return indicator.getTriangle(x, y, getAnimationRadius() + (Settings.IndicatorBaseOffset * coefficient), coefficient);
     }

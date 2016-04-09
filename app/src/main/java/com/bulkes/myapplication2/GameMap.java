@@ -21,6 +21,7 @@ public class GameMap
     private boolean needAddFood;
     private int maxFoodCountOnMap;
     private int minFoodCountOnMap;
+
     public GameMap()
     {
         random = new Random();
@@ -36,6 +37,8 @@ public class GameMap
         startFoodTimer();
     }
 
+
+
     private void startFoodTimer()
     {
         final CountDownTimer addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000,Settings.TimeCreateNewFood * 1000)
@@ -46,12 +49,13 @@ public class GameMap
             @Override
             public void onFinish()
             {
-                Log.v("Timer ", "Tick");
-                if(delFoodCount != 0)
-                {
-                    addUnitRandomly(delFoodCount);
-                    delFoodCount = 0;
-                    needAddFood = true;
+                if(CriticalData.isRun) {
+                    Log.v("Timer ", "Tick");
+                    if (delFoodCount != 0) {
+                        addUnitRandomly(delFoodCount);
+                        delFoodCount = 0;
+                        needAddFood = true;
+                    }
                 }
                 start();
             }
@@ -130,7 +134,7 @@ public class GameMap
         Unit unit;
         float startSectorX;
         float startSectorY;
-        LinkedList<Unit> sectorMap = new LinkedList<>();
+        LinkedList<Unit> sectorMap = new LinkedList<Unit>();
         diffSectorX = Settings.ScreenWidthDefault  / Settings.CountSectorX;
         diffSectorY = Settings.ScreenHeightDefault / Settings.CountSectorY;
         startSectorY = offsetTopLeftY;
@@ -148,7 +152,7 @@ public class GameMap
                             getRandomX((int) startSectorX, (int) diffSectorX,radius),
                             getRandomY((int) startSectorY, (int) diffSectorY,radius),
                             radius,
-                            /*getColor()*/Settings.ColorList[Math.abs((int)((startSectorX / diffSectorX + startSectorY / diffSectorY) % Settings.getCountColors()))],
+                            getColor(),
                             Settings.FoodFeedForRadius * radius);
                     if(unit.getX() >= 2 * Settings.ScreenWidthDefault || unit.getY() >= 2 * Settings.ScreenHeightDefault )
                         Log.e("Smart Map1 wrong food", unit.toString());

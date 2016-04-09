@@ -12,6 +12,7 @@ public final class CriticalData {
     public static ArrayList<Bulk> bulkesMap;
     public static float scaling;
     public static long lastTime;
+    public static boolean isRun;
 
     public static void createNewField()
     {
@@ -27,5 +28,25 @@ public final class CriticalData {
         }
         gameMap.addUnit(user);
         lastTime = 0;
+        isRun = true;
+        Settings.UserScale = 1f;
+    }
+    public static void createTrainingField()
+    {
+        Settings.CountBulkes    = 0;
+        Settings.UserStartSize  = 150f;
+        createNewField();
+    }
+    public static void createBattleField()
+    {
+        Settings.CountBulkes    = 1;
+        Settings.UserStartSize  = 100f;
+        createNewField();
+    }
+    public static void createSurvivalField()
+    {
+        Settings.CountBulkes    = 5;
+        Settings.UserStartSize = 50f;
+        createNewField();
     }
 }

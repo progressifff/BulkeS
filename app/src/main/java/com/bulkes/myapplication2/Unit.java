@@ -62,7 +62,7 @@ public class Unit
         radius *= Settings.UserScale;
         x = unit.x + ((x - unit.x) * Settings.UserScale);
         y = unit.y + ((y - unit.y) * Settings.UserScale);
-        if(isOnMainScreen())
+        if(!isOnMainScreen())
             animationRadius = radius;
     }
     public void setSpeed(float _speedX, float _speedY)
@@ -235,39 +235,4 @@ public class Unit
             return (_y - getY()) / k + getX();
         }
     }
-
-    public boolean insideBulk()
-    {
-        //  float k;
-        float newX;
-        float newY;
-        float dx;
-        float dy;
-        float stepY;
-        float stepX;
-        dx = target.getX() - x;
-        dy = target.getY() - y;
-        stepX = 10f;
-        stepY = 10f;
-        if(Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0))<=(target.getRadius()-radius))
-            return true;
-        else {
-            //    k = dy/dx;
-            if(Math.abs(dx)>=Math.abs(dy))
-            {
-                newX = x + ((dx > 0)? stepX : (-stepX));
-                //newY = k*(newX - x) + y;
-                newY = solveY(newX);
-            }
-            else
-            {
-                newY = y + ((dy > 0)? stepY : (-stepY));
-                //  newX = (newY - y)/k + x;
-                newX = solveX(newY);
-            }
-            setPosition(newX,newY);
-            return false;
-        }
-    }
-
 }

@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.media.Image;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -15,12 +17,13 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainMenuActivity extends AppCompatActivity{
+public class MainMenuActivity extends AppCompatActivity {
 
     private boolean mContentLoaded;
     private View mContentView;
@@ -31,6 +34,14 @@ public class MainMenuActivity extends AppCompatActivity{
     private Animation anim;
     private Point size;
     private EditText nameUser;
+
+    private ImageButton iButtonSettings;
+    private ImageButton iButtonAbout;
+
+    //Game Type Button
+    private ImageButton iButtonTraining;
+    private ImageButton iButtonBattle;
+    private ImageButton iButtonSurvival;
 
     //File saving
     public static final String APP_SETTINGS = "mysettings";
@@ -59,19 +70,19 @@ public class MainMenuActivity extends AppCompatActivity{
 
         size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
-        CriticalData.scaling = (float)size.y / Settings.ScreenHeightDefault;
+        CriticalData.scaling = (float) size.y / Settings.ScreenHeightDefault;
 
         setContentView(R.layout.activity_crossfade);
-        cardAbout = (CardView)findViewById(R.id.card_about);
-        cardHelp = (CardView)findViewById(R.id.card_help);
-        cardAbout.setVisibility(View.INVISIBLE);
-        cardHelp.setVisibility(View.INVISIBLE);
+        //    cardAbout = (CardView)findViewById(R.id.card_about);
+        //     cardHelp = (CardView)findViewById(R.id.card_help);
+//        cardAbout.setVisibility(View.INVISIBLE);
+        //       cardHelp.setVisibility(View.INVISIBLE);
 
         nameUser = (EditText) findViewById(R.id.nameField);
         // nameUser.requestFocus();//for non started focus
         mSettings = getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE);
         if (mSettings.contains(APP_SETTINGS_USER_NAME)) {
-            nameUser.setText( mSettings.getString(APP_SETTINGS_USER_NAME, "User Default"));
+            nameUser.setText(mSettings.getString(APP_SETTINGS_USER_NAME, "User Default"));
         }
         nameUser.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -84,20 +95,57 @@ public class MainMenuActivity extends AppCompatActivity{
             }
         });
 
+        iButtonTraining = (ImageButton)findViewById(R.id.iButtonTraining);
+        iButtonBattle   = (ImageButton)findViewById(R.id.iButtonBattle);
+        iButtonSurvival = (ImageButton)findViewById(R.id.iButtonSurvival);
+
+
+        iButtonTraining.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CriticalData.createTrainingField();
+                Intent intent = new Intent();
+                intent.setClass(MainMenuActivity.this, GoGaming.class);
+                MainMenuActivity.this.startActivityForResult(intent, 1);
+            }
+        });
+
+        iButtonBattle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CriticalData.createBattleField();
+                Intent intent = new Intent();
+                intent.setClass(MainMenuActivity.this, GoGaming.class);
+                MainMenuActivity.this.startActivityForResult(intent, 1);
+            }
+        });
+
+        iButtonSurvival.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CriticalData.createSurvivalField();
+                Intent intent = new Intent();
+                intent.setClass(MainMenuActivity.this, GoGaming.class);
+                MainMenuActivity.this.startActivityForResult(intent, 1);
+            }
+        });
+
         //CriticalData
-        findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
+/*        findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                Settings.UserScale = 1f;
                 CriticalData.createNewField();
                 Intent intent = new Intent();
                 intent.setClass(MainMenuActivity.this, GoGaming.class);
                 MainMenuActivity.this.startActivityForResult(intent, 1);
             }
         });
-        findViewById(R.id.help_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        */
+        //findViewById(R.id.help_button).setOnClickListener(new View.OnClickListener() {
+        //  @Override
+        //public void onClick(View v) {
 
               /*  cardAbout.animate()
                         .alpha(0f)
@@ -112,12 +160,12 @@ public class MainMenuActivity extends AppCompatActivity{
          /*       if(cardAbout.getVisibility()==View.VISIBLE)
                     cardAbout.setVisibility(View.INVISIBLE);
 */
-                TranslateAnimation animation = new TranslateAnimation(cardHelp.getWidth(), 0, 0, 0);
-                animation.setDuration(500);
+        // TranslateAnimation animation = new TranslateAnimation(cardHelp.getWidth(), 0, 0, 0);
+        // animation.setDuration(500);
 
 
 
-                animation.setAnimationListener(new Animation.AnimationListener() {
+               /* animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
                         cardAbout.setVisibility(View.INVISIBLE);
@@ -140,11 +188,12 @@ public class MainMenuActivity extends AppCompatActivity{
 
                 //  cardAbout.setVisibility(View.INVISIBLE);
             }
-        });
+        });*/
+        /*
         findViewById(R.id.about_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+*/
            /*     cardHelp.animate()
                         .alpha(0f)
                         .setDuration(mShortAnimationDuration)
@@ -157,6 +206,7 @@ public class MainMenuActivity extends AppCompatActivity{
                /* if(cardHelp.getVisibility()==View.VISIBLE)
                     cardHelp.setVisibility(View.INVISIBLE);
                     */
+        /*
                 TranslateAnimation animation = new TranslateAnimation(cardAbout.getWidth(),0,0,0);
                 animation.setDuration(500);
 
@@ -183,34 +233,34 @@ public class MainMenuActivity extends AppCompatActivity{
                 cardAbout.startAnimation(animation);
 
             }
-        });
+        });*/
     }
 
 
-    @Override
-    protected  void onResume()
-    {
-        super.onResume();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+        @Override
+        protected void onResume ()
+        {
+            super.onResume();
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                /* | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 */
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.hide();
+            }
         }
-    }
 
 
-    @Override
-    protected  void onActivityResult(int ReqCode, int ResCode, Intent data)
-    {
+        @Override
+        protected void onActivityResult ( int ReqCode, int ResCode, Intent data)
+        {
 
-    }
+        }
 
 
 
@@ -235,4 +285,4 @@ public class MainMenuActivity extends AppCompatActivity{
                 });
     }
     */
-}
+    }

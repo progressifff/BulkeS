@@ -4,66 +4,210 @@
     android:background="#ffffff"
     android:weightSum="1"
     >
-    <LinearLayout
+
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="false"
+        android:gravity="right"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp">
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/iButtonDiagram"
+            android:background="#0054a9f9"
+            android:layout_gravity="left"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="400dp"
+            android:layout_alignParentLeft="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/chart96"/>
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/iButtonAbout"
+            android:background="#009ef47f"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toLeftOf="@+id/iButtonSettings"
+            android:scaleType="centerCrop"
+            android:src="@drawable/info96"/>
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/iButtonSettings"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/setting96"
+            android:cropToPadding="false"
+            android:background="#00f42020"
+            android:scaleType="centerCrop"/>
+
+    </RelativeLayout>
+
+    <GridLayout
+        android:id="@+id/userInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:gravity="bottom"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="50dp"
+        android:columnCount="2"
+        android:rowCount="3"
+        android:clickable="false"
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:layout_below="@+id/topBar"
+        android:layout_above="@+id/gameButton"
+        android:focusableInTouchMode="true"
         >
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/imageView"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:layout_rowSpan="3"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/setting96"
+            android:scaleType="centerCrop"/>
+
         <EditText
             android:id = "@+id/nameField"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:focusableInTouchMode="true"
-            android:layout_height="match_parent"
+            android:layout_height="30dp"
             android:inputType="textPersonName"
             android:maxLines="1"
+            android:width="200dp"
             android:text = "User1"
-            />
-    </LinearLayout>
+            android:layout_row="0"
+            android:layout_column="1"
+            android:gravity="center"
+            android:background="#b0d344fa"
+            android:layout_marginTop="10dp"
+            android:textIsSelectable="false"
+
+            android:hint = "Your Name"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="00:05:23"
+            android:id="@+id/userTime"
+            android:gravity="center"
+            android:width="200dp"
+            android:textColor="#000000"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="32456"
+            android:id="@+id/userPoint"
+            android:gravity="center"
+            android:width="200dp"
+            android:textColor="#000000"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+    </GridLayout>
+
+
+
+
+    <ScrollView
+        android:layout_below="@+id/topBar"
+        android:layout_above="@+id/gameButton"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/userInfo"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp">
+
+    <TableLayout
+        android:id = "@+id/tableResult"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+       >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/textView2"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="50dp"
+            android:layout_height="100dp"
+            android:background="#eababa">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/textView"/>
+        </TableRow>
+    </TableLayout>
+</ScrollView>
 
 
     <LinearLayout
-        android:id="@+id/frameid"
+        android:id="@+id/gameButton"
         android:orientation="horizontal"
-        android:gravity="center_horizontal|bottom"
-        android:layout_marginBottom="40dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userInfo"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp">
 
-        <Button
-            style="@style/ButtonStyle"
-            android:id="@+id/play_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Play Game!"
-            />
+        <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:id="@+id/iButtonTraining"
+            android:background="#9d45f5"
+            android:layout_margin="5dp"/>
 
-        <Button
-            style="@style/ButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Top Score"
-            android:layout_marginLeft="20dp"
-            android:id="@+id/statistic_button"      />
+        <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:id="@+id/iButtonBattle"
+            android:background="#f39224"
+            android:layout_margin="5dp"/>
 
-        <Button
-            style="@style/ButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Help"
-            android:layout_marginLeft="20dp"
-            android:id="@+id/help_button" />
+        <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:id="@+id/iButtonSurvival"
+            android:background="#3d63ee"
+            android:layout_margin="5dp"/>
 
-        <Button
-            style="@style/ButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="About"
-            android:layout_marginLeft="20dp"
-            android:id="@+id/about_button" />
     </LinearLayout>
-    <include layout="@layout/about_content"/>
-    <include layout="@layout/help_content"/>
+
+
 </RelativeLayout>

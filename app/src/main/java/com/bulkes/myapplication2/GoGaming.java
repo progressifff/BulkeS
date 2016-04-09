@@ -102,7 +102,7 @@ public class GoGaming extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                //| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
@@ -122,6 +122,7 @@ public class GoGaming extends AppCompatActivity {
             isPause = false;
         else
             isPause = true;
+
        // Log.v("onStop", "onStop");
     }
 
@@ -235,7 +236,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         timer.schedule(timerTask, 0, 1000);
         setStartTime();
         stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
-
+        Log.v("Bulkes Map", String.valueOf(bulkesMap.size()));
         mainHandler = new Handler();
         /*
         {
@@ -256,6 +257,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         synchronized (this) {
             user.setIsMoved(false);
             gamePaused = isPaused;
+            CriticalData.isRun = !isPaused;
         }
     }
 
@@ -290,6 +292,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         this.setDrawingCacheEnabled(false);
         Log.v("surfaceDestroyed", "surfaceDestroyed");
         CriticalData.user.setIsMoved(false);
+        CriticalData.isRun = false;
         runFlag = false;
         mainHandler.removeCallbacks(this);
     }
@@ -339,8 +342,8 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             }
             drawUser();
             drawJoyStick();
-            if(user.getRadius() > Settings.UserMaxRadius && user.getRadius() == user.getAnimationRadius()) {
-                Settings.UserScale /= 2f;
+            if(user.getRadius() > Settings.UserMaxRadius /*&& user.getRadius() == user.getAnimationRadius()*/) {
+                Settings.UserScale -= Settings.UserScaleStep;
                 Log.v("User Scale ", String.valueOf(Settings.UserScale));
                 for (Unit unit : gameMap.getMap()) {
                     unit.updatePosition(user);
@@ -374,20 +377,16 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawBulk(Bulk bulk) {
-        paint.setColor(bulk.getColor());
-        paint.setStyle(Paint.Style.FILL);
-        //update if bulk is not in screen area
-        if (bulk.isOnMainScreen())
-            canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getAnimationRadius(), paint);
-    }
-
     private void drawUser()
     {
-        drawBulk(user);
-        paint.setColor(Color.GRAY);
-        paint.setAlpha(240);
-        canvas.drawPath(user.getIndicator(user.getX() + stick.getdX(), user.getY() + stick.getdY()), paint);
+        paint.setColor(user.getColor());
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(user.getX(), user.getY(), user.getAnimationRadius(), paint);
+        if(user.isMoved) {
+            paint.setColor(Color.GRAY);
+            paint.setAlpha(240);
+            canvas.drawPath(user.getIndicator(user.getX() + stick.getdX(), user.getY() + stick.getdY()), paint);
+        }
     }
 
     private void drawMap() {
@@ -396,8 +395,9 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         float speedX = stick.getdX() * Settings.UserSpeedCoefficient;
         float speedY = stick.getdY() * Settings.UserSpeedCoefficient;
         user.setSpeed(Math.abs(speedX), Math.abs(speedY));
-        speedX = -speedX;//user stand and other unit moved
-        speedY = -speedY;
+        speedX = -speedX * user.getSpeedCoefficient();//user stand and other unit moved
+        speedY = -speedY * user.getSpeedCoefficient();//user transform base speed to real speed(dependence of radius)
+        boolean needMove = user.getIsMoved();
         int leftBorder      = gameMap.getOffsetTopLeftX() + 1;
         int rightBorder     = gameMap.getOffsetTopLeftX() + Settings.MapWidthP - 1;
         int upBorder        = gameMap.getOffsetTopLeftY() + 1;
@@ -435,7 +435,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                                 surfaceDestroyed(Holder);
                             }
                         }
-                        break;
                     }
                 }
                 else if(point.getIsDeleted()) {
@@ -448,7 +447,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     }
                 }
                 gameMap.checkForFoodAdd(iterator);
-                if (user.getIsMoved())//previous loop can change isDeleted
+                if (needMove)//previous loop can change isDeleted
                     point.move( speedX,  speedY);
                 paint.setColor(point.color);
                 if (point.getX() >= rightBorder)
@@ -459,9 +458,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                     point.setY(point.getY() - Settings.MapHeightP   + 2);
                 else if (point.getY() <= upBorder)
                     point.setY(point.getY() + Settings.MapHeightP   - 2);
-                //5 - correction, if x or y near border
-                if(point.getX() >= 2 * Settings.ScreenWidthDefault || point.getY() >= 2 * Settings.ScreenHeightDefault )
-                    Log.e("Moving ", point.toString());
+                //2 - correction, if x or y near border
                 if (point.isOnMainScreen())
                     canvas.drawCircle(point.getX(), point.getY(), point.getAnimationRadius(), paint);
             }
@@ -496,7 +493,8 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 downX = event.getX() / CriticalData.scaling;
                 downY = event.getY() / CriticalData.scaling;
                 user.setIsMoved(true);
-                if( Math.abs(downX - begDownX) < 1f && Math.abs(downY - begDownY) < 1f) {user.setIsMoved(false);}
+                if( Math.abs(downX - begDownX) < 1f && Math.abs(downY - begDownY) < 1f)
+                    user.setIsMoved(false);
                 break;
             case MotionEvent.ACTION_UP:
                 isTouch = false;
