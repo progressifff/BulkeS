@@ -1,8 +1,17 @@
 <resources>
     <string name="app_name">Bulkes</string>
-    <string name="action_settings">Settings</string>
-    <string name="resume_game">Game is on pause</string>
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="resume_game" translatable="false">Game is on pause</string>
     <string name="game_over">You lose. Try again</string>
-    <string name="end_game">Are You sure that\n you want to leave?</string>
-    <string name="pause_game">Game paused</string>
+    <string name="end_game" translatable="false">Are You sure that\n you want to leave?</string>
+    <string name="pause_game" translatable="false">Game paused</string>
+    <string name="tableN">N</string>
+    <string name="tableName">Name</string>
+    <string name="tableTime">Time</string>
+    <string name="tablePoint">Point</string>
+
+    <string name="totalGameTime">Total game time:</string>
+    <string name="maxGameScore">Max game score:</string>
+
+    <string name="title_activity_splash_screen" translatable="false">splashScreen</string>
 </resources>

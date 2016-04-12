@@ -66,6 +66,7 @@ public class Bulk extends Unit
     {
         this.mass = mass;
         radius = (float) Math.sqrt((double) mass / Math.PI) * Settings.UserScale;
+        baseRadius = radius;
         if( this instanceof User) {
             Log.v("Mass: ", String.valueOf(mass));
             Log.v("Radius: ", String.valueOf(radius));

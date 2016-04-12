@@ -34,7 +34,7 @@ public final class CriticalData {
     public static void createTrainingField()
     {
         Settings.CountBulkes    = 0;
-        Settings.UserStartSize  = 150f;
+        Settings.UserStartSize  = 180f;
         createNewField();
     }
     public static void createBattleField()

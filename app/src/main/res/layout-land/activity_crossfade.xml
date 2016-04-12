@@ -69,18 +69,23 @@
         android:focusableInTouchMode="true"
         >
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/imageView"
-            android:layout_column="0"
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_row="0"
-            android:layout_rowSpan="3"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:src="@drawable/setting96"
-            android:scaleType="centerCrop"/>
+            android:layout_rowSpan="3">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/imageView"
+                android:layout_column="0"
+                android:layout_row="0"
+                android:layout_rowSpan="3"
+                android:layout_gravity="center"
+                android:src="@drawable/setting96"
+                android:scaleType="centerCrop"/>
+        </FrameLayout>
 
         <EditText
             android:id = "@+id/nameField"
@@ -94,51 +99,96 @@
             android:layout_row="0"
             android:layout_column="1"
             android:gravity="center"
-            android:background="#b0d344fa"
-            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_style"
             android:textIsSelectable="false"
 
+
             android:hint = "Your Name"
-            android:layout_marginBottom="10dp"/>
+            android:enabled="true"
+            android:textColor="#f21e3a"
+            android:singleLine="true"
+            android:editable="true"/>
+
+        <RelativeLayout
+            android:layout_width="220dp"
+            android:layout_height="30dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/totalGameTime"
+                android:id="@+id/labelTime"
+                android:textSize="14dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_alignParentLeft="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="00:05:23"
+                android:id="@+id/userTime"
+                android:gravity="left|center"
+                android:textColor="#000000"
+                android:layout_gravity="center_vertical|right"
+                android:layout_alignParentRight="true"
+                android:layout_alignBaseline="@+id/labelTime"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="220dp"
+            android:layout_height="30dp">
+
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="00:05:23"
-            android:id="@+id/userTime"
+            android:text="@string/maxGameScore"
+            android:id="@+id/labelPoint"
+            android:textSize="14dp"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:width="200dp"
-            android:textColor="#000000"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignBaseline="@+id/userPoint"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="32456"
-            android:id="@+id/userPoint"
-            android:gravity="center"
-            android:width="200dp"
-            android:textColor="#000000"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="32145"
+                android:id="@+id/userPoint"
+                android:gravity="left|center"
+                android:textColor="#000000"
+                android:layout_gravity="center_vertical"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
 
     </GridLayout>
 
 
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/userInfo"
+        android:layout_below="@+id/topBar"
+        android:id="@+id/tableHeader"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
 
+    </TableLayout>
 
     <ScrollView
-        android:layout_below="@+id/topBar"
         android:layout_above="@+id/gameButton"
-        android:layout_marginLeft="20dp"
         android:layout_toRightOf="@+id/userInfo"
-        android:layout_marginRight="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp">
+        android:layout_below="@+id/tableHeader"
+        android:layout_alignLeft="@+id/tableHeader"
+        android:layout_alignRight="@+id/tableHeader">
 
     <TableLayout
         android:id = "@+id/tableResult"
@@ -146,30 +196,41 @@
         android:layout_height="match_parent"
 
        >
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+        <TableRow android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/headerHidden">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:id="@+id/textView2"/>
-        </TableRow>
-        <TableRow
-            android:layout_width="50dp"
-            android:layout_height="100dp"
-            android:background="#eababa">
+                android:text="@string/tableN"
+                android:layout_weight="1"
+                />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:id="@+id/textView"/>
+                android:text="@string/tableName"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/tableTime"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/tablePoint"
+                android:layout_weight="1"
+                />
         </TableRow>
     </TableLayout>
 </ScrollView>

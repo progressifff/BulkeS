@@ -1,6 +1,7 @@
 package com.bulkes.myapplication2;
 
 import android.graphics.Color;
+import android.util.Log;
 
 /**
  This is a base unit for all game element
@@ -9,6 +10,9 @@ public class Unit
 {
     protected float x;
     protected float y;
+    protected float baseX;
+    protected float baseY;
+    protected float baseRadius;
     protected float radius;
     private   float animationRadius;
     protected boolean isDeleted;
@@ -38,7 +42,10 @@ public class Unit
     {
         x = _x;
         y = _y;
+        baseX = x;
+        baseY = y;
         radius = _radius * Settings.UserScale;
+        baseRadius = _radius;
         color = _color;
         isDeleted = false;
         animationRadius = 0f;
@@ -48,20 +55,26 @@ public class Unit
     public void setX(float x)
     {
         this.x = x;
+        baseX = x;
     }
     public void setY(float y)
     {
         this.y = y;
+        baseY = y;
     }
     public void setRadius(float radius)
     {
+        this.baseRadius = radius;
         this.radius = radius * Settings.UserScale;
     }
     public void updatePosition(Unit unit)//update location + radius
     {
-        radius *= Settings.UserScale;
-        x = unit.x + ((x - unit.x) * Settings.UserScale);
-        y = unit.y + ((y - unit.y) * Settings.UserScale);
+        radius = baseRadius * Settings.UserScale;
+        x = unit.x + ((baseX - unit.x) * Settings.UserScale);
+        y = unit.y + ((baseY - unit.y) * Settings.UserScale);
+        if (this instanceof User) {
+            Log.v("User UPD", String.valueOf(radius));
+        }
         if(!isOnMainScreen())
             animationRadius = radius;
     }
@@ -78,6 +91,8 @@ public class Unit
     {
         x = _x;
         y = _y;
+        baseX = x;//update here
+        baseY = y;
     }
     public void setIsDeleted(boolean isDeleted, Unit whatBulk)
     {
@@ -107,7 +122,7 @@ public class Unit
         if(animationRadius < radius)
         {
             animationRadius += Settings.StepRadius*radius;
-            if(animationRadius < radius)
+            if(animationRadius <= radius)
                 return animationRadius;
             else
                 animationRadius = radius;
@@ -121,6 +136,8 @@ public class Unit
             else
                 animationRadius = radius;
         }
+        if( this instanceof User)
+            Log.v("User ", String.valueOf(radius) + " " + String.valueOf(animationRadius));
         return radius;
     }
     public float getFeed()//this method must override in all class
@@ -140,6 +157,8 @@ public class Unit
     {
         x += dx;
         y += dy;
+        baseX += dx;
+        baseY += dy;
     }
     public boolean isOverlapped(Unit unit)
     {

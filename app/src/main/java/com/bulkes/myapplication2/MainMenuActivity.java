@@ -5,19 +5,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -43,10 +45,48 @@ public class MainMenuActivity extends AppCompatActivity {
     private ImageButton iButtonBattle;
     private ImageButton iButtonSurvival;
 
+    //Table Result
+    private TableLayout tableResult;
+    private TableLayout tableHeader;
+  //  private TableRow    rowHeader;
+
+
     //File saving
     public static final String APP_SETTINGS = "mysettings";
     public static final String APP_SETTINGS_USER_NAME = "UserName";
     private SharedPreferences mSettings;
+
+    TableRow getHeader()
+    {
+        TableRow rowHeader = new TableRow(this);
+        rowHeader.setLayoutParams(new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT));
+        TextView textViewN = new TextView(this);
+        TextView textViewName = new TextView(this);
+        TextView textViewTime = new TextView(this);
+        TextView textViewPoint = new TextView(this);
+        textViewN.setPadding(50,0,50,0);
+        textViewName.setPadding(80,0,80,0);
+        textViewTime.setPadding(50,0,50,0);
+        textViewPoint.setPadding(50,0,50,0);
+
+        //textViewN.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        textViewN.setText(R.string.tableN);
+        textViewName.setText(R.string.tableName);
+        textViewTime.setText(R.string.tableTime);
+        textViewPoint.setText(R.string.tablePoint);
+        /*rowHeader.addView(textViewN);
+        rowHeader.addView(textViewName);
+        rowHeader.addView(textViewTime);
+        rowHeader.addView(textViewPoint);
+        */
+        rowHeader.addView(textViewN, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        rowHeader.addView(textViewName, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        rowHeader.addView(textViewTime, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        rowHeader.addView(textViewPoint, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        return rowHeader;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +170,60 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
+        //table creating fields
+        tableResult = (TableLayout) findViewById(R.id.tableResult);
+        tableHeader = (TableLayout) findViewById(R.id.tableHeader);
+
+        //TableRow rowHidden = (TableRow) findViewById(R.id.headerHidden);
+        tableResult.removeAllViews();
+
+        tableHeader.addView(getHeader());
+        TableRow templateRow = getHeader();
+        templateRow.setLayoutParams(new TableRow.LayoutParams(
+                0,
+                0));
+       // TableRow headRow = getHeader();
+        //tableResult.removeView(headRow);
+        tableResult.addView(templateRow);
+
+        for(int i = 0; i < 150; ++i) {
+            TableRow tableRow = new TableRow(this);
+            //tableRow.setMinimumHeight(50);
+            tableRow.setLayoutParams(new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.WRAP_CONTENT));
+
+            TextView textViewN = new TextView(this);
+            TextView textViewName = new TextView(this);
+            TextView textViewTime = new TextView(this);
+            TextView textViewPoint = new TextView(this);
+
+            //textViewN.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+            textViewN.setText(String.valueOf(i * 10 + 1) + " " + String.valueOf(i * 10 + 1));
+            textViewName.setText("Vladislav");
+            textViewTime.setText("12:23:11");
+            textViewPoint.setText("50432");
+
+
+            textViewN.setGravity(Gravity.CENTER);
+            textViewName.setGravity(Gravity.CENTER);
+            textViewTime.setGravity(Gravity.CENTER);
+            textViewPoint.setGravity(Gravity.CENTER);
+
+
+           // textViewN.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+            //textViewName.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+            //textViewTime.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+            //textViewPoint.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+
+            tableRow.addView(textViewN, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+            tableRow.addView(textViewName, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+            tableRow.addView(textViewTime, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+            tableRow.addView(textViewPoint, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+            tableResult.addView(tableRow);
+        }
         //CriticalData
 /*        findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
 

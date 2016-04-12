@@ -342,7 +342,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             }
             drawUser();
             drawJoyStick();
-            if(user.getRadius() > Settings.UserMaxRadius /*&& user.getRadius() == user.getAnimationRadius()*/) {
+            if(user.getRadius() > Settings.UserMaxRadius && user.getAnimationRadius() >= user.getRadius()) {
                 Settings.UserScale -= Settings.UserScaleStep;
                 Log.v("User Scale ", String.valueOf(Settings.UserScale));
                 for (Unit unit : gameMap.getMap()) {

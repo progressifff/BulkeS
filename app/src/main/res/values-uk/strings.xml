@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Бульки</string>
+    <string name="tableN">N</string>
+    <string name="tableName">ім\'я</string>
+    <string name="tablePoint">очки</string>
+    <string name="tableTime">ігровий час</string>
+    <string name="totalGameTime">загальний ігровий час</string>
+    <string name="game_over">програш</string>
+    <string name="maxGameScore">максимальний рахунок</string>
+</resources>

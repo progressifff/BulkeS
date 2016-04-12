@@ -16,20 +16,19 @@ public final class Settings
     final   static float  PriorityValue              = 0.5f;
     //--------------------User--------------------------------
             static float  UserStartSize              = 100f;
-    final   static float  UserDefaultSpeed           = 0.1f;
     final   static int    UserDefaultColor           = Color.RED;
     final   static float  BulkBaseSize               = 100f;//for indicator and speed
     final   static float  UserMaxRadius              = 200f;
     final   static float  UserSpeedCoefficient       = 0.1f;
             static float  UserScale                  = 1f;
-    final   static float  UserScaleStep              = 0.025f;
+    final   static float  UserScaleStep              = 0.005f;
     //------------------Food--------------------------------
     final   static int    MinFoodInSector            = 0;
     final   static int    MaxFoodInSector            = 6;
     final   static float  MinAddFoodScaleValue       = 0.6f;
     final   static float  MaxAddFoodScaleValue       = 1.3f;
-    final   static int    MinFoodSize                = 20;
-    final   static int    MaxFoodSize                = 40;
+    final   static int    MinFoodSize                = 69;
+    final   static int    MaxFoodSize                = 70;
     final   static int    BaseFoodSize               = (MaxFoodSize - MinFoodSize) / 2;
     final   static int    FoodDefaultFeed            = 500;
     final   static int    FoodFeedForRadius          = 20;
