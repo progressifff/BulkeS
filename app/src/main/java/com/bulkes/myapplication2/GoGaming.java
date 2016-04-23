@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -44,6 +45,16 @@ public class GoGaming extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setFullScreenMode();
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                if((visibility&View.SYSTEM_UI_FLAG_IMMERSIVE) == 0) {
+                    Log.v("IMMERSIVE", "IMMERSIVE");
+                    setFullScreenMode();
+                }
+            }
+        });
         Log.v("onCreate", "onCreate");
         isPause = false;
         isDialogOpened = false;
@@ -53,6 +64,7 @@ public class GoGaming extends AppCompatActivity {
         pauseGameDialog = new PauseGameDialog(this);
         endGamedialog = new EndGameDialog(this);
         gameView = new GameView(this);
+        gameView.setGraphDataTimer();
         setContentView(gameView);
         gamePauseView = new View(this);
         gamePauseView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
@@ -62,16 +74,19 @@ public class GoGaming extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
-        setFullScreenMode();
         if(isPause) {
-            gameView.pauseGame(true);
             if(!isDialogOpened) {
+                gameView.pauseGame(true);
                 gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
                 setContentView(gamePauseView);
-                if(isEndDialog)
+                if(isEndDialog) {
                     endGamedialog.show();
-                else
+                    endGamedialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+                }
+                else {
                     pauseGameDialog.show();
+                    pauseGameDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+                }
                 isDialogOpened = true;
             }
         }
@@ -83,6 +98,7 @@ public class GoGaming extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK)
         {
             if(!isDialogOpened) {
+                Log.v("KEYCODE_BACK","KEYCODE_BACK");
                 CriticalData.lastTime += gameView.getLastTime();
                 gameView.pauseGame(true);
                 gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
@@ -96,15 +112,17 @@ public class GoGaming extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    public void setFullScreenMode()
-    {
-        window.getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    private void setFullScreenMode() {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(View.GONE);
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     public void setIsDialogOpened(boolean isDialogOpened)
@@ -132,7 +150,7 @@ public class GoGaming extends AppCompatActivity {
     {
         Log.v("onSaveInstanceState", "onSaveInstanceState");
         super.onSaveInstanceState(outState);
-        if (gameView!=null) {CriticalData.lastTime += gameView.getLastTime();}
+        if (gameView!=null && !isDialogOpened) {CriticalData.lastTime += gameView.getLastTime();}
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -150,7 +168,7 @@ public class GoGaming extends AppCompatActivity {
                 this.setContentView(gameView);
                 isPause = false;
                 isEndDialog = false;
-                gameView.setStartTime();
+           //     gameView.setStartTime();
                 gameView.pauseGame(false);
                 break;
             }
@@ -160,7 +178,7 @@ public class GoGaming extends AppCompatActivity {
                 this.setContentView(gameView);
                 break;
         }
-        setFullScreenMode();
+       // setFullScreenMode();
         isDialogOpened = false;
     }
 }
@@ -176,7 +194,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private Boolean isTouch;
     private Paint paint;
     private boolean runFlag = false;
-    private User user;
+
     private ArrayList<Bulk> bulkesMap;
     private SectorHolder sectors;
     private GameMap gameMap;
@@ -190,9 +208,15 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private Context context;
     private Thread thread;
     private Handler mainHandler;
-    private CountDownTimer graphDataTimer;
-    private Date gameTime;
 
+    private CountDownTimer graphDataTimer;
+
+    public Date gameTime;
+    public User user;
+
+    long restTime = 2000L;
+
+    //static GameCountDownTimer timer;
 
     public GameView(Context context) {
         super(context);
@@ -210,27 +234,44 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         bulkesMap = CriticalData.bulkesMap;
         user = CriticalData.user;
         gameTime = new Date(0);
+        //setGameTime();
         sectors = new SectorHolder();
         sectors.setOffsets(-gameMap.getOffsetTopLeftX(), - gameMap.getOffsetTopLeftY());
         isTouch = false;
-        setStartTime();
+        Calendar calendar = Calendar.getInstance();
+        startTime = calendar.getTimeInMillis();
         stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
-        startGraphDataTimer();
+        //setGraphDataTimer();
         mainHandler = new Handler();
     }
 
-    private void startGraphDataTimer()
+    public void setGraphDataTimer()
     {
-        CriticalData.graphPoints.add(new GraphPoint(gameTime.getTime(),((int) user.mass / 10)));
+      //  timer = new GameCountDownTimer(2000,2000);
+       // timer.start();
         graphDataTimer = new CountDownTimer(2000,2000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                Log.v("setGraphDataTimer","setGraphDataTimer");
             }
 
             @Override
             public void onFinish() {
-                CriticalData.graphPoints.add(new GraphPoint(gameTime.getTime(),((int) user.mass / 10)));
+                CriticalData.usersMass.add((int) user.mass / 10);
+
                 start();
+            }
+        }.start();
+    }
+
+
+    private void startCountDownTimer() {
+        graphDataTimer = new CountDownTimer(restTime, 1000) {
+            public void onTick(long millisUntilFinished) {
+                restTime = millisUntilFinished;
+            }
+            public void onFinish() {
+
             }
         }.start();
     }
@@ -240,6 +281,9 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         synchronized (this) {
             if(isPaused)
             {
+                Log.v("pauseGame","pauseGame");
+                gameMap.stopFoodTimer();
+                graphDataTimer.cancel();
                 runFlag = false;
                 synchronized(this) {
                     notify();
@@ -249,21 +293,14 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
-                gameMap.stopFoodTimer();
-                graphDataTimer.cancel();
             }
             else
             {
                 gameMap.startFoodTimer();
-                graphDataTimer.start();
+                //timer.resume();
+                setGraphDataTimer();
             }
         }
-    }
-
-    public void setStartTime()
-    {
-        Calendar calendar = Calendar.getInstance();
-        startTime = calendar.getTimeInMillis();
     }
 
     public Bitmap getLastScene()
@@ -277,8 +314,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         return bitmap;
     }
 
-    public long getLastTime()
-    {
+    public long getLastTime() {
         return (currentTime-startTime);
     }
 
@@ -302,7 +338,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Log.v("surfaceDestroyed", "surfaceDestroyed");
         CriticalData.user.setIsMoved(false);
         gameMap.stopFoodTimer();
-        graphDataTimer.cancel();
         runFlag = false;
         mainHandler.removeCallbacks(this);
     }
@@ -340,8 +375,9 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     public void draw()
     {
 //------------------------Draw Field------------------------------------------------------------
-        paint.setColor(Color.WHITE);
+        paint.setColor(Settings.GameFieldColor);
         canvas.drawPaint(paint);
+
         drawMap();
         for (Bulk bulk : bulkesMap) {
             if (!bulk.isDeleted && bulk instanceof Enemy)
@@ -441,6 +477,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                                         public void run() {
                                             GameOverDialog gameOverDialog = new GameOverDialog(context);
                                             gameOverDialog.show();
+                                            gameOverDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
                                             ((GoGaming)context).setIsDialogOpened(true);
                                         }
                                     });
@@ -489,9 +526,19 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Calendar calendar = Calendar.getInstance();
         currentTime = calendar.getTimeInMillis();
         gameTime.setTime(CriticalData.lastTime + (currentTime - startTime));
+        //setGameTime();
+
         canvas.drawText(sdf.format(gameTime), 50f, 100f, paint);
         canvas.drawText(String.valueOf((int) user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
     }
+
+    private void setGameTime()
+    {
+        Calendar calendar = Calendar.getInstance();
+        currentTime = calendar.getTimeInMillis();
+        gameTime.setTime(CriticalData.lastTime + (currentTime - startTime));
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event)
@@ -518,16 +565,5 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 break;
         }
         return true;
-    }
-}
-
-class GraphPoint
-{
-    public long gameTime;
-    public int userMass;
-    public GraphPoint(long gameTime, int userMass)
-    {
-        this.gameTime = gameTime;
-        this.userMass = userMass;
     }
 }

@@ -5,4 +5,5 @@
     <string name="game_over">You lose. Try again</string>
     <string name="end_game">Are You sure that\n you want to leave?</string>
     <string name="pause_game">Game paused</string>
+    <string name="settings_header">Settings</string>
 </resources>

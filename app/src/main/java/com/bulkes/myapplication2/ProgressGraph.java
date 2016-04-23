@@ -63,11 +63,11 @@ public class ProgressGraph extends AppCompatActivity {
     {
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
-        for(int i = 0; i<CriticalData.graphPoints.size(); i++)
+        for(int i = 0; i<CriticalData.usersMass.size(); i++)
         {
-            GraphPoint gPoint = CriticalData.graphPoints.get(i);
-            entries.add(new Entry(gPoint.userMass,i));
-            date.setTime(gPoint.gameTime);
+            int userMass = CriticalData.usersMass.get(i);
+            entries.add(new Entry(userMass,i*2));
+            date.setTime(i*2000);
             labels.add(sdf.format(date));
         }
         LineDataSet dataset = new LineDataSet(entries, "Player`s mass");

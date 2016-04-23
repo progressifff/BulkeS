@@ -13,11 +13,11 @@ public final class CriticalData {
     public static float scaling;
     public static long lastTime;
 
-    public static ArrayList<GraphPoint> graphPoints;
+    public static ArrayList<Integer> usersMass;
 
     public static void createNewField()
     {
-        graphPoints = new ArrayList();
+        usersMass = new ArrayList();
         gameMap = new GameMap();
         user = new User(Settings.ScreenWidthDefault / 2, Settings.ScreenHeightDefault / 2, Settings.UserStartSize, Settings.UserDefaultColor);
         bulkesMap = new ArrayList<Bulk>(Settings.CountBulkes + 1);

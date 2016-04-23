@@ -20,6 +20,7 @@
             android:inputType="textPersonName"
             android:maxLines="1"
             android:text = "User1"
+            android:imeOptions="flagNoFullscreen|flagNoExtractUi|actionDone"
             />
     </LinearLayout>
 
@@ -64,6 +65,8 @@
             android:layout_marginLeft="20dp"
             android:id="@+id/about_button" />
     </LinearLayout>
-    <include layout="@layout/about_content"/>
+    <include layout="@layout/about_content"
+        android:id="@+id/include" />
     <include layout="@layout/help_content"/>
+
 </RelativeLayout>

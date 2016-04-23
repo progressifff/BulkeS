@@ -10,18 +10,19 @@ public final class Settings
     //------------------ScreenParameters--------------------
     final   static int    ScreenWidthDefault         = 1920;
     final   static int    ScreenHeightDefault        = 1080;
-    //--------------------Game--------------------
-    final   static int    TimeCreateNewFood          = 5;
-    final   static int    TimeDelayFirstNewFood      = 10;
+    //--------------------Game------------------------------
+       static int    GameFieldColor             = Color.WHITE;
     //--------------------User--------------------------------
     final   static float  UserStartSize              = 100f;
     final   static float  UserDefaultSpeed           = 0.1f;
-    final   static int    UserDefaultColor           = Color.RED;
+            static int    UserDefaultColor           = Color.RED;
     final   static float  UserBaseSize               = 100f;//for indicator
     final   static float  UserMaxRadius              = 200f;
     final   static float  UserSpeedCoefficient       = 0.1f;
     static  float  UserScale                         = 1f;
     //------------------Food--------------------------------
+    final   static int    TimeCreateNewFood          = 5;
+    final   static int    TimeDelayFirstNewFood      = 10;
     final   static int    MinFoodInSector            = 0;
     final   static int    MaxFoodInSector            = 6;
     final   static float  MinAddFoodScaleValue       = 0.6f;
@@ -77,5 +78,21 @@ public final class Settings
     {
         return ColorList.length;
     }
-    final   static String FileBaseName               = "gameProgress.txt";
+
+    final static int UsersBulkColors[] = {
+            Color.rgb(239,48,56),//red
+            Color.rgb(250,72,102),//light red
+            Color.rgb(240,108,0),//orange
+            Color.rgb(234,117,0),//mandarin
+            Color.rgb(255,215,0),//gold
+            Color.rgb(255,255,0),//yellow
+            Color.rgb(191,255,0),//light green
+            Color.rgb(102,255,0),//lime
+            Color.rgb(0,255,255),//cyan
+            Color.rgb(120,219,226),//material blue
+            Color.rgb(28,169,201),//dark blue
+            Color.rgb(29,172,214),//blue Krayola
+            Color.rgb(147,112,216),//purpur
+            Color.rgb(184,143,255)//violet
+    };
 }

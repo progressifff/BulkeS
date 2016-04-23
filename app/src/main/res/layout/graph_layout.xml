@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ImageButton
+    <com.bulkes.myapplication2.FocusableImageButton
         android:id="@+id/close_graph_btn"
         android:src="@drawable/close_graph_btn"
         android:scaleType="centerCrop"
@@ -14,7 +14,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="9dp" />
 
-    <ImageButton
+    <com.bulkes.myapplication2.FocusableImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/save_graph_btn"
