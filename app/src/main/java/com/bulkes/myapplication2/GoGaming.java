@@ -1,5 +1,6 @@
 package com.bulkes.myapplication2;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -36,7 +37,6 @@ import java.util.ListIterator;
 public class GoGaming extends AppCompatActivity {
     private     GameView gameView;
     private     Window window;
-    private     boolean isPause;
     private     boolean isDialogOpened;
     private     boolean isEndDialog;
     private     PauseGameDialog pauseGameDialog;
@@ -50,13 +50,10 @@ public class GoGaming extends AppCompatActivity {
             @Override
             public void onSystemUiVisibilityChange(int visibility) {
                 if((visibility&View.SYSTEM_UI_FLAG_IMMERSIVE) == 0) {
-                    Log.v("IMMERSIVE", "IMMERSIVE");
                     setFullScreenMode();
                 }
             }
         });
-        Log.v("onCreate", "onCreate");
-        isPause = false;
         isDialogOpened = false;
         isEndDialog = false;
         window = getWindow();
@@ -64,20 +61,16 @@ public class GoGaming extends AppCompatActivity {
         pauseGameDialog = new PauseGameDialog(this);
         endGamedialog = new EndGameDialog(this);
         gameView = new GameView(this);
-        gameView.setGraphDataTimer();
         setContentView(gameView);
         gamePauseView = new View(this);
         gamePauseView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
-        if(isPause) {
+        if(gameView.isPaused()) {
             if(!isDialogOpened) {
-                gameView.pauseGame(true);
-                gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
                 setContentView(gamePauseView);
                 if(isEndDialog) {
                     endGamedialog.show();
@@ -98,7 +91,6 @@ public class GoGaming extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK)
         {
             if(!isDialogOpened) {
-                Log.v("KEYCODE_BACK","KEYCODE_BACK");
                 CriticalData.lastTime += gameView.getLastTime();
                 gameView.pauseGame(true);
                 gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
@@ -131,30 +123,27 @@ public class GoGaming extends AppCompatActivity {
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         Log.v("onPause", "onPause");
     }
 
     @Override
-    public void onStop()
-    {
+    public void onStop() {
         super.onStop();
-        isPause = true;
         Log.v("onStop", "onStop");
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState)
-    {
+    public void onSaveInstanceState(Bundle outState) {
         Log.v("onSaveInstanceState", "onSaveInstanceState");
         super.onSaveInstanceState(outState);
-        if (gameView!=null && !isDialogOpened) {CriticalData.lastTime += gameView.getLastTime();}
-    }
+        if(!gameView.isPaused()){
 
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+            CriticalData.lastTime += gameView.getLastTime();
+            gameView.pauseGame(true);
+            gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
+        }
     }
 
     public void dialogStartGame(int id)
@@ -166,9 +155,7 @@ public class GoGaming extends AppCompatActivity {
             {
                 gameView = new GameView(this);
                 this.setContentView(gameView);
-                isPause = false;
                 isEndDialog = false;
-           //     gameView.setStartTime();
                 gameView.pauseGame(false);
                 break;
             }
@@ -178,7 +165,6 @@ public class GoGaming extends AppCompatActivity {
                 this.setContentView(gameView);
                 break;
         }
-       // setFullScreenMode();
         isDialogOpened = false;
     }
 }
@@ -202,24 +188,20 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     static long currentTime;//action for pause
     static long startTime;
 
-    private Canvas canvas;
+    private Canvas gameCanvas;
     private long previous = -1;//for fps
     //-------------
     private Context context;
     private Thread thread;
     private Handler mainHandler;
-
-    private CountDownTimer graphDataTimer;
-
     public Date gameTime;
     public User user;
-
     long restTime = 2000L;
-
-    //static GameCountDownTimer timer;
+    private boolean isPause;
 
     public GameView(Context context) {
         super(context);
+        isPause = false;
         Log.v("GameView", "GameView");
         this.context = context;
         paint = new Paint();
@@ -234,83 +216,68 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         bulkesMap = CriticalData.bulkesMap;
         user = CriticalData.user;
         gameTime = new Date(0);
-        //setGameTime();
         sectors = new SectorHolder();
         sectors.setOffsets(-gameMap.getOffsetTopLeftX(), - gameMap.getOffsetTopLeftY());
         isTouch = false;
         Calendar calendar = Calendar.getInstance();
         startTime = calendar.getTimeInMillis();
         stick = new JoyStick(Settings.JoyStickRadiusOut,Settings.JoyStickRadiusIn);
-        //setGraphDataTimer();
+        setGraphDataTimer();
         mainHandler = new Handler();
     }
 
     public void setGraphDataTimer()
     {
-      //  timer = new GameCountDownTimer(2000,2000);
-       // timer.start();
-        graphDataTimer = new CountDownTimer(2000,2000) {
+        final CountDownTimer graphDataTimer = new CountDownTimer(2000, 2000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.v("setGraphDataTimer","setGraphDataTimer");
+                if(isPause) {
+                    this.cancel();
+                }
             }
-
             @Override
             public void onFinish() {
                 CriticalData.usersMass.add((int) user.mass / 10);
-
                 start();
             }
         }.start();
     }
-
-
+/*
     private void startCountDownTimer() {
         graphDataTimer = new CountDownTimer(restTime, 1000) {
             public void onTick(long millisUntilFinished) {
                 restTime = millisUntilFinished;
             }
-            public void onFinish() {
-
-            }
+            public void onFinish() {}
         }.start();
     }
+*/
+    public boolean isPaused() {
+        return isPause;
+    }
 
-    public void pauseGame(boolean isPaused)
-    {
-        synchronized (this) {
-            if(isPaused)
-            {
-                Log.v("pauseGame","pauseGame");
-                gameMap.stopFoodTimer();
-                graphDataTimer.cancel();
-                runFlag = false;
-                synchronized(this) {
-                    notify();
-                }
-                try {
-                    thread.join();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            else
-            {
-                gameMap.startFoodTimer();
-                //timer.resume();
-                setGraphDataTimer();
-            }
+    public void pauseGame(boolean isPaused) {
+        if(isPaused) {
+            Log.v("pauseGame","pauseGame");
+            isPause = true;
+            runFlag = false;
+        }
+        else {
+            Log.v("NOpauseGame", "NOpauseGame");
+            isPause = false;
+            gameMap.startFoodTimer();
+            setGraphDataTimer();
         }
     }
 
     public Bitmap getLastScene()
     {
         Bitmap bitmap = Bitmap.createBitmap(this.getWidth(), this.getHeight(),Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
+        Canvas sceneCanvas = new Canvas(bitmap);
         setDrawingCacheEnabled(true);
         measure(this.getWidth(), this.getHeight());
         layout(0, 0, this.getWidth(), this.getHeight());
-        draw();
+        draw(sceneCanvas);
         return bitmap;
     }
 
@@ -326,15 +293,13 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-    {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         onFinishInflate();
         Log.v("surfaceChanged", "surfaceChanged");
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder)
-    {
+    public void surfaceDestroyed(SurfaceHolder holder) {
         Log.v("surfaceDestroyed", "surfaceDestroyed");
         CriticalData.user.setIsMoved(false);
         gameMap.stopFoodTimer();
@@ -343,54 +308,50 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     }
 
     @Override
-    public void run()
-    {
-        Log.v("pauseGame","pauseGame");
+    public void run() {
         while(runFlag)
         {
-            canvas = null;
+            gameCanvas = null;
             try
             {
-                canvas = Holder.lockCanvas();
-                if(canvas!=null)
+                gameCanvas = Holder.lockCanvas();
+                if(gameCanvas!=null)
                 {
                     synchronized (Holder)
                     {
-                        canvas.setMatrix(matrix);
-                        this.draw();
+                        gameCanvas.setMatrix(matrix);
+                        this.draw(gameCanvas);
                     }
                 }
             }
             finally
             {
-                if(canvas != null)
-                {
-                    Holder.unlockCanvasAndPost(canvas);
+                if(gameCanvas != null) {
+                    Holder.unlockCanvasAndPost(gameCanvas);
                 }
             }
         //mainHandler.postDelayed(this,2);
         }
     }
 
-    public void draw()
+    @SuppressLint("MissingSuperCall")
+    public void draw(Canvas canvas)
     {
 //------------------------Draw Field------------------------------------------------------------
         paint.setColor(Settings.GameFieldColor);
         canvas.drawPaint(paint);
 
-        drawMap();
+        drawMap(canvas);
         for (Bulk bulk : bulkesMap) {
             if (!bulk.isDeleted && bulk instanceof Enemy)
             {
-               // ((Enemy) bulk).updateState(gameMap, sectors);
-                // drawBulk(bulk);
-                drawBulk(bulk);
+                drawBulk(bulk,canvas);
                 if(!((Enemy) bulk).isDeleted)
                     ((Enemy) bulk).updateState(gameMap, sectors);
             }
         }
-        drawUser();
-        drawJoyStick();
+        drawUser(canvas);
+        drawJoyStick(canvas);
         if(user.getRadius() > Settings.UserMaxRadius && user.getRadius() == user.getAnimationRadius()) {
             Settings.UserScale -= Settings.UserScaleStep;
             Log.v("User Scale ", String.valueOf(Settings.UserScale));
@@ -398,11 +359,11 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 unit.updatePosition(user);
             }
         }
-        drawScores();
-        drawFPS();
+        drawScores(canvas);
+        drawFPS(canvas);
     }
 
-    private void drawFPS() {
+    private void drawFPS(Canvas canvas) {
         long current = System.currentTimeMillis();
         if (previous != -1)
         {
@@ -412,7 +373,8 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
         previous = current;
     }
-    private void drawJoyStick()
+
+    private void drawJoyStick(Canvas canvas)
     {
         if(isTouch)
         {
@@ -425,15 +387,16 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawBulk(Bulk bulk)
+    private void drawBulk(Bulk bulk,Canvas canvas)
     {
         paint.setColor(bulk.getColor());
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getAnimationRadius(), paint);
     }
-    private void drawUser()
+
+    private void drawUser(Canvas canvas)
     {
-        drawBulk(user);
+        drawBulk(user,canvas);
         if(user.isMoved) {
             paint.setColor(Color.GRAY);
             paint.setAlpha(240);
@@ -441,7 +404,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawMap() {
+    private void drawMap(Canvas canvas) {
         sectors.restartChecking();
         //sectors.checkUnit(user);
         float speedX = stick.getdX() * Settings.UserSpeedCoefficient;
@@ -481,6 +444,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                                 mainHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        pauseGame(true);
                                         GameOverDialog gameOverDialog = new GameOverDialog(context);
                                         gameOverDialog.show();
                                         gameOverDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
@@ -520,7 +484,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         }
     }
 
-    private void drawScores()
+    private void drawScores(Canvas canvas)
     {
         paint.setAntiAlias(true);
         paint.setColor(Color.RED);
@@ -530,8 +494,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         Calendar calendar = Calendar.getInstance();
         currentTime = calendar.getTimeInMillis();
         gameTime.setTime(CriticalData.lastTime + (currentTime - startTime));
-        //setGameTime();
-
         canvas.drawText(sdf.format(gameTime), 50f, 100f, paint);
         canvas.drawText(String.valueOf((int) user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
     }
@@ -542,7 +504,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         currentTime = calendar.getTimeInMillis();
         gameTime.setTime(CriticalData.lastTime + (currentTime - startTime));
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event)

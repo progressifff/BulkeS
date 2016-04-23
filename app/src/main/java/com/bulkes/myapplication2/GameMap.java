@@ -22,7 +22,8 @@ public class GameMap
     private boolean needAddFood;
     private int maxFoodCountOnMap;
     private int minFoodCountOnMap;
-    private CountDownTimer addFoodTimer;
+  //  private CountDownTimer addFoodTimer;
+    private boolean stopTimer;
 
     public GameMap()
     {
@@ -35,24 +36,29 @@ public class GameMap
         offsetTopLeftY = (Settings.MapSizeY%2 == 0) ? (int)(-0.5f*Settings.ScreenHeightDefault*(Settings.MapSizeY - 1)) : (-Settings.MapSizeY/2*Settings.ScreenHeightDefault);
         delFoodCount = 0;
         needAddFood = false;
+        stopTimer = false;
     }
 
     public void fillFood(ArrayList<Bulk> bulkesMap)
     {
-        Log.v("fill food", String.valueOf(map.size()));
         generateSmartMap(bulkesMap);
         startFoodTimer();
     }
 
-    public void stopFoodTimer() {addFoodTimer.cancel();}
+    public void stopFoodTimer() {
+        stopTimer = true;
+    }
 
     public void startFoodTimer()
     {
-        addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000,Settings.TimeCreateNewFood * 1000)
+        final CountDownTimer addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000,Settings.TimeCreateNewFood * 1000)
         {
             @Override
-            public void onTick(long millisUntilFinished)
-            {}
+            public void onTick(long millisUntilFinished) {
+                if(stopTimer){
+                    this.cancel();
+                }
+            }
             @Override
             public void onFinish()
             {

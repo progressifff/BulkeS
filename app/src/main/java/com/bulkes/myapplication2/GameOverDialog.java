@@ -34,8 +34,9 @@ public class GameOverDialog extends Dialog {
         closeGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancel();
                 activity.finish();
+                cancel();
+
             }
         });
         repeatGameBtn = (Button) findViewById(R.id.repeate_btn);
