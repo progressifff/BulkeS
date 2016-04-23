@@ -10,6 +10,7 @@ public class User extends Bulk
         this(_x, _y, _radius, Settings.UserDefaultColor);
     }
 
+
     public User( float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
