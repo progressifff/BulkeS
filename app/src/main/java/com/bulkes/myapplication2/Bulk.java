@@ -14,12 +14,10 @@ public class Bulk extends Unit
     public Bulk(float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
-        if( this instanceof User )
-            Log.v("User constr ", String.valueOf(radius));
-
         mass = (float)Math.PI * _radius * _radius;
         isMoved = false;
         indicator = new Indicator();
+        animationRadius = radius;
     }
     public Bulk( float _x, float _y, float _radius)
     {
@@ -71,6 +69,20 @@ public class Bulk extends Unit
             Log.v("Mass: ", String.valueOf(mass));
             Log.v("Radius: ", String.valueOf(radius));
         }
+    }
+
+    @Override
+    public void updatePosition(Unit unit)//update location + radius
+    {
+        radius = (float) Math.sqrt((double) mass / Math.PI) * Settings.UserScale;
+        //baseRadius = radius;
+        x = unit.x + ((baseX - unit.x) * Settings.UserScale);
+        y = unit.y + ((baseY - unit.y) * Settings.UserScale);
+        if (this instanceof User) {
+            Log.v("User UPD", String.valueOf(radius));
+        }
+        if(!isOnMainScreen())
+            animationRadius = radius;
     }
 
     @Override

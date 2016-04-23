@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/userInfo"
+        android:layout_below="@+id/topBar"
+        android:id="@+id/tableHeader"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+    </TableLayout>
+
+    <ScrollView
+        android:layout_above="@+id/gameButton"
+        android:layout_toRightOf="@+id/userInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tableHeader"
+        android:layout_alignLeft="@+id/tableHeader"
+        android:layout_alignRight="@+id/tableHeader">
+
+        <TableLayout
+            android:id = "@+id/tableResult"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            >
+            <TableRow android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/headerHidden">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/tableN"
+                    android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/tableName"
+                    android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/tableTime"
+                    android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/tablePoint"
+                    android:layout_weight="1"
+                    />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
+</LinearLayout>

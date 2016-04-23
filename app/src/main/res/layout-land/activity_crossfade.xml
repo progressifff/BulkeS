@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:weightSum="1"
@@ -21,19 +21,32 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/iButtonDiagram"
-            android:background="#0054a9f9"
+            android:background="@drawable/ibuttonsstyle"
             android:layout_gravity="left"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="400dp"
             android:layout_alignParentLeft="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/chart96"/>
+            android:src="@drawable/chart96"
+            android:layout_marginRight="5dp"/>
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/imageButton"
+            android:background="@drawable/ibuttonsstyle"
+            android:layout_gravity="left"
+            android:scaleType="centerCrop"
+            android:src="@drawable/table104"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iButtonDiagram"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
 
         <ImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/iButtonAbout"
-            android:background="#009ef47f"
+            android:background="@drawable/ibuttonsstyle"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:layout_toLeftOf="@+id/iButtonSettings"
@@ -49,10 +62,22 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/setting96"
             android:cropToPadding="false"
-            android:background="#00f42020"
+            android:background="@drawable/ibuttonsstyle"
             android:scaleType="centerCrop"/>
 
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Bulkes"
+        android:id="@+id/mainLogo"
+        android:layout_above="@+id/userInfo"
+        android:layout_centerHorizontal="true"
+        android:textColor="#34adf3"
+        android:textSize="100dp"
+        android:background="@drawable/ibuttonsstyle"/>
 
     <GridLayout
         android:id="@+id/userInfo"
@@ -64,16 +89,15 @@
         android:layout_alignParentTop="false"
         android:layout_marginTop="5dp"
         android:padding="10dp"
-        android:layout_below="@+id/topBar"
-        android:layout_above="@+id/gameButton"
         android:focusableInTouchMode="true"
-        >
+        android:layout_centerInParent="true">
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
-            android:layout_rowSpan="3">
+            android:layout_rowSpan="3"
+            android:paddingRight="10dp">
 
             <ImageView
                 android:layout_width="100dp"
@@ -83,8 +107,9 @@
                 android:layout_row="0"
                 android:layout_rowSpan="3"
                 android:layout_gravity="center"
-                android:src="@drawable/setting96"
-                android:scaleType="centerCrop"/>
+                android:src="@drawable/user_main"
+                android:scaleType="centerCrop"
+                />
         </FrameLayout>
 
         <EditText
@@ -94,7 +119,6 @@
             android:layout_height="30dp"
             android:inputType="textPersonName"
             android:maxLines="1"
-            android:width="200dp"
             android:text = "User1"
             android:layout_row="0"
             android:layout_column="1"
@@ -107,11 +131,12 @@
             android:enabled="true"
             android:textColor="#f21e3a"
             android:singleLine="true"
-            android:editable="true"/>
+            android:width="220dp"/>
 
         <RelativeLayout
             android:layout_width="220dp"
-            android:layout_height="30dp">
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -122,7 +147,8 @@
                 android:textSize="14dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:layout_alignParentLeft="true"/>
+                android:layout_alignParentLeft="true"
+                android:textColor="#000000"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -152,7 +178,8 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_alignParentLeft="true"
-            android:layout_alignBaseline="@+id/userPoint"/>
+            android:layout_alignBaseline="@+id/userPoint"
+            android:textColor="#000000"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -170,70 +197,7 @@
     </GridLayout>
 
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/userInfo"
-        android:layout_below="@+id/topBar"
-        android:id="@+id/tableHeader"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
 
-    </TableLayout>
-
-    <ScrollView
-        android:layout_above="@+id/gameButton"
-        android:layout_toRightOf="@+id/userInfo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tableHeader"
-        android:layout_alignLeft="@+id/tableHeader"
-        android:layout_alignRight="@+id/tableHeader">
-
-    <TableLayout
-        android:id = "@+id/tableResult"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-       >
-        <TableRow android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:id="@+id/headerHidden">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/tableN"
-                android:layout_weight="1"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/tableName"
-                android:layout_weight="1"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/tableTime"
-                android:layout_weight="1"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/tablePoint"
-                android:layout_weight="1"
-                />
-        </TableRow>
-    </TableLayout>
-</ScrollView>
 
 
     <LinearLayout
@@ -241,32 +205,280 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/userInfo"
-        android:layout_centerInParent="true"
         android:gravity="center"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/userInfo">
 
-        <ImageButton
-            android:layout_width="150dp"
-            android:layout_height="100dp"
-            android:id="@+id/iButtonTraining"
-            android:background="#9d45f5"
-            android:layout_margin="5dp"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp">
 
-        <ImageButton
-            android:layout_width="150dp"
-            android:layout_height="100dp"
-            android:id="@+id/iButtonBattle"
-            android:background="#f39224"
-            android:layout_margin="5dp"/>
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/iButtonTraining"
+                android:background="@drawable/training_button"
+                />
 
-        <ImageButton
-            android:layout_width="150dp"
-            android:layout_height="100dp"
-            android:id="@+id/iButtonSurvival"
-            android:background="#3d63ee"
-            android:layout_margin="5dp"/>
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentRight="false"
+                android:src="@drawable/play104"
+                android:scaleType="centerCrop"
+                android:layout_centerInParent="true"
+                android:alpha="0.8"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/training"
+                android:id="@+id/trainingLabel"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:textColor="#000000"
+                android:textSize="22dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/max_score"
+                android:id="@+id/trainingMaxScoreLabel"
+                android:layout_below="@+id/trainingLabel"
+                android:layout_alignParentLeft="false"
+                android:layout_marginLeft="5dp"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="11500"
+                android:id="@+id/trainingMaxScoreValue"
+                android:layout_below="@+id/trainingLabel"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentBottom="false"
+                android:layout_alignRight="@+id/iButtonTraining"
+                android:layout_marginRight="5dp"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/total_time"
+                android:id="@+id/trainingTotalTimeLabel"
+                android:layout_below="@+id/trainingMaxScoreLabel"
+                android:layout_alignLeft="@+id/trainingMaxScoreLabel"
+                android:textColor="#000000"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="02:11:50"
+                android:id="@+id/trainingTotalTimeValue"
+                android:layout_below="@+id/trainingMaxScoreValue"
+                android:layout_alignParentRight="false"
+                android:layout_alignRight="@+id/trainingMaxScoreValue"
+                android:textColor="#000000"
+                android:layout_marginTop="5dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/iButtonDuel"
+                android:background="@drawable/duel_button"
+                />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentRight="false"
+                android:src="@drawable/play104"
+                android:scaleType="centerCrop"
+                android:layout_centerInParent="true"
+                android:alpha="0.8"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/duel"
+                android:id="@+id/duelLabel"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:textColor="#000000"
+                android:layout_toLeftOf="@+id/duelLevel"
+                android:layout_toStartOf="@+id/duelLevel"
+                android:textSize="22dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/max_point"
+                android:id="@+id/duelMaxPointLabel"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/duelLabel"
+                android:layout_marginLeft="5dp"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="22500"
+                android:id="@+id/duelMaxPointValue"
+                android:layout_below="@+id/duelLabel"
+                android:layout_alignParentRight="false"
+                android:layout_alignRight="@+id/iButtonDuel"
+                android:layout_marginRight="5dp"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/best_time"
+                android:id="@+id/duelBestTimeLabel"
+                android:layout_below="@+id/duelMaxPointLabel"
+                android:layout_alignLeft="@+id/duelMaxPointLabel"
+                android:textColor="#000000"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="00:05:36"
+                android:id="@+id/duelBestTimeValue"
+                android:layout_below="@+id/duelMaxPointValue"
+                android:layout_alignRight="@+id/duelMaxPointValue"
+                android:textColor="#000000"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="1"
+                android:id="@+id/duelLevel"
+                android:layout_alignRight="@+id/iButtonDuel"
+                android:layout_alignTop="@+id/iButtonDuel"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/level_indicator_style"
+                android:gravity="center"
+                android:textColor="#ffffff"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/iButtonSurvival"
+                android:background="@drawable/survival_button"
+                />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentRight="false"
+                android:src="@drawable/play104"
+                android:scaleType="centerCrop"
+                android:layout_centerInParent="true"
+                android:alpha="0.8"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/survival"
+                android:id="@+id/survivalLabel"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:textColor="#000000"
+                android:layout_alignRight="@+id/iButtonSurvival"
+                android:textSize="22dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/max_point"
+                android:id="@+id/survivalMaxPointLabel"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/survivalLabel"
+                android:layout_marginLeft="5dp"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="22500"
+                android:id="@+id/survivalMaxPointValue"
+                android:layout_below="@+id/survivalLabel"
+                android:layout_alignParentRight="false"
+                android:layout_alignRight="@+id/iButtonSurvival"
+                android:layout_marginRight="5dp"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/best_time"
+                android:id="@+id/survivalBestTimeLabel"
+                android:layout_below="@+id/survivalMaxPointLabel"
+                android:layout_alignLeft="@+id/survivalMaxPointLabel"
+                android:textColor="#000000"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="00:05:36"
+                android:id="@+id/survivalBestTimeValue"
+                android:layout_below="@+id/survivalMaxPointValue"
+                android:layout_alignRight="@+id/survivalMaxPointValue"
+                android:textColor="#000000"
+                android:layout_marginTop="5dp"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

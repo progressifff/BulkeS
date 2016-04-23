@@ -14,7 +14,7 @@ public class Unit
     protected float baseY;
     protected float baseRadius;
     protected float radius;
-    private   float animationRadius;
+    protected float animationRadius;
     protected boolean isDeleted;
     protected int color;
     protected Unit    target;
@@ -29,6 +29,7 @@ public class Unit
 
     protected  float        speedX;
     protected  float        speedY;
+    protected  float        step;
 
     //constructors
     public Unit()
@@ -67,14 +68,13 @@ public class Unit
         this.baseRadius = radius;
         this.radius = radius * Settings.UserScale;
     }
+    //overrided in Bulk
     public void updatePosition(Unit unit)//update location + radius
     {
         radius = baseRadius * Settings.UserScale;
-        x = unit.x + ((baseX - unit.x) * Settings.UserScale);
-        y = unit.y + ((baseY - unit.y) * Settings.UserScale);
-        if (this instanceof User) {
-            Log.v("User UPD", String.valueOf(radius));
-        }
+       // x = unit.x + ((baseX - unit.x) * Settings.UserScale);
+       // y = unit.y + ((baseY - unit.y) * Settings.UserScale);
+
         if(!isOnMainScreen())
             animationRadius = radius;
     }
@@ -136,8 +136,6 @@ public class Unit
             else
                 animationRadius = radius;
         }
-        if( this instanceof User)
-            Log.v("User ", String.valueOf(radius) + " " + String.valueOf(animationRadius));
         return radius;
     }
     public float getFeed()//this method must override in all class
@@ -162,6 +160,8 @@ public class Unit
     }
     public boolean isOverlapped(Unit unit)
     {
+        //if( unit.radius > radius )
+          //  return unit.isOverlapped(this);
         if(       unit.getX() < x - (radius + unit.radius)
                 ||unit.getX() > x + (radius + unit.radius)
                 ||unit.getY() < y - (radius + unit.radius)
@@ -174,10 +174,12 @@ public class Unit
         float dy;
         dx = pointOut.getX() - x;
         dy = pointOut.getY() - y;
-        return (dx * dx + dy * dy) < (radius * radius);
+        return  (dx * dx + dy * dy) < (radius * radius);
     }
     public boolean isEaten(Unit unit)
     {
+        if(unit.radius > radius)
+            return unit.isEaten(this);
         float dx;
         float dy;
         dx = unit.getX() - x;
@@ -205,6 +207,7 @@ public class Unit
         if(isOnMainScreen()) {
             speedX = Math.max(Settings.MinFoodSpeed, target.getSpeedX() * Settings.UnitToTargetCoefficient);
             speedY = Math.max(Settings.MinFoodSpeed, target.getSpeedY() * Settings.UnitToTargetCoefficient);
+            Log.v("Alarm", String.valueOf(speedX) + " " + String.valueOf(speedY));
             return moveToTarget();
         }
         else
@@ -223,15 +226,15 @@ public class Unit
         //catchTarget();
         if (Math.abs(dx) > Math.abs(dy)) {
             if (dx > 0)
-                newX = x + speedX;
+                newX = x + getSpeedX();
             else
-                newX = x - speedX;
+                newX = x - getSpeedX();
             setPosition(newX, solveY(newX));
         } else {
             if (dy > 0)
-                newY = y + speedY;
+                newY = y + getSpeedY();
             else
-                newY = y - speedY;
+                newY = y - getSpeedY();
             setPosition(solveX(newY), newY);
         }
         return false;

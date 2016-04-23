@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Bulkes</string>
     <string name="action_settings" translatable="false">Settings</string>
-    <string name="resume_game" translatable="false">Game is on pause</string>
+    <string name="resume_game">Game is on pause</string>
     <string name="game_over">You lose. Try again</string>
     <string name="end_game" translatable="false">Are You sure that\n you want to leave?</string>
-    <string name="pause_game" translatable="false">Game paused</string>
+    <string name="pause_game">Game paused</string>
     <string name="tableN">N</string>
     <string name="tableName">Name</string>
     <string name="tableTime">Time</string>
@@ -14,4 +14,11 @@
     <string name="maxGameScore">Max game score:</string>
 
     <string name="title_activity_splash_screen" translatable="false">splashScreen</string>
+    <string name="training">Training</string>
+    <string name="max_score">Max Score</string>
+    <string name="total_time">Total Time</string>
+    <string name="duel">Duel</string>
+    <string name="max_point">Max Point</string>
+    <string name="best_time">Best time</string>
+    <string name="survival">Survival</string>
 </resources>

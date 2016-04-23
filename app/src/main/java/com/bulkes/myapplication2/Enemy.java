@@ -43,11 +43,9 @@ public class Enemy extends Bulk
 
         sectors.solveSectorToMove(this);
 
-        int minimumPriority = Integer.MAX_VALUE;
         float attraction;
         float maxAttraction = Integer.MIN_VALUE;
         int currentPriority;
-        float maxFeedByDistance = -1f;//warning default
         Iterator<Unit> iterator = gameMap.getMap().iterator();
         while (iterator.hasNext()) {
             Unit point = iterator.next();
@@ -63,25 +61,6 @@ public class Enemy extends Bulk
                         maxAttraction = attraction;
                         target = point;
                     }
-                    /*
-                    if (currentPriority < minimumPriority) {
-                        minimumPriority = sectors.getPriorityForUnit(point);
-                        float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                        float feedByDistance = point.getFeed() / distance;
-                        maxFeedByDistance = feedByDistance;
-                        target = point;
-                        //minimumDistance = distance;
-                    } else {
-                        if (currentPriority == minimumPriority) {
-                            float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                            float feedByDistance = point.getFeed() / distance;
-                            if (feedByDistance > maxFeedByDistance) {
-                                maxFeedByDistance = feedByDistance;
-                                target = point;
-                            }
-                        }
-                    }
-                    */
                 }
         }
     }
@@ -102,24 +81,8 @@ public class Enemy extends Bulk
         }
         else
             stepToTarget++;
-        target.setColor(Color.BLACK);
+//        target.setColor(Color.BLACK);
         //Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
-    }
-    private float solveY(float _x)
-    {
-        float k;
-        k = (target.getY() - getY()) / (target.getX() - getX());
-        return k * _x - k * getX() + getY();
-    }
-    private float solveX(float _y)
-    {
-        float k;
-        if(Math.abs(target.getX() - getX()) < 0.001f )
-            return getX();
-        else {
-            k = (target.getY() - getY()) / (target.getX() - getX());
-            return (_y - getY()) / k + getX();
-        }
     }
     public Path getIndicatorToTarget() {
         return getIndicator(target.getX(), target.getY());

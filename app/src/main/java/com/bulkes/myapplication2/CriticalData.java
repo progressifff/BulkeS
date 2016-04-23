@@ -1,6 +1,7 @@
 package com.bulkes.myapplication2;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 /**
@@ -16,6 +17,7 @@ public final class CriticalData {
 
     public static void createNewField()
     {
+        Settings.UserScale = 1f;
         gameMap = new GameMap();
         user = new User(Settings.ScreenWidthDefault / 2, Settings.ScreenHeightDefault / 2, Settings.UserStartSize, Settings.UserDefaultColor);
         bulkesMap = new ArrayList<Bulk>(Settings.CountBulkes + 1);//1 - for user
@@ -27,9 +29,9 @@ public final class CriticalData {
             gameMap.addUnit(enemy);
         }
         gameMap.addUnit(user);
+        gameMap.fillFood(bulkesMap);
         lastTime = 0;
         isRun = true;
-        Settings.UserScale = 1f;
     }
     public static void createTrainingField()
     {
@@ -46,7 +48,7 @@ public final class CriticalData {
     public static void createSurvivalField()
     {
         Settings.CountBulkes    = 5;
-        Settings.UserStartSize = 50f;
+        Settings.UserStartSize = 100f;
         createNewField();
     }
 }

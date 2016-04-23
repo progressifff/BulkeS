@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,7 +48,36 @@ public class MainMenuActivity extends AppCompatActivity {
     //Table Result
     private TableLayout tableResult;
     private TableLayout tableHeader;
-  //  private TableRow    rowHeader;
+
+    //Main Logo
+    private TextView    mainLogo;
+
+    //User info
+    private TextView    labelTime;
+    private TextView    userTime;
+    private TextView    labelPoint;
+    private TextView    userPoint;
+
+    //Training
+    private TextView    trainingLabel;
+    private TextView    trainingMaxScoreLabel;
+    private TextView    trainingMaxScoreValue;
+    private TextView    trainingTotalTimeLabel;
+    private TextView    trainingTotalTimeValue;
+
+    //Duel
+    private TextView    duelLabel;
+    private TextView    duelBestTimeLabel;
+    private TextView    duelMaxPointLabel;
+    private TextView    duelBestTimeValue;
+    private TextView    duelMaxPointValue;
+
+    //Survival
+    private TextView    survivalLabel;
+    private TextView    survivalBestTimeLabel;
+    private TextView    survivalMaxPointLabel;
+    private TextView    survivalBestTimeValue;
+    private TextView    survivalMaxPointValue;
 
 
     //File saving
@@ -56,8 +85,19 @@ public class MainMenuActivity extends AppCompatActivity {
     public static final String APP_SETTINGS_USER_NAME = "UserName";
     private SharedPreferences mSettings;
 
+    //Fonts
+    static String fontRubik = "fonts/Rubik/Rubik-Regular.ttf";
+    static String fontPhilosopher = "fonts/Philosopher/Philosopher-Regular.ttf";
+    static String fontPassionOne = "fonts/Passion_One/PassionOne-Regular.ttf";
+    static String fontMain = fontRubik;
+    static String fontNumber = fontPhilosopher;
+    static String fontLogo = fontPassionOne;
+
     TableRow getHeader()
     {
+        Typeface typefaceLetter = Typeface.createFromAsset(getAssets(), fontMain);
+        Typeface typefaceNumber = Typeface.createFromAsset(getAssets(), fontNumber);
+
         TableRow rowHeader = new TableRow(this);
         rowHeader.setLayoutParams(new TableRow.LayoutParams(
                 TableRow.LayoutParams.MATCH_PARENT,
@@ -76,6 +116,11 @@ public class MainMenuActivity extends AppCompatActivity {
         textViewName.setText(R.string.tableName);
         textViewTime.setText(R.string.tableTime);
         textViewPoint.setText(R.string.tablePoint);
+
+        textViewN.setTypeface(typefaceNumber);
+        textViewName.setTypeface(typefaceLetter);
+        textViewTime.setTypeface(typefaceNumber);
+        textViewPoint.setTypeface(typefaceNumber);
         /*rowHeader.addView(textViewN);
         rowHeader.addView(textViewName);
         rowHeader.addView(textViewTime);
@@ -118,6 +163,19 @@ public class MainMenuActivity extends AppCompatActivity {
 //        cardAbout.setVisibility(View.INVISIBLE);
         //       cardHelp.setVisibility(View.INVISIBLE);
 
+        Typeface typefaceLetter = Typeface.createFromAsset(getAssets(), fontMain);
+        Typeface typefaceNumber = Typeface.createFromAsset(getAssets(), fontNumber);
+        Typeface typefaceLogo   = Typeface.createFromAsset(getAssets(), fontLogo);
+
+        mainLogo = (TextView) findViewById(R.id.mainLogo);
+        mainLogo.setTypeface(typefaceLogo);
+        mainLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         nameUser = (EditText) findViewById(R.id.nameField);
         // nameUser.requestFocus();//for non started focus
         mSettings = getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE);
@@ -136,7 +194,7 @@ public class MainMenuActivity extends AppCompatActivity {
         });
 
         iButtonTraining = (ImageButton)findViewById(R.id.iButtonTraining);
-        iButtonBattle   = (ImageButton)findViewById(R.id.iButtonBattle);
+        iButtonBattle   = (ImageButton)findViewById(R.id.iButtonDuel);
         iButtonSurvival = (ImageButton)findViewById(R.id.iButtonSurvival);
 
 
@@ -170,6 +228,7 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
+        /*
         //table creating fields
         tableResult = (TableLayout) findViewById(R.id.tableResult);
         tableHeader = (TableLayout) findViewById(R.id.tableHeader);
@@ -204,6 +263,11 @@ public class MainMenuActivity extends AppCompatActivity {
             textViewTime.setText("12:23:11");
             textViewPoint.setText("50432");
 
+            textViewN.setTypeface(typefaceNumber);
+            textViewName.setTypeface(typefaceLetter);
+            textViewTime.setTypeface(typefaceNumber);
+            textViewPoint.setTypeface(typefaceNumber);
+
 
             textViewN.setGravity(Gravity.CENTER);
             textViewName.setGravity(Gravity.CENTER);
@@ -224,6 +288,64 @@ public class MainMenuActivity extends AppCompatActivity {
 
             tableResult.addView(tableRow);
         }
+        */
+
+        //Training
+        trainingLabel            = (TextView) findViewById(R.id.trainingLabel);
+        trainingMaxScoreLabel    = (TextView) findViewById(R.id.trainingMaxScoreLabel);
+        trainingMaxScoreValue    = (TextView) findViewById(R.id.trainingMaxScoreValue);
+        trainingTotalTimeLabel   = (TextView) findViewById(R.id.trainingTotalTimeLabel);
+        trainingTotalTimeValue   = (TextView) findViewById(R.id.trainingTotalTimeValue);
+
+        trainingLabel.setTypeface(typefaceLetter);
+        trainingMaxScoreLabel.setTypeface(typefaceLetter);
+        trainingTotalTimeLabel.setTypeface(typefaceLetter);
+        trainingMaxScoreValue.setTypeface(typefaceNumber);
+        trainingTotalTimeValue.setTypeface(typefaceNumber);
+
+        //Duel
+        duelLabel           = (TextView) findViewById(R.id.duelLabel);
+        duelBestTimeLabel   = (TextView) findViewById(R.id.duelBestTimeLabel);
+        duelMaxPointLabel   = (TextView) findViewById(R.id.duelMaxPointLabel);
+        duelBestTimeValue   = (TextView) findViewById(R.id.duelBestTimeValue);
+        duelMaxPointValue   = (TextView) findViewById(R.id.duelMaxPointValue);
+
+        duelLabel.setTypeface(typefaceLetter);
+        duelBestTimeLabel.setTypeface(typefaceLetter);
+        duelMaxPointLabel.setTypeface(typefaceLetter);
+
+        duelBestTimeValue.setTypeface(typefaceNumber);
+        duelMaxPointValue.setTypeface(typefaceNumber);
+
+        //survival
+        survivalLabel           = (TextView) findViewById(R.id.survivalLabel);
+        survivalBestTimeLabel   = (TextView) findViewById(R.id.survivalBestTimeLabel);
+        survivalMaxPointLabel   = (TextView) findViewById(R.id.survivalMaxPointLabel);
+        survivalBestTimeValue   = (TextView) findViewById(R.id.survivalBestTimeValue);
+        survivalMaxPointValue   = (TextView) findViewById(R.id.survivalMaxPointValue);
+
+        survivalLabel.setTypeface(typefaceLetter);
+        survivalBestTimeLabel.setTypeface(typefaceLetter);
+        survivalMaxPointLabel.setTypeface(typefaceLetter);
+
+        survivalBestTimeValue.setTypeface(typefaceNumber);
+        survivalMaxPointValue.setTypeface(typefaceNumber);
+
+
+
+
+        //user info
+        labelTime   =  (TextView) findViewById(R.id.labelTime);
+        userTime    =  (TextView) findViewById(R.id.userTime);
+        labelPoint  =  (TextView) findViewById(R.id.labelPoint);
+        userPoint   =  (TextView) findViewById(R.id.userPoint);
+
+        labelTime.setTypeface(typefaceLetter);
+        labelPoint.setTypeface(typefaceLetter);
+
+        userTime.setTypeface(typefaceNumber);
+        userPoint.setTypeface(typefaceNumber);
+
         //CriticalData
 /*        findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
 

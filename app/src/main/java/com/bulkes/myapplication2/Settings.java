@@ -27,8 +27,8 @@ public final class Settings
     final   static int    MaxFoodInSector            = 6;
     final   static float  MinAddFoodScaleValue       = 0.6f;
     final   static float  MaxAddFoodScaleValue       = 1.3f;
-    final   static int    MinFoodSize                = 69;
-    final   static int    MaxFoodSize                = 70;
+    final   static int    MinFoodSize                = 20;
+    final   static int    MaxFoodSize                = 40;
     final   static int    BaseFoodSize               = (MaxFoodSize - MinFoodSize) / 2;
     final   static int    FoodDefaultFeed            = 500;
     final   static int    FoodFeedForRadius          = 20;

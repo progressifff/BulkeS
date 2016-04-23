@@ -334,9 +334,11 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         if(!gamePaused) {
             drawMap();
             for (Bulk bulk : bulkesMap) {
-                if (!bulk.isDeleted && bulk instanceof Enemy)
+                if (bulk instanceof Enemy)
                 {
-                    ((Enemy) bulk).updateState(gameMap, sectors);
+                    drawBulk(bulk);
+                    if(!((Enemy) bulk).isDeleted)
+                        ((Enemy) bulk).updateState(gameMap, sectors);
                     // drawBulk(bulk);
                 }
             }
@@ -376,12 +378,15 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             canvas.drawCircle(stick.getX(), stick.getY(), stick.getRadiusIn(), paint);
         }
     }
-
+    private void drawBulk(Bulk bulk)
+    {
+        paint.setColor(bulk.getColor());
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(bulk.getX(), bulk.getY(), bulk.getAnimationRadius(), paint);
+    }
     private void drawUser()
     {
-        paint.setColor(user.getColor());
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(user.getX(), user.getY(), user.getAnimationRadius(), paint);
+        drawBulk(user);
         if(user.isMoved) {
             paint.setColor(Color.GRAY);
             paint.setAlpha(240);
@@ -406,11 +411,14 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         synchronized (map)
         {
             ListIterator<Unit> iterator = map.listIterator();
+            gameMap.checkForFoodAdd(iterator);
             while (iterator.hasNext()) {
                 Unit point = iterator.next();
+                //if (point instanceof User)
+                //{Log.v("Map " , "User");continue;}
                 if (point.getIsDeleted() == false) {
                     sectors.checkUnit(point);//update: what with deleted items
-                    if (point instanceof User)
+                    if(point instanceof User)
                         continue;
                     for (Bulk bulk : bulkesMap) {
                         if (point != bulk && !bulk.getIsDeleted() && bulk.isEaten(point)) {
@@ -420,22 +428,23 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                                 if (bulk instanceof Enemy && ((Enemy) bulk).isTarget(point))
                                     ((Enemy) bulk).setTarget(null);
                             } else
-                            if (bulk instanceof User)
-                            {
-                                user.setIsMoved(false);
-                                bulk.setIsMoved(false);
-                                //Handler mHandler = new Handler(Looper.getMainLooper());
-                                mainHandler.post(new Runnable() {
+                            if (bulk instanceof User) {
+                                    user.setIsMoved(false);
+                                    bulk.setIsMoved(false);
+                                    //Handler mHandler = new Handler(Looper.getMainLooper());
+                                    mainHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
                                             GameOverDialog gameOverDialog = new GameOverDialog(context);
                                             gameOverDialog.show();
-                                            GoGaming.isDialogOpened = true;}
+                                            GoGaming.isDialogOpened = true;
+                                        }
                                     });
-                                surfaceDestroyed(Holder);
+                                    surfaceDestroyed(Holder);
+                                }
                             }
-                        }
                     }
+
                 }
                 else if(point.getIsDeleted()) {
                     if (point.catchTarget()) {
@@ -446,7 +455,6 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                         iterator.remove();
                     }
                 }
-                gameMap.checkForFoodAdd(iterator);
                 if (needMove)//previous loop can change isDeleted
                     point.move( speedX,  speedY);
                 paint.setColor(point.color);
@@ -459,7 +467,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
                 else if (point.getY() <= upBorder)
                     point.setY(point.getY() + Settings.MapHeightP   - 2);
                 //2 - correction, if x or y near border
-                if (point.isOnMainScreen())
+                if (point.isOnMainScreen() && !(point instanceof Enemy))
                     canvas.drawCircle(point.getX(), point.getY(), point.getAnimationRadius(), paint);
             }
         }
