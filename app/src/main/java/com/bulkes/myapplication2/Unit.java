@@ -1,6 +1,7 @@
 package com.bulkes.myapplication2;
 
 import android.graphics.Color;
+import android.util.Log;
 
 /**
  This is a base unit for all game element
@@ -9,8 +10,11 @@ public class Unit
 {
     protected float x;
     protected float y;
+    protected float baseX;
+    protected float baseY;
+    protected float baseRadius;
     protected float radius;
-    private   float animationRadius;
+    protected float animationRadius;
     protected boolean isDeleted;
     protected int color;
     protected Unit    target;
@@ -25,6 +29,7 @@ public class Unit
 
     protected  float        speedX;
     protected  float        speedY;
+    protected  float        step;
 
     //constructors
     public Unit()
@@ -38,7 +43,10 @@ public class Unit
     {
         x = _x;
         y = _y;
+        baseX = x;
+        baseY = y;
         radius = _radius * Settings.UserScale;
+        baseRadius = _radius;
         color = _color;
         isDeleted = false;
         animationRadius = 0f;
@@ -48,21 +56,26 @@ public class Unit
     public void setX(float x)
     {
         this.x = x;
+        baseX = x;
     }
     public void setY(float y)
     {
         this.y = y;
+        baseY = y;
     }
     public void setRadius(float radius)
     {
+        this.baseRadius = radius;
         this.radius = radius * Settings.UserScale;
     }
+    //overrided in Bulk
     public void updatePosition(Unit unit)//update location + radius
     {
-        radius *= Settings.UserScale;
-        x = unit.x + ((x - unit.x) * Settings.UserScale);
-        y = unit.y + ((y - unit.y) * Settings.UserScale);
-        if(isOnMainScreen())
+        radius = baseRadius * Settings.UserScale;
+       // x = unit.x + ((baseX - unit.x) * Settings.UserScale);
+       // y = unit.y + ((baseY - unit.y) * Settings.UserScale);
+
+        if(!isOnMainScreen())
             animationRadius = radius;
     }
     public void setSpeed(float _speedX, float _speedY)
@@ -78,6 +91,8 @@ public class Unit
     {
         x = _x;
         y = _y;
+        baseX = x;//update here
+        baseY = y;
     }
     public void setIsDeleted(boolean isDeleted, Unit whatBulk)
     {
@@ -107,7 +122,7 @@ public class Unit
         if(animationRadius < radius)
         {
             animationRadius += Settings.StepRadius*radius;
-            if(animationRadius < radius)
+            if(animationRadius <= radius)
                 return animationRadius;
             else
                 animationRadius = radius;
@@ -140,9 +155,13 @@ public class Unit
     {
         x += dx;
         y += dy;
+        baseX += dx;
+        baseY += dy;
     }
     public boolean isOverlapped(Unit unit)
     {
+        //if( unit.radius > radius )
+          //  return unit.isOverlapped(this);
         if(       unit.getX() < x - (radius + unit.radius)
                 ||unit.getX() > x + (radius + unit.radius)
                 ||unit.getY() < y - (radius + unit.radius)
@@ -155,10 +174,12 @@ public class Unit
         float dy;
         dx = pointOut.getX() - x;
         dy = pointOut.getY() - y;
-        return (dx * dx + dy * dy) < (radius * radius);
+        return  (dx * dx + dy * dy) < (radius * radius);
     }
     public boolean isEaten(Unit unit)
     {
+        if(unit.radius > radius)
+            return unit.isEaten(this);
         float dx;
         float dy;
         dx = unit.getX() - x;
@@ -186,6 +207,7 @@ public class Unit
         if(isOnMainScreen()) {
             speedX = Math.max(Settings.MinFoodSpeed, target.getSpeedX() * Settings.UnitToTargetCoefficient);
             speedY = Math.max(Settings.MinFoodSpeed, target.getSpeedY() * Settings.UnitToTargetCoefficient);
+            Log.v("Alarm", String.valueOf(speedX) + " " + String.valueOf(speedY));
             return moveToTarget();
         }
         else
@@ -204,15 +226,15 @@ public class Unit
         //catchTarget();
         if (Math.abs(dx) > Math.abs(dy)) {
             if (dx > 0)
-                newX = x + speedX;
+                newX = x + getSpeedX();
             else
-                newX = x - speedX;
+                newX = x - getSpeedX();
             setPosition(newX, solveY(newX));
         } else {
             if (dy > 0)
-                newY = y + speedY;
+                newY = y + getSpeedY();
             else
-                newY = y - speedY;
+                newY = y - getSpeedY();
             setPosition(solveX(newY), newY);
         }
         return false;
@@ -235,39 +257,4 @@ public class Unit
             return (_y - getY()) / k + getX();
         }
     }
-
-    public boolean insideBulk()
-    {
-        //  float k;
-        float newX;
-        float newY;
-        float dx;
-        float dy;
-        float stepY;
-        float stepX;
-        dx = target.getX() - x;
-        dy = target.getY() - y;
-        stepX = 10f;
-        stepY = 10f;
-        if(Math.sqrt(Math.pow(dx, 2.0) + Math.pow(dy, 2.0))<=(target.getRadius()-radius))
-            return true;
-        else {
-            //    k = dy/dx;
-            if(Math.abs(dx)>=Math.abs(dy))
-            {
-                newX = x + ((dx > 0)? stepX : (-stepX));
-                //newY = k*(newX - x) + y;
-                newY = solveY(newX);
-            }
-            else
-            {
-                newY = y + ((dy > 0)? stepY : (-stepY));
-                //  newX = (newY - y)/k + x;
-                newX = solveX(newY);
-            }
-            setPosition(newX,newY);
-            return false;
-        }
-    }
-
 }

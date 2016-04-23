@@ -14,16 +14,31 @@ public class Bulk extends Unit
     public Bulk(float _x, float _y, float _radius, int _color)
     {
         super(_x,_y, _radius, _color);
-        if( this instanceof User )
-            Log.v("User constr ", String.valueOf(radius));
-
         mass = (float)Math.PI * _radius * _radius;
         isMoved = false;
         indicator = new Indicator();
+        animationRadius = radius;
     }
     public Bulk( float _x, float _y, float _radius)
     {
         this(_x, _y, _radius, Settings.BulkDefaultColor);
+    }
+
+    public float getSpeedCoefficient()
+    {
+        return Math.min(Settings.BulkBaseSize / radius, 2f);
+    }
+
+    @Override
+    public float getSpeedX()
+    {
+        return speedX * getSpeedCoefficient();
+    }
+
+    @Override
+    public float getSpeedY()
+    {
+        return speedY * getSpeedCoefficient();
     }
 
     public boolean getIsMoved()
@@ -49,10 +64,25 @@ public class Bulk extends Unit
     {
         this.mass = mass;
         radius = (float) Math.sqrt((double) mass / Math.PI) * Settings.UserScale;
+        baseRadius = radius;
         if( this instanceof User) {
             Log.v("Mass: ", String.valueOf(mass));
             Log.v("Radius: ", String.valueOf(radius));
         }
+    }
+
+    @Override
+    public void updatePosition(Unit unit)//update location + radius
+    {
+        radius = (float) Math.sqrt((double) mass / Math.PI) * Settings.UserScale;
+        //baseRadius = radius;
+        x = unit.x + ((baseX - unit.x) * Settings.UserScale);
+        y = unit.y + ((baseY - unit.y) * Settings.UserScale);
+        if (this instanceof User) {
+            Log.v("User UPD", String.valueOf(radius));
+        }
+        if(!isOnMainScreen())
+            animationRadius = radius;
     }
 
     @Override
@@ -63,7 +93,7 @@ public class Bulk extends Unit
 
     public Path getIndicator(float x_end, float y_end)
     {
-        float coefficient = Math.max(radius / Settings.UserBaseSize, 2f);
+        float coefficient = Math.max(radius / Settings.BulkBaseSize, 2f);
         indicator.getParameters(x,y,getAnimationRadius() + Settings.IndicatorTopOffset * coefficient, x_end, y_end);
         return indicator.getTriangle(x, y, getAnimationRadius() + (Settings.IndicatorBaseOffset * coefficient), coefficient);
     }

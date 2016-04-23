@@ -5,24 +5,26 @@ import android.graphics.Color;
 /**
  * Created by 1 on 14.03.16.
  */
+
 public final class Settings
 {
     //------------------ScreenParameters--------------------
     final   static int    ScreenWidthDefault         = 1920;
     final   static int    ScreenHeightDefault        = 1080;
-    //--------------------Game------------------------------
-       static int    GameFieldColor             = Color.WHITE;
-    //--------------------User--------------------------------
-    final   static float  UserStartSize              = 100f;
-    final   static float  UserDefaultSpeed           = 0.1f;
-            static int    UserDefaultColor           = Color.RED;
-    final   static float  UserBaseSize               = 100f;//for indicator
-    final   static float  UserMaxRadius              = 200f;
-    final   static float  UserSpeedCoefficient       = 0.1f;
-    static  float  UserScale                         = 1f;
-    //------------------Food--------------------------------
+    //--------------------Game--------------------
     final   static int    TimeCreateNewFood          = 5;
     final   static int    TimeDelayFirstNewFood      = 10;
+    final   static float  PriorityValue              = 0.5f;
+    static  int    GameFieldColor             = Color.WHITE;
+    //--------------------User--------------------------------
+    static float  UserStartSize              = 100f;
+       static int    UserDefaultColor           = Color.RED;
+    final   static float  BulkBaseSize               = 100f;//for indicator and speed
+    final   static float  UserMaxRadius              = 200f;
+    final   static float  UserSpeedCoefficient       = 0.1f;
+    static float  UserScale                  = 1f;
+    final   static float  UserScaleStep              = 0.005f;
+    //------------------Food--------------------------------
     final   static int    MinFoodInSector            = 0;
     final   static int    MaxFoodInSector            = 6;
     final   static float  MinAddFoodScaleValue       = 0.6f;
@@ -44,9 +46,9 @@ public final class Settings
     final   static float  MinFoodSpeed               = 2f;
     final   static int    MaxTotalFeed               = MaxFoodSize * FoodFeedForRadius * MaxFoodInSector * 2 ;
     final   static int    BulkDefaultColor           = Color.YELLOW;
-    final   static float  BulkOffsetRadius           = 5f;//min difference
+    final   static float  BulkOffsetRadius           = 2f;//min difference between bulkes for move
     //------------------Enemy--------------------------------
-    final   static int    EnemyMaxStepToTarget       = 30;
+    final   static int    EnemyMaxStepToTarget       = 10;
     final   static int    EnemyFindOffset            = 500;
     final   static float  EnemyStepValue             = 5f;
     final   static int    EnemyDefaultColor          = Color.MAGENTA;
@@ -56,7 +58,7 @@ public final class Settings
     final   static float  IndicatorBaseAlpha         = 0.3f;
     final   static float  JoyStickRadiusOut          = 120f;
     final   static float  JoyStickRadiusIn           = 60f;
-    final   static int    CountBulkes                = 10;
+    static int    CountBulkes                = 10;
     //------------------Dialogs---------------------------------
     final   static int    DialogPauseID              = 0;
     final   static int    DialogEndID                = 1;
@@ -74,11 +76,9 @@ public final class Settings
             Color.rgb(0xFB,0xE5,0x66),//#fbe566 light yellow
             Color.rgb(0xFF,0xA7,0x00)//#ffa700 gold
     };
-    public static int getCountColors()
-    {
+    public static int getCountColors() {
         return ColorList.length;
     }
-
     final static int UsersBulkColors[] = {
             Color.rgb(239,48,56),//red
             Color.rgb(250,72,102),//light red

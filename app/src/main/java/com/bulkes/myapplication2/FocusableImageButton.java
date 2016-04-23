@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageButton;
 
@@ -38,6 +39,7 @@ public class FocusableImageButton extends ImageButton {
                 buttonRect.set(this.getLeft(), this.getTop(), this.getRight(), this.getBottom());
                 this.setColorFilter(Color.rgb(138,149,151), PorterDuff.Mode.MULTIPLY);
                 touchFlag = true;
+                Log.v("ACTION_DOWN","ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_UP:
                 if(touchFlag) {

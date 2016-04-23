@@ -22,13 +22,15 @@ public class Food extends Unit
         super();
         this.feed = feed;
     }
-
-    public Food(float _x, float _y, float _radius, int _color, float feed) {
-        super(_x, _y, _radius, _color);
-        this.feed = feed;
-    }
-
     public Food(float _x, float _y, float _radius, float _feed) {
         this(_x, _y, _radius, Settings.ColorList[new Random().nextInt(Settings.getCountColors())], _feed);
     }
+    public Food(float _x, float _y, float _radius, int _color, float feed) {
+        super(_x, _y, _radius, _color);
+        this.feed = feed;
+        if(!isOnMainScreen())
+            animationRadius = radius;
+    }
+
+
 }

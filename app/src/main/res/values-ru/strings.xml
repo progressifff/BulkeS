@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Бульки</string>
+    <string name="game_over">Ты проиграл. Попробуй ещё</string>
+    <string name="tableName">Имя</string>
+    <string name="maxGameScore">Максимальный счёт:</string>
+    <string name="tableN">N</string>
+    <string name="tablePoint">Очки</string>
+    <string name="tableTime">Время игры</string>
+    <string name="totalGameTime">Общее время игры:</string>
+    <string name="training">Тренировка</string>
+    <string name="max_score">Лучший счёт:</string>
+    <string name="total_time">Общее время:</string>
+    <string name="duel">Поединок</string>
+    <string name="max_point">Лучший счёт:</string>
+    <string name="best_time">Лучшее время:</string>
+    <string name="survival">Выживание</string>
+    <string name="pause_game">Игра на паузе</string>
+    <string name="resume_game">Игра на паузе</string>
+</resources>

@@ -1,6 +1,5 @@
 package com.bulkes.myapplication2;
 
-import android.graphics.Color;
 import android.graphics.Path;
 
 import java.util.Iterator;
@@ -27,39 +26,38 @@ public class Enemy extends Bulk
     {
         target = unit;
     }
+    private boolean isVisibleUnit(Unit unit)
+    {
+        if(Math.abs(x - unit.getX()) > Settings.EnemyFindOffset + radius)
+            return false;
+        if(Math.abs(y - unit.getY()) > Settings.EnemyFindOffset + radius)
+            return false;
+        return true;
+    }
     private void findNewTarget(GameMap gameMap, SectorHolder sectors)
     {
         stepToTarget = 0;
         target = null;
 
-        sectors.findSectorToMove(this);
+        sectors.solveSectorToMove(this);
 
-        int minimumPriority = Integer.MAX_VALUE;
-        float minimumDistance = (float) Integer.MAX_VALUE;
+        float attraction;
+        float maxAttraction = Integer.MIN_VALUE;
         int currentPriority;
-        float maxFeedByDistance = -1f;//warning default
         Iterator<Unit> iterator = gameMap.getMap().iterator();
         while (iterator.hasNext()) {
             Unit point = iterator.next();
             if (point != this && !point.isDeleted)
-                if (Math.abs(x - point.getX()) < Settings.EnemyFindOffset + radius && Math.abs(y - point.getY()) < Settings.EnemyFindOffset + radius && radius > point.radius) {
+                if ( isVisibleUnit(point) && radius > point.radius) {
                     currentPriority = sectors.getPriorityForUnit(point);
-                    if (currentPriority < minimumPriority) {
-                        minimumPriority = sectors.getPriorityForUnit(point);
-                        float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                        float feedByDistance = point.getFeed() / distance;
-                        maxFeedByDistance = feedByDistance;
+                    float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
+                    float feedByDistance = point.getFeed() / distance;
+                    //Log.v("Feed by Distance ", String.valueOf(feedByDistance));
+                    attraction = feedByDistance - currentPriority * Settings.PriorityValue;
+                    if(attraction > maxAttraction)
+                    {
+                        maxAttraction = attraction;
                         target = point;
-                        //minimumDistance = distance;
-                    } else {
-                        if (currentPriority == minimumPriority) {
-                            float distance = Math.abs(x - point.getX()) + Math.abs(y - point.getY());//not real distance use only for choice
-                            float feedByDistance = point.getFeed() / distance;
-                            if (feedByDistance > maxFeedByDistance) {
-                                maxFeedByDistance = feedByDistance;
-                                target = point;
-                            }
-                        }
                     }
                 }
         }
@@ -81,25 +79,8 @@ public class Enemy extends Bulk
         }
         else
             stepToTarget++;
-        if(target!=null)
-            target.setColor(Color.BLACK);
+//        target.setColor(Color.BLACK);
         //Log.v("Enemy X Y", String.valueOf(getX()) + " " + String.valueOf(getY()));
-    }
-    private float solveY(float _x)
-    {
-        float k;
-        k = (target.getY() - getY()) / (target.getX() - getX());
-        return k * _x - k * getX() + getY();
-    }
-    private float solveX(float _y)
-    {
-        float k;
-        if(Math.abs(target.getX() - getX()) < 0.001f )
-            return getX();
-        else {
-            k = (target.getY() - getY()) / (target.getX() - getX());
-            return (_y - getY()) / k + getX();
-        }
     }
     public Path getIndicatorToTarget() {
         return getIndicator(target.getX(), target.getY());
