@@ -2,6 +2,7 @@ package com.bulkes.myapplication2;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -42,6 +43,8 @@ public class GoGaming extends AppCompatActivity {
     private     PauseGameDialog pauseGameDialog;
     private     EndGameDialog endGamedialog;
     private     View gamePauseView;
+    public      static final String USER_SCORES = "userscores";
+    public      static final String USER_GAMETIME = "usergametime";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,6 +147,17 @@ public class GoGaming extends AppCompatActivity {
             gameView.pauseGame(true);
             gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
         }
+    }
+
+    public void dialogEndGame()
+    {
+        Log.v("dialogEndGame"," "+gameView.getUsersScores());
+        Log.v("dialogEndGame"," "+CriticalData.lastTime);
+        Intent activityResult = new Intent();
+        activityResult.putExtra(USER_SCORES, gameView.getUsersScores());
+        activityResult.putExtra(USER_GAMETIME, CriticalData.lastTime);
+        this.setResult(2,activityResult);
+        finish();
     }
 
     public void dialogStartGame(int id)
@@ -268,6 +282,10 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             gameMap.startFoodTimer();
             setGraphDataTimer();
         }
+    }
+
+    public int getUsersScores() {
+        return ((int) user.mass / 10);
     }
 
     public Bitmap getLastScene()

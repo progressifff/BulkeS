@@ -27,15 +27,16 @@ public class EndGameDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.end_game_dialog);
+        setContentView(R.layout.dialog_end_game_layout);
 
         getWindow().getAttributes().windowAnimations = R.style.GameDialogAnimation;
         agreeGameBtn = (Button) findViewById(R.id.yes_btn);
         agreeGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.setResult(1);
-                activity.finish();
+                ((GoGaming)activity).dialogEndGame();
+               // activity.setResult(1);
+               // activity.finish();
                 cancel();
             }
         });

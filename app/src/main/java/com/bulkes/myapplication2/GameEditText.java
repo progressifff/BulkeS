@@ -10,7 +10,7 @@ import android.widget.EditText;
 /**
  * Created by progr on 23.04.2016.
  */
-public class GameEditText extends EditText{
+public class GameEditText extends EditText {
     public GameEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
     }

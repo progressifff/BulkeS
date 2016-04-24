@@ -32,7 +32,7 @@
         <ImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/imageButton"
+            android:id="@+id/iButtonProgressTable"
             android:background="@drawable/ibuttonsstyle"
             android:layout_gravity="left"
             android:scaleType="centerCrop"
@@ -155,7 +155,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="00:05:23"
+                android:text="00:00:00"
                 android:id="@+id/userTime"
                 android:gravity="left|center"
                 android:textColor="#000000"
@@ -186,7 +186,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="32145"
+                android:text="0"
                 android:id="@+id/userPoint"
                 android:gravity="left|center"
                 android:textColor="#000000"
@@ -264,7 +264,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="11500"
+                android:text="0"
                 android:id="@+id/trainingMaxScoreValue"
                 android:layout_below="@+id/trainingLabel"
                 android:layout_alignParentRight="false"
@@ -289,7 +289,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="02:11:50"
+                android:text="00:00:00"
                 android:id="@+id/trainingTotalTimeValue"
                 android:layout_below="@+id/trainingMaxScoreValue"
                 android:layout_alignParentRight="false"
@@ -350,7 +350,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="22500"
+                android:text="0"
                 android:id="@+id/duelMaxPointValue"
                 android:layout_below="@+id/duelLabel"
                 android:layout_alignParentRight="false"
@@ -374,7 +374,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="00:05:36"
+                android:text="00:00:00"
                 android:id="@+id/duelBestTimeValue"
                 android:layout_below="@+id/duelMaxPointValue"
                 android:layout_alignRight="@+id/duelMaxPointValue"
@@ -448,7 +448,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="22500"
+                android:text="0"
                 android:id="@+id/survivalMaxPointValue"
                 android:layout_below="@+id/survivalLabel"
                 android:layout_alignParentRight="false"
@@ -472,7 +472,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="00:05:36"
+                android:text="00:00:00"
                 android:id="@+id/survivalBestTimeValue"
                 android:layout_below="@+id/survivalMaxPointValue"
                 android:layout_alignRight="@+id/survivalMaxPointValue"
@@ -482,6 +482,16 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button4"
+        android:layout_alignTop="@+id/userInfo"
+        android:layout_alignLeft="@+id/topBar"
+        android:layout_alignStart="@+id/topBar"
+        android:layout_marginTop="21dp" />
 
 
 </RelativeLayout>

@@ -28,13 +28,14 @@ public class GameOverDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.game_over_layout);
+        setContentView(R.layout.dialog_game_over_layout);
         getWindow().getAttributes().windowAnimations = R.style.GameDialogAnimation;
         closeGameBtn = (Button) findViewById(R.id.close_btn);
         closeGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.finish();
+                ((GoGaming)activity).dialogEndGame();
+                //activity.finish();
                 cancel();
 
             }

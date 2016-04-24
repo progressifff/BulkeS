@@ -96,6 +96,7 @@
                         android:layout_marginRight="45dp"
                         android:imeOptions="flagNoFullscreen|actionDone"
                         android:textColorHighlight="#7cff88"
+                        android:drawableRight="@android:drawable/ic_input_delete"
                         />
                 </LinearLayout>
                 <LinearLayout

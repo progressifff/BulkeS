@@ -162,7 +162,6 @@ public class GameSettings extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
         Log.v("onWindowFocusChanged","onWindowFocusChanged");
     }
 
