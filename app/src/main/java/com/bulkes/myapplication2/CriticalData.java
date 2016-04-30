@@ -1,9 +1,7 @@
+
 package com.bulkes.myapplication2;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Random;
-
 /**
  * Created by progr on 25.03.2016.
  */
@@ -14,10 +12,11 @@ public final class CriticalData {
     public static float scaling;
     public static long lastTime;
     public static boolean isRun;
-
+    public static ArrayList<Integer> usersMass;
     public static void createNewField()
     {
         Settings.UserScale = 1f;
+        usersMass = new ArrayList();
         gameMap = new GameMap();
         user = new User(Settings.ScreenWidthDefault / 2, Settings.ScreenHeightDefault / 2, Settings.UserStartSize, Settings.UserDefaultColor);
         bulkesMap = new ArrayList<Bulk>(Settings.CountBulkes + 1);//1 - for user

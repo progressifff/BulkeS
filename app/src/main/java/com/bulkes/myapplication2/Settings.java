@@ -5,6 +5,7 @@ import android.graphics.Color;
 /**
  * Created by 1 on 14.03.16.
  */
+
 public final class Settings
 {
     //------------------ScreenParameters--------------------
@@ -14,13 +15,14 @@ public final class Settings
     final   static int    TimeCreateNewFood          = 5;
     final   static int    TimeDelayFirstNewFood      = 10;
     final   static float  PriorityValue              = 0.5f;
+    static  int    GameFieldColor             = Color.WHITE;
     //--------------------User--------------------------------
-            static float  UserStartSize              = 100f;
-    final   static int    UserDefaultColor           = Color.RED;
+    static float  UserStartSize              = 100f;
+       static int    UserDefaultColor           = Color.RED;
     final   static float  BulkBaseSize               = 100f;//for indicator and speed
     final   static float  UserMaxRadius              = 200f;
     final   static float  UserSpeedCoefficient       = 0.1f;
-            static float  UserScale                  = 1f;
+    static float  UserScale                  = 1f;
     final   static float  UserScaleStep              = 0.005f;
     //------------------Food--------------------------------
     final   static int    MinFoodInSector            = 0;
@@ -56,7 +58,7 @@ public final class Settings
     final   static float  IndicatorBaseAlpha         = 0.3f;
     final   static float  JoyStickRadiusOut          = 120f;
     final   static float  JoyStickRadiusIn           = 60f;
-            static int    CountBulkes                = 10;
+    static int    CountBulkes                = 10;
     //------------------Dialogs---------------------------------
     final   static int    DialogPauseID              = 0;
     final   static int    DialogEndID                = 1;
@@ -74,8 +76,23 @@ public final class Settings
             Color.rgb(0xFB,0xE5,0x66),//#fbe566 light yellow
             Color.rgb(0xFF,0xA7,0x00)//#ffa700 gold
     };
-    public static int getCountColors()
-    {
+    public static int getCountColors() {
         return ColorList.length;
     }
+    final static int UsersBulkColors[] = {
+            Color.rgb(239,48,56),//red
+            Color.rgb(250,72,102),//light red
+            Color.rgb(240,108,0),//orange
+            Color.rgb(234,117,0),//mandarin
+            Color.rgb(255,215,0),//gold
+            Color.rgb(255,255,0),//yellow
+            Color.rgb(191,255,0),//light green
+            Color.rgb(102,255,0),//lime
+            Color.rgb(0,255,255),//cyan
+            Color.rgb(120,219,226),//material blue
+            Color.rgb(28,169,201),//dark blue
+            Color.rgb(29,172,214),//blue Krayola
+            Color.rgb(147,112,216),//purpur
+            Color.rgb(184,143,255)//violet
+    };
 }

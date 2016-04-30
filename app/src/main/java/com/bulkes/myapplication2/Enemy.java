@@ -1,6 +1,5 @@
 package com.bulkes.myapplication2;
 
-import android.graphics.Color;
 import android.graphics.Path;
 import android.util.Log;
 
