@@ -2,8 +2,8 @@
 <string name="app_name">Bulkes</string>
 <string name="action_settings" translatable="false">Settings</string>
 <string name="resume_game">Game is on pause</string>
-<string name="game_over">You lose. Try again</string>
-<string name="end_game" translatable="false">Are You sure that\n you want to leave?</string>
+<string name="game_over">You lose. Try again.</string>
+<string name="end_game">Are You sure that you want to leave?</string>
 <string name="pause_game">Game paused</string>
 <string name="tableN">N</string>
 <string name="tableName">Name</string>
@@ -22,4 +22,8 @@
 <string name="max_point">Max Point</string>
 <string name="best_time">Best time</string>
 <string name="survival">Survival</string>
+    <string name="resume">Resume</string>
+    <string name="yes">Leave</string>
+    <string name="no_but">Continue</string>
+    <string name="repeat">Repeat</string>
 </resources>

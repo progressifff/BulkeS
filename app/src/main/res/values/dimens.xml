@@ -4,6 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="color_item_width">60dp</dimen>
+    <dimen name="recycle_view_height">80dp</dimen>
     <dimen name="recycle_view_width">180dp</dimen>
     <dimen name="pad_width">60dp</dimen>
     <dimen name="colors_items_padding">50dp</dimen>

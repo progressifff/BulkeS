@@ -28,22 +28,20 @@
                 android:textSize="20sp"
                 android:autoText="true"
                 android:gravity="center"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                />
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="10dp"/>
             <Button
-                style="?android:attr/buttonStyleSmall"
+                style="@style/Base.Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Resume"
+                android:text="@string/resume"
                 android:id="@+id/resume_btn"
-                android:layout_alignTop="@+id/pause_game_text"
-                android:layout_alignRight="@+id/pause_game_text"
-                android:layout_marginTop="100dp"
-                android:layout_marginBottom="10dp"
-                />
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/pause_game_text"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </FrameLayout>

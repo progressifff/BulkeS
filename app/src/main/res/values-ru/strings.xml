@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Бульки</string>
-    <string name="game_over">Ты проиграл. Попробуй ещё</string>
+    <string name="game_over">Ты проиграл. Попробуй ещё.</string>
     <string name="tableName">Имя</string>
     <string name="maxGameScore">Максимальный счёт:</string>
     <string name="tableN">N</string>
@@ -15,6 +15,11 @@
     <string name="max_point">Лучший счёт:</string>
     <string name="best_time">Лучшее время:</string>
     <string name="survival">Выживание</string>
-    <string name="pause_game">Игра на паузе</string>
-    <string name="resume_game">Игра на паузе</string>
+    <string name="pause_game">Игра приостановлена</string>
+    <string name="resume_game">Игра приостановлена</string>
+    <string name="resume">Продолжить</string>
+    <string name="yes">Уйти</string>
+    <string name="no_but">Продолжить</string>
+    <string name="end_game">Вы точно хотите покинуть игру?</string>
+    <string name="repeat">Повторить</string>
 </resources>

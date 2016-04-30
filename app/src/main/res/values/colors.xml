@@ -3,7 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#3396ff</color>
-    <color name="colorMarengo">#4c5866</color>
+    <color name="colorMarengo">#ed1e63</color>
     <color name="colorPang">#cceeff</color>
     <color name="colorBlack_overlay">#66000000</color>
     <color name="colorWhite">#ffffff</color>
@@ -12,4 +12,6 @@
     <color name="lightCyan">#e0ffff</color>
     <color name="lightGray">#e6e6e6</color>
     <color name="materialPurple">#9494ff</color>
+    <color name="settingColor">#f44336</color>
+
 </resources>
