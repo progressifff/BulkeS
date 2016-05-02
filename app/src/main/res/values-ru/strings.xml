@@ -39,7 +39,11 @@
     <string name="player_table_name">Имя</string>
     <string name="player_table_scores">Очки</string>
     <string name="player_table_time">Время</string>
-    <string name="check_internet_access">Пожалуйста, проверте интренет-соединение</string>
+    <string name="check_internet_access">Пожалуйста, проверьте интренет-соединение</string>
     <string name="connection_time_out">Не удаётся подключиться к серверу</string>
     <string name="receive_user_data_error">Не удаётся получить данные о игроке</string>
+    <string name="back">Вернуться</string>\
+    <string name="game_authors">Авторы игры</string>
+    <string name="mohnachov">Владислав Мохначёв</string>
+    <string name="elagin">Игорь Елагин</string>
 </resources>

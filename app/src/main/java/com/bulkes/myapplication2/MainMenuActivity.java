@@ -175,6 +175,7 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         iButtonProgressTable.setOnClickListener(this);
         iButtonDiagram.setOnClickListener(this);
         iButtonSettings.setOnClickListener(this);
+        iButtonAbout.setOnClickListener(this);
         buttonTraining.setOnClickListener(this);
         buttonSurvival.setOnClickListener(this);
         final View.OnLongClickListener toolTip = new View.OnLongClickListener() {
@@ -376,7 +377,9 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
                 startActivityForResult(intent, 4);
                 break;
             case R.id.iButtonAbout:
-
+                AboutDialog aboutDialog = new AboutDialog(this);
+                aboutDialog.show();
+                aboutDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
                 break;
         }
     }

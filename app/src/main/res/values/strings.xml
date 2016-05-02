@@ -3,7 +3,7 @@
     <string name="action_settings" translatable="false">Settings</string>
     <string name="resume_game">Game is on pause</string>
     <string name="game_over">You lose. Try again</string>
-    <string name="end_game" translatable="false">Are You sure that\n you want to leave?</string>
+    <string name="end_game">Are You sure that\n you want to leave?</string>
     <string name="pause_game">Game paused</string>
     <string name="tableN">N</string>
     <string name="tableName">Name</string>
@@ -43,4 +43,8 @@
     <string name="check_internet_access">Please check Internet access</string>
     <string name="connection_time_out">Connection timeout</string>
     <string name="receive_user_data_error">Can`t receive user`s data</string>
+    <string name="back">Back</string>
+    <string name="game_authors">Game authors</string>
+    <string name="mohnachov">Vladislav Mohnachov</string>
+    <string name="elagin">Igor Elagin</string>
 </resources>

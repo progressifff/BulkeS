@@ -46,9 +46,6 @@ public class GameTable extends AppCompatActivity implements View.OnClickListener
 
     public static RecyclerView gameTableList;
     private TableListAdapter tableListAdapter;
-    //private final String requestFullTableURL = "http://bulkes.orgfree.com/php/get.php";
-    //  private final String requestFullTableURL = "http://bulkes.orgfree.com/php/starttable.php?id=7&offset=8";
-    //  private final String requestFullTableURL = "http://bulkes.orgfree.com/php/starttable.php?id=%d&offset=%d";
     public static final String ID = "id";
     public static final String USER_NAME = "username";
     public static final String USERS_SCORES = "usersscores";
@@ -60,7 +57,6 @@ public class GameTable extends AppCompatActivity implements View.OnClickListener
     private ProgressBar dataGettingProgressBar;
     private ImageButton refreshTableBtn;
     private ImageButton toFirstPositionBtn;
-    private ImageButton backToPlayersPositionBtn;
     private ImageButton closeTableBtn;
     private LinearLayoutManager linearLayoutManager;
     private List<PlayersAchievements> playersAchievementsList;
@@ -516,7 +512,7 @@ public class GameTable extends AppCompatActivity implements View.OnClickListener
                     if (dataBaseItemsCount <= maxRecyclerVisibleItemsCount) {
                         tableListAdapter.upEdgeAchieved();
                         tableListAdapter.downEdgeAchieved();
-                    }
+                    } else linearLayoutManager.scrollToPositionWithOffset(1, 0);
                 }
                 tableListAdapter.setLoadedState(false);
             }

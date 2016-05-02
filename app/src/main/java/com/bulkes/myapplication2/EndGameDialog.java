@@ -35,8 +35,6 @@ public class EndGameDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 ((GoGaming)activity).dialogEndGame();
-               // activity.setResult(1);
-               // activity.finish();
                 cancel();
             }
         });
