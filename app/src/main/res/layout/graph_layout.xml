@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <com.bulkes.myapplication2.FocusableImageButton
         android:id="@+id/close_graph_btn"
-        android:src="@drawable/close_graph_btn"
+        android:src="@drawable/close_btn"
         android:scaleType="centerCrop"
         android:background="@color/colorFull_transparent"
         android:layout_width="wrap_content"

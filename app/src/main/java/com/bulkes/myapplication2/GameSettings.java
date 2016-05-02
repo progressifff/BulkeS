@@ -94,6 +94,7 @@ public class GameSettings extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 synchronized (this) {
                     if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        Log.v("SCROLLTO", "SCROLLTO");
                         int newPosition = Math.round((movePixels + pad) / itemWidth);
                         scrollToPosition(newPosition);
                     }
@@ -158,7 +159,6 @@ public class GameSettings extends AppCompatActivity {
         });
     }
 
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -195,7 +195,7 @@ public class GameSettings extends AppCompatActivity {
         }
         if (newPosition != currentColorPosition)
             currentColorPosition = newPosition;
-        float pixelsToScroll = (itemWidth * (newPosition) - pad) - movePixels;
+        float pixelsToScroll = (itemWidth * newPosition - pad) - movePixels;
         if (pixelsToScroll != 0)
             colorsList.smoothScrollBy((int) pixelsToScroll, 0);
     }

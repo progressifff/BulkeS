@@ -17,4 +17,11 @@
     <string name="survival">Выживание</string>
     <string name="pause_game">Игра на паузе</string>
     <string name="resume_game">Игра на паузе</string>
+    <string name="player_table_position">Позиция</string>
+    <string name="player_table_name">Имя</string>
+    <string name="player_table_scores">Очки</string>
+    <string name="player_table_time">Время</string>
+    <string name="check_internet_access">Пожалуйста, проверте интренет-соединение</string>
+    <string name="connection_time_out">Не удаётся подключиться к серверу</string>
+    <string name="receive_user_data_error">Не удаётся получить данные о игроке</string>
 </resources>

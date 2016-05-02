@@ -31,7 +31,7 @@
         android:layout_height="2dp"
         android:layout_below="@+id/closeSettingsBtn"
         android:id="@+id/borderSettings"
-        android:background="@color/lightGray"
+        android:background="@color/colorLightGray"
         />
     <ScrollView
         android:layout_width="match_parent"

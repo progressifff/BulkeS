@@ -1,33 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#eeeeee"
     android:stretchColumns="*"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <TableRow android:padding="5dp">
+    android:layout_height="@dimen/table_row_height">
+
+    <TableRow
+        android:id="@+id/tableRowId"
+        android:layout_width="wrap_content"
+        android:minHeight="@dimen/table_row_height"
+        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/firstColumnText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="One"
-            android:gravity="center_horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="aa"
+            android:gravity="center_horizontal|center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             />
         <TextView
             android:id="@+id/secondColumnText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Two"
-            android:gravity="center_horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="One"
+            android:gravity="center_horizontal|center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             />
         <TextView
             android:id="@+id/thirdColumnText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="Two"
+            android:gravity="center_horizontal|center_vertical"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/fourthColumnText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:text="Three"
-            android:gravity="center_horizontal"
+            android:gravity="center_horizontal|center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             />
     </TableRow>

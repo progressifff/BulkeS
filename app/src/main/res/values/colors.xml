@@ -9,7 +9,8 @@
     <color name="colorWhite">#ffffff</color>
     <color name="colorTranslucent">#80000000</color>
     <color name="colorFull_transparent">#00000000</color>
-    <color name="lightCyan">#e0ffff</color>
-    <color name="lightGray">#e6e6e6</color>
-    <color name="materialPurple">#9494ff</color>
+    <color name="colorLightCyan">#e0ffff</color>
+    <color name="colorLightGray">#e6e6e6</color>
+    <color name="colorMaterialPurple">#9494ff</color>
+    <color name="colorMaterialRed">#ff6161</color>
 </resources>

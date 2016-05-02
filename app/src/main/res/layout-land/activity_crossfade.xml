@@ -120,7 +120,7 @@
             android:layout_height="30dp"
             android:inputType="textPersonName|textNoSuggestions"
             android:maxLines="1"
-            android:text = "User1"
+            android:text="Player1"
             android:layout_row="0"
             android:layout_column="1"
             android:gravity="center"
