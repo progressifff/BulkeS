@@ -3,11 +3,11 @@
     <string name="app_name">Бульки</string>
     <string name="game_over">Ты проиграл. Попробуй ещё.</string>
     <string name="tableName">Имя</string>
-    <string name="maxGameScore">Максимальный счёт:</string>
+    <string name="maxGameScore">Максимальный счёт</string>
     <string name="tableN">N</string>
     <string name="tablePoint">Очки</string>
     <string name="tableTime">Время игры</string>
-    <string name="totalGameTime">Общее время игры:</string>
+    <string name="totalGameTime">Время игры</string>
     <string name="training">Тренировка</string>
     <string name="max_score">Лучший счёт:</string>
     <string name="total_time">Общее время:</string>
@@ -22,4 +22,17 @@
     <string name="no_but">Продолжить</string>
     <string name="end_game">Вы точно хотите покинуть игру?</string>
     <string name="repeat">Повторить</string>
+    <string name="tooltipDiagram">Диаграмма игрового процесса</string>
+    <string name="tooltipInfo">О игре</string>
+    <string name="tooltipSetting">Основные игровые настройки</string>
+    <string name="tooltipTable">Лучшие результаты</string>
+    <string name="settings_header">Настройки</string>
+    <string name="nickname">Имя</string>
+    <string name="bulk_color">Цвет булька</string>
+    <string name="black_background">Тёмный фон</string>
+    <string name="game_time">Game time</string>
+    <string name="diagram_axix">Время игры</string>
+    <string name="diagram_legend">Масса булька</string>
+    <string name="diagram_top">Прогресс игрока</string>
+    <string name="digramm_shot">Картинка сохранена</string>
 </resources>

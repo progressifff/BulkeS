@@ -32,15 +32,15 @@ public class GameOverDialog extends Dialog {
         setContentView(R.layout.dialog_game_over_layout);
         getWindow().getAttributes().windowAnimations = R.style.GameDialogAnimation;
         closeGameBtn = (ImageButton) findViewById(R.id.close_btn);
-//        closeGameBtn.setOnClickListener(new View.OnClickListener() {
-  //          @Override
-    //        public void onClick(View v) {
-      //          ((GoGaming)activity).dialogEndGame();
-          //      //activity.finish();
-        //        cancel();
+        closeGameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((GoGaming)activity).dialogEndGame();
+                //activity.finish();
+                cancel();
 
-          //  }
-        //});
+            }
+        });
         repeatGameBtn = (Button) findViewById(R.id.repeate_btn);
         repeatGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override

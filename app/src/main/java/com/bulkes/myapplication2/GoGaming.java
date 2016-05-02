@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.Console;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,6 +95,8 @@ public class GoGaming extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK)
         {
             if(!isDialogOpened) {
+                Log.v("Adding time", String.valueOf(CriticalData.lastTime) + " " + gameView.getLastTime());
+                CriticalData.previousTime = CriticalData.lastTime;
                 CriticalData.lastTime += gameView.getLastTime();
                 gameView.pauseGame(true);
                 gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
@@ -142,7 +145,7 @@ public class GoGaming extends AppCompatActivity {
         Log.v("onSaveInstanceState", "onSaveInstanceState");
         super.onSaveInstanceState(outState);
         if(!gameView.isPaused()){
-
+            CriticalData.previousTime = CriticalData.lastTime;
             CriticalData.lastTime += gameView.getLastTime();
             gameView.pauseGame(true);
             gamePauseView.setBackground(new BitmapDrawable(getResources(), gameView.getLastScene()));
@@ -199,8 +202,9 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     private SectorHolder sectors;
     private GameMap gameMap;
     private JoyStick stick;
-    static long currentTime;//action for pause
-    static long startTime;
+    static  long currentTime;//action for pause
+    static  long startTime;
+    private long lastDrawingTime;
 
     private Canvas gameCanvas;
     private long previous = -1;//for fps
@@ -212,6 +216,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     public User user;
     long restTime = 2000L;
     private boolean isPause;
+    private CountDownTimer graphDataTimer;
 
     public GameView(Context context) {
         super(context);
@@ -242,7 +247,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 
     public void setGraphDataTimer()
     {
-        final CountDownTimer graphDataTimer = new CountDownTimer(2000, 2000) {
+        graphDataTimer = new CountDownTimer(2000, 2000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if(isPause) {
@@ -251,6 +256,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             }
             @Override
             public void onFinish() {
+                Log.v("Timer diagramm", "Tick");
                 CriticalData.usersMass.add((int) user.mass / 10);
                 start();
             }
@@ -275,12 +281,13 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
             Log.v("pauseGame","pauseGame");
             isPause = true;
             runFlag = false;
+            graphDataTimer.cancel();
         }
         else {
             Log.v("NOpauseGame", "NOpauseGame");
             isPause = false;
             gameMap.startFoodTimer();
-            setGraphDataTimer();
+            graphDataTimer.start();
         }
     }
 
@@ -295,6 +302,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         setDrawingCacheEnabled(true);
         measure(this.getWidth(), this.getHeight());
         layout(0, 0, this.getWidth(), this.getHeight());
+        sceneCanvas.setMatrix(matrix);
         draw(sceneCanvas);
         return bitmap;
     }
@@ -322,6 +330,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
         CriticalData.user.setIsMoved(false);
         gameMap.stopFoodTimer();
         runFlag = false;
+        graphDataTimer.cancel();
         mainHandler.removeCallbacks(this);
     }
 
@@ -504,16 +513,22 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
 
     private void drawScores(Canvas canvas)
     {
-        paint.setAntiAlias(true);
-        paint.setColor(Color.RED);
-        paint.setAlpha(170);
-        paint.setTextSize(52.0f);
+        Paint paints = new Paint();
+        paints.setAntiAlias(true);
+        paints.setColor(Color.RED);
+        paints.setAlpha(170);
+        paints.setTextSize(52.0f);
         SimpleDateFormat sdf = new SimpleDateFormat("m:ss");
         Calendar calendar = Calendar.getInstance();
         currentTime = calendar.getTimeInMillis();
-        gameTime.setTime(CriticalData.lastTime + (currentTime - startTime));
-        canvas.drawText(sdf.format(gameTime), 50f, 100f, paint);
-        canvas.drawText(String.valueOf((int) user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paint);
+        //Log.v("Is pause ", String.valueOf(isPause) + " " + String.valueOf(runFlag));
+        //Log.v("Last time ", String.valueOf(CriticalData.lastTime));
+        //Log.v("Calendar ", String.valueOf(currentTime));
+        if(!isPause)
+            lastDrawingTime = CriticalData.lastTime + (currentTime - startTime);
+        gameTime.setTime(lastDrawingTime);
+        canvas.drawText(sdf.format(gameTime), 50f, 100f, paints);
+        canvas.drawText(String.valueOf((int) user.mass / 10), Settings.ScreenWidthDefault - 250f, 100f, paints);
     }
 
     private void setGameTime()
