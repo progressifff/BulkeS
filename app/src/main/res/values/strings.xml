@@ -10,8 +10,8 @@
     <string name="tableTime">Time</string>
     <string name="tablePoint">Point</string>
     <string name="settings_header">Settings</string>
-    <string name="totalGameTime">Total game time:</string>
-    <string name="maxGameScore">Max game score:</string>
+    <string name="totalGameTime">Game time</string>
+    <string name="maxGameScore">Max game score</string>
     <string name="title_activity_splash_screen" translatable="false">splashScreen</string>
     <string name="training">Training</string>
     <string name="max_score">Max Score</string>

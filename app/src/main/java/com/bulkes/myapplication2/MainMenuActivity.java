@@ -383,7 +383,4 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
-
-
-
 }
