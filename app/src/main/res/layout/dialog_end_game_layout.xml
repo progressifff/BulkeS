@@ -14,8 +14,7 @@
         card_view:cardCornerRadius="10dp"
         card_view:cardPreventCornerOverlap = "false"
         style="@style/CardView"
-        android:layout_marginLeft="100dp"
-        android:layout_marginRight="100dp">
+        >
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,11 +35,15 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/end_game_text"
                 android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentEnd="false"
+                android:layout_alignLeft="@+id/end_game_text"
+                android:layout_alignRight="@+id/end_game_text">
 
                 <Button
                     style="@style/Base.Widget.AppCompat.Button.Colored"
@@ -51,10 +54,9 @@
 
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/end_game_text"
-                    android:layout_weight="1"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    />
+                    android:layout_weight="1"/>
 
                 <Button
                     style="@style/Base.Widget.AppCompat.Button.Colored"
@@ -64,10 +66,9 @@
                     android:id="@+id/no_btn"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/end_game_text"
-                    android:layout_weight="1"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    />
+                    android:layout_weight="1"/>
             </LinearLayout>
 
         </RelativeLayout>

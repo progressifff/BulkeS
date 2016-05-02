@@ -365,6 +365,7 @@ class GameView extends SurfaceView implements SurfaceHolder.Callback,Runnable
     public void draw(Canvas canvas)
     {
 //------------------------Draw Field------------------------------------------------------------
+        paint.setAntiAlias(true);
         paint.setColor(Settings.GameFieldColor);
         canvas.drawPaint(paint);
 
