@@ -18,7 +18,7 @@ public final class Settings
     static  int    GameFieldColor             = Color.WHITE;
     //--------------------User--------------------------------
     static float  UserStartSize              = 100f;
-       static int    UserDefaultColor           = Color.RED;
+    static int UserDefaultColor = Color.RED;
     final   static float  BulkBaseSize               = 100f;//for indicator and speed
     final   static float  UserMaxRadius              = 200f;
     final   static float  UserSpeedCoefficient       = 0.1f;
@@ -29,8 +29,8 @@ public final class Settings
     final   static int    MaxFoodInSector            = 6;
     final   static float  MinAddFoodScaleValue       = 0.6f;
     final   static float  MaxAddFoodScaleValue       = 1.3f;
-    final   static int    MinFoodSize                = 20;
-    final   static int    MaxFoodSize                = 40;
+    static int MinFoodSize = 20;
+    static int MaxFoodSize = 40;
     final   static int    BaseFoodSize               = (MaxFoodSize - MinFoodSize) / 2;
     final   static int    FoodDefaultFeed            = 500;
     final   static int    FoodFeedForRadius          = 20;

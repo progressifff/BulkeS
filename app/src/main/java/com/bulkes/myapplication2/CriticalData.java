@@ -1,5 +1,7 @@
-
 package com.bulkes.myapplication2;
+
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Random;
 /**
@@ -11,11 +13,13 @@ public final class CriticalData {
     public static ArrayList<Bulk> bulkesMap;
     public static float scaling;
     public static long lastTime;
+    public static long previousTime;
     public static boolean isRun;
     public static ArrayList<Integer> usersMass;
     public static void createNewField()
     {
         Settings.UserScale = 1f;
+        Log.v("Timer diargram", "Clear");
         usersMass = new ArrayList();
         gameMap = new GameMap();
         user = new User(Settings.ScreenWidthDefault / 2, Settings.ScreenHeightDefault / 2, Settings.UserStartSize, Settings.UserDefaultColor);
@@ -30,24 +34,33 @@ public final class CriticalData {
         gameMap.addUnit(user);
         gameMap.fillFood(bulkesMap);
         lastTime = 0;
+        previousTime = 0;
         isRun = true;
     }
     public static void createTrainingField()
     {
         Settings.CountBulkes    = 0;
         Settings.UserStartSize  = 180f;
+        Settings.MinFoodSize = 20;
+        Settings.MaxFoodSize = 40;
         createNewField();
     }
-    public static void createBattleField()
-    {
-        Settings.CountBulkes    = 1;
-        Settings.UserStartSize  = 100f;
-        createNewField();
-    }
+
     public static void createSurvivalField()
     {
-        Settings.CountBulkes    = 5;
+        Settings.CountBulkes = 5;
         Settings.UserStartSize = 100f;
+        Settings.MinFoodSize = 20;
+        Settings.MaxFoodSize = 40;
+        createNewField();
+    }
+
+    public static void createRunField()
+    {
+        Settings.CountBulkes    = 5;
+        Settings.UserStartSize = 40f;
+        Settings.MinFoodSize = 75;
+        Settings.MaxFoodSize = 80;
         createNewField();
     }
 }

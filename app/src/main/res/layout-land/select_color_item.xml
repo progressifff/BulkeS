@@ -2,6 +2,7 @@
 <FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/color_item_width"
     android:layout_height="@dimen/color_item_width"
+    android:layout_gravity="center_vertical"
     android:clickable="true"
     android:focusable="true">
     <ImageView

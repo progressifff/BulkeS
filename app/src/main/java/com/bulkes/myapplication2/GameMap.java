@@ -22,7 +22,7 @@ public class GameMap
     private boolean needAddFood;
     private int maxFoodCountOnMap;
     private int minFoodCountOnMap;
-  //  private CountDownTimer addFoodTimer;
+    private CountDownTimer addFoodTimer;
     private boolean stopTimer;
 
     public GameMap()
@@ -46,19 +46,18 @@ public class GameMap
     }
 
     public void stopFoodTimer() {
-        stopTimer = true;
+        addFoodTimer.cancel();
     }
 
     public void startFoodTimer()
     {
-        final CountDownTimer addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000,Settings.TimeCreateNewFood * 1000)
+        addFoodTimer = new CountDownTimer(Settings.TimeDelayFirstNewFood * 1000, Settings.TimeCreateNewFood * 1000)
         {
             @Override
             public void onTick(long millisUntilFinished) {
-                if(stopTimer){
-                    this.cancel();
-                }
+
             }
+
             @Override
             public void onFinish()
             {

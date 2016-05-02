@@ -13,4 +13,5 @@
     <color name="colorLightGray">#e6e6e6</color>
     <color name="colorMaterialPurple">#9494ff</color>
     <color name="colorMaterialRed">#ff6161</color>
+    <color name="settingColor">#f44336</color>
 </resources>

@@ -72,8 +72,8 @@ public class Unit
     public void updatePosition(Unit unit)//update location + radius
     {
         radius = baseRadius * Settings.UserScale;
-       // x = unit.x + ((baseX - unit.x) * Settings.UserScale);
-       // y = unit.y + ((baseY - unit.y) * Settings.UserScale);
+        // x = unit.x + ((baseX - unit.x) * Settings.UserScale);
+        // y = unit.y + ((baseY - unit.y) * Settings.UserScale);
 
         if(!isOnMainScreen())
             animationRadius = radius;
@@ -161,7 +161,7 @@ public class Unit
     public boolean isOverlapped(Unit unit)
     {
         //if( unit.radius > radius )
-          //  return unit.isOverlapped(this);
+        //  return unit.isOverlapped(this);
         if(       unit.getX() < x - (radius + unit.radius)
                 ||unit.getX() > x + (radius + unit.radius)
                 ||unit.getY() < y - (radius + unit.radius)

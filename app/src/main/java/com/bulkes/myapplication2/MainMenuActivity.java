@@ -15,11 +15,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,26 +45,16 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
     private Date        date;
     private SimpleDateFormat dateFormat;
 
-
-
-    private int         trainingScore;
-    private long        trainingTime;
-
-    private int         duelLevel;
-    private int         duelScore;
-    private long        duelTime;
-
-    private int         survivalScore;
-    private long        survivalTime;
+    private int maxScore;
+    private long maxTime;
 
     private ImageButton iButtonProgressTable;
     private ImageButton iButtonDiagram;
     private ImageButton iButtonSettings;
     private ImageButton iButtonAbout;
     //Game Type Button
-    private ImageButton iButtonTraining;
-    private ImageButton iButtonBattle;
-    private ImageButton iButtonSurvival;
+    private Button buttonTraining;
+    private Button buttonSurvival;
 
     //Table Result
     private TableLayout tableResult;
@@ -77,26 +69,6 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
     private TextView    labelPoint;
     private TextView    userPoint;
 
-    //Training
-    private TextView    trainingLabel;
-    private TextView    trainingMaxScoreLabel;
-    private TextView    trainingMaxScoreValue;
-    private TextView    trainingTotalTimeLabel;
-    private TextView    trainingTotalTimeValue;
-
-    //Duel
-    private TextView    duelLabel;
-    private TextView    duelBestTimeLabel;
-    private TextView    duelMaxPointLabel;
-    private TextView    duelBestTimeValue;
-    private TextView    duelMaxPointValue;
-
-    //Survival
-    private TextView    survivalLabel;
-    private TextView    survivalBestTimeLabel;
-    private TextView    survivalMaxPointLabel;
-    private TextView    survivalBestTimeValue;
-    private TextView    survivalMaxPointValue;
 
 
     //File saving
@@ -104,16 +76,8 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
     public static final String APP_SETTINGS_USER_NAME = "UserName";
     public static final String APP_SETTINGS_USER_COLOR_NUM = "UserBulkColorNum";
     public static final String APP_SETTINGS_IS_BLACK_BG = "GameIsBlackField";
-
-    public static final String APP_SETTINGS_TRAINING_MAX_SCORE = "TrainingMaxScore";
-    public static final String APP_SETTINGS_TRAINING_TOTAL_TIME = "TrainingTotaltime";
-
-    public static final String APP_SETTINGS_DUEL_LEVEL = "DuelLevel";
-    public static final String APP_SETTINGS_DUEL_MAX_SCORE = "DuelMaxScore";
-    public static final String APP_SETTINGS_DUEL_BEST_TIME = "DuelBestTime";
-
-    public static final String APP_SETTINGS_SURVIVAL_MAX_SCORE = "SurvivalMaxScore";
-    public static final String APP_SETTINGS_SURVIVAL_BEST_TIME = "SurvivalBestTime";
+    public static final String APP_SETTINGS_MAX_SCORE = "MaxScore";
+    public static final String APP_SETTINGS_MAX_TIME = "MaxTime";
     public static final String APP_SETTINGS_USER_ID = "UserID";
 
     private SharedPreferences mSettings;
@@ -195,105 +159,65 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         mainLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                CriticalData.createRunField();
+                intent = new Intent();
+                intent.setClass(MainMenuActivity.this, GoGaming.class);
+                startActivityForResult(intent, 1);
             }
         });
 
-        nameUser = (EditText) findViewById(R.id.nameField);
-        nameUser.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (nameUser.getText().toString().length() != 0) {
-                        SharedPreferences.Editor editor = mSettings.edit();
-                        nickName = nameUser.getText().toString();
-                        editor.putString(APP_SETTINGS_USER_NAME, nameUser.getText().toString());
-                        editor.apply();
-                    }
-                    nameUser.clearFocus();
-                }
-                return false;
-            }
-        });
-
-        iButtonTraining = (ImageButton)findViewById(R.id.iButtonTraining);
-        iButtonBattle   = (ImageButton)findViewById(R.id.iButtonDuel);
-        iButtonSurvival = (ImageButton)findViewById(R.id.iButtonSurvival);
-        iButtonDiagram = (ImageButton)findViewById(R.id.iButtonDiagram);
-        iButtonSettings = (ImageButton)findViewById(R.id.iButtonSettings);
+        iButtonProgressTable = (ImageButton) findViewById(R.id.iButtonProgressTable);
+        buttonTraining = (Button) findViewById(R.id.buttonTraining);
+        buttonSurvival = (Button) findViewById(R.id.buttonSurvival);
+        iButtonDiagram = (ImageButton) findViewById(R.id.iButtonDiagram);
+        iButtonAbout = (ImageButton) findViewById(R.id.iButtonAbout);
+        iButtonSettings = (ImageButton) findViewById(R.id.iButtonSettings);
+        iButtonProgressTable.setOnClickListener(this);
         iButtonDiagram.setOnClickListener(this);
         iButtonSettings.setOnClickListener(this);
-        iButtonTraining.setOnClickListener(this);
-        iButtonBattle.setOnClickListener(this);
-        iButtonSurvival.setOnClickListener(this);
-//===================
-        iButtonProgressTable = (ImageButton)findViewById(R.id.iButtonProgressTable);
-        iButtonProgressTable.setOnClickListener(this);
-        //==================
+        buttonTraining.setOnClickListener(this);
+        buttonSurvival.setOnClickListener(this);
+        final View.OnLongClickListener toolTip = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String info = new String();
+                switch (v.getId()) {
+                    case R.id.iButtonAbout:
+                        info = getResources().getString(R.string.tooltipInfo);
+                        break;
+                    case R.id.iButtonSettings:
+                        info = getResources().getString(R.string.tooltipSetting);
+                        break;
+                    case R.id.iButtonDiagram:
+                        info = getResources().getString(R.string.tooltipDiagram);
+                        break;
+                    case R.id.iButtonProgressTable:
+                        info = getResources().getString(R.string.tooltipTable);
+                        break;
+                }
+                Toast.makeText(v.getContext(), info, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        };
 
-        //Training
-        trainingLabel            = (TextView) findViewById(R.id.trainingLabel);
-        trainingMaxScoreLabel    = (TextView) findViewById(R.id.trainingMaxScoreLabel);
-        trainingMaxScoreValue    = (TextView) findViewById(R.id.trainingMaxScoreValue);
-        trainingTotalTimeLabel   = (TextView) findViewById(R.id.trainingTotalTimeLabel);
-        trainingTotalTimeValue   = (TextView) findViewById(R.id.trainingTotalTimeValue);
+        iButtonSettings.setOnLongClickListener(toolTip);
+        iButtonAbout.setOnLongClickListener(toolTip);
+        iButtonProgressTable.setOnLongClickListener(toolTip);
+        iButtonDiagram.setOnLongClickListener(toolTip);
 
-        trainingLabel.setTypeface(typefaceLetter);
-        trainingMaxScoreLabel.setTypeface(typefaceLetter);
-        trainingTotalTimeLabel.setTypeface(typefaceLetter);
-        trainingMaxScoreValue.setTypeface(typefaceNumber);
-        trainingTotalTimeValue.setTypeface(typefaceNumber);
-
-        //Duel
-        duelLabel           = (TextView) findViewById(R.id.duelLabel);
-        duelBestTimeLabel   = (TextView) findViewById(R.id.duelBestTimeLabel);
-        duelMaxPointLabel   = (TextView) findViewById(R.id.duelMaxPointLabel);
-        duelBestTimeValue   = (TextView) findViewById(R.id.duelBestTimeValue);
-        duelMaxPointValue   = (TextView) findViewById(R.id.duelMaxPointValue);
-
-        duelLabel.setTypeface(typefaceLetter);
-        duelBestTimeLabel.setTypeface(typefaceLetter);
-        duelMaxPointLabel.setTypeface(typefaceLetter);
-
-        duelBestTimeValue.setTypeface(typefaceNumber);
-        duelMaxPointValue.setTypeface(typefaceNumber);
-
-        //survival
-        survivalLabel           = (TextView) findViewById(R.id.survivalLabel);
-        survivalBestTimeLabel   = (TextView) findViewById(R.id.survivalBestTimeLabel);
-        survivalMaxPointLabel   = (TextView) findViewById(R.id.survivalMaxPointLabel);
-        survivalBestTimeValue   = (TextView) findViewById(R.id.survivalBestTimeValue);
-        survivalMaxPointValue   = (TextView) findViewById(R.id.survivalMaxPointValue);
-
-        survivalLabel.setTypeface(typefaceLetter);
-        survivalBestTimeLabel.setTypeface(typefaceLetter);
-        survivalMaxPointLabel.setTypeface(typefaceLetter);
-
-        survivalBestTimeValue.setTypeface(typefaceNumber);
-        survivalMaxPointValue.setTypeface(typefaceNumber);
-
-
-
-
-        //user info
         labelTime   =  (TextView) findViewById(R.id.labelTime);
         userTime    =  (TextView) findViewById(R.id.userTime);
         labelPoint  =  (TextView) findViewById(R.id.labelPoint);
         userPoint   =  (TextView) findViewById(R.id.userPoint);
-
         labelTime.setTypeface(typefaceLetter);
         labelPoint.setTypeface(typefaceLetter);
-
         userTime.setTypeface(typefaceNumber);
         userPoint.setTypeface(typefaceNumber);
-
 
         //------------------------Read Settings From File------------------------#######
         mSettings = getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE);
 
         nickName = mSettings.getString(APP_SETTINGS_USER_NAME, "Player1");
-        Log.v("NICKNAME", nickName);
-        nameUser.setText(nickName);
 
         userColorNum = mSettings.getInt(APP_SETTINGS_USER_COLOR_NUM, 1);
         Settings.UserDefaultColor = Settings.UsersBulkColors[userColorNum-1];
@@ -303,48 +227,13 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
 
         userId = mSettings.getInt(APP_SETTINGS_USER_ID, 0);
 
-        trainingScore = mSettings.getInt(APP_SETTINGS_TRAINING_MAX_SCORE, 0);
-        trainingMaxScoreValue.setText(String.valueOf(trainingScore));
+        maxScore = (mSettings.contains(APP_SETTINGS_MAX_SCORE) ? mSettings.getInt(APP_SETTINGS_MAX_SCORE, -1) : 0);
+        userPoint.setText(String.valueOf(maxScore));
 
-        trainingTime = mSettings.getLong(APP_SETTINGS_TRAINING_TOTAL_TIME, 0);
-        date.setTime(trainingTime);
-        trainingTotalTimeValue.setText(dateFormat.format(date));
-
-        duelLevel = mSettings.getInt(APP_SETTINGS_DUEL_LEVEL, 1);
-        duelBestTimeLabel.setText(String.valueOf(duelLevel));
-
-        duelScore = mSettings.getInt(APP_SETTINGS_DUEL_MAX_SCORE, 0);
-        duelMaxPointValue.setText(String.valueOf(duelScore));
-
-        duelTime = mSettings.getLong(APP_SETTINGS_DUEL_BEST_TIME, 0);
-        date.setTime(duelTime);
-        duelBestTimeValue.setText(dateFormat.format(date));
-
-        survivalScore = mSettings.getInt(APP_SETTINGS_SURVIVAL_MAX_SCORE, 0);
-        survivalMaxPointValue.setText(String.valueOf(trainingScore));
-
-        survivalTime = mSettings.getLong(APP_SETTINGS_SURVIVAL_BEST_TIME, 0);
-        date.setTime(survivalTime);
-        survivalBestTimeValue.setText(dateFormat.format(date));
-
-
+        maxTime = (mSettings.contains(APP_SETTINGS_MAX_TIME) ? mSettings.getLong(APP_SETTINGS_MAX_TIME, -1) : 0);
+        date.setTime(maxTime);
+        userTime.setText(dateFormat.format(date));
         //-----------------------------------------------------------------------#######
-
-
-        findViewById(R.id.button4).setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                intent = new Intent();
-                intent.putExtra(GameTable.ID, userId);
-                intent.putExtra(GameTable.USER_NAME, nickName);
-                intent.putExtra(GameTable.USERS_SCORES, survivalScore);
-                date.setTime(survivalTime);
-                intent.putExtra(GameTable.GAME_TIME, dateFormat.format(date));
-                intent.setClass(MainMenuActivity.this, GameTable.class);
-                startActivityForResult(intent, 5);
-            }
-        });
     }
 
     private boolean deviceImmersiveSupport()
@@ -406,71 +295,32 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int reqCode, int resCode, Intent data)
     {
         SharedPreferences.Editor editor = mSettings.edit();
-        //***************
-        int resultDuelLevel;
-        //****************
-        int resultUserScore;
-        long resultUserGameTime;
         switch (reqCode)
         {
-            case 0:// Training
-                resultUserScore = data.getIntExtra(GoGaming.USER_SCORES,-1);
-                resultUserGameTime = data.getLongExtra(GoGaming.USER_GAMETIME,-1);
-                if(resultUserScore!=-1&&resultUserGameTime!=-1) {
-                    trainingTime += resultUserGameTime;
-                    date.setTime(trainingTime);
-                    trainingTotalTimeValue.setText(dateFormat.format(date));
-                    trainingScore = (resultUserScore>trainingScore?resultUserScore:trainingScore);
-                    trainingMaxScoreValue.setText(String.valueOf(trainingScore));
-                    editor.putInt(APP_SETTINGS_TRAINING_MAX_SCORE, trainingScore);
-                    editor.putLong(APP_SETTINGS_TRAINING_TOTAL_TIME, trainingTime);
+            case 1:// Survival
+                int currentScore = data.getIntExtra(GoGaming.USER_SCORES, -1);
+                long currentTime = data.getLongExtra(GoGaming.USER_GAMETIME, -1);
+                if (currentScore > maxScore) {
+                    maxScore = currentScore;
+                    maxTime = currentTime;
+                    date.setTime(maxTime);
+                    userPoint.setText(String.valueOf(maxScore));
+                    userTime.setText(dateFormat.format(date));
+                    editor.putInt(APP_SETTINGS_MAX_SCORE, maxScore);
+                    editor.putLong(APP_SETTINGS_MAX_TIME, maxTime);
                     editor.apply();
-                    iButtonDiagram.setVisibility(View.VISIBLE);
                 }
+                iButtonDiagram.setVisibility(View.VISIBLE);
                 break;
-            case 1:// Duel
-                resultUserScore = data.getIntExtra(GoGaming.USER_SCORES,-1);
-                resultUserGameTime = data.getLongExtra(GoGaming.USER_GAMETIME,-1);
-                if(resultUserScore!=-1&&resultUserGameTime!=-1) {
-                    if (resultUserScore > duelScore) {
-                        date.setTime(duelTime);
-                        duelBestTimeValue.setText(dateFormat.format(date));
-                        duelScore = (resultUserScore > duelScore ? resultUserScore : duelScore);
-                        duelMaxPointValue.setText(String.valueOf(duelScore));
-                        editor.putInt(APP_SETTINGS_DUEL_MAX_SCORE, duelScore);
-                        editor.putLong(APP_SETTINGS_DUEL_BEST_TIME, duelTime);
-                        editor.apply();
-                    }
-                    iButtonDiagram.setVisibility(View.VISIBLE);
-                }
+            case 2:// GraphActivity
                 break;
-            case 2:// Survival
-                resultUserScore = data.getIntExtra(GoGaming.USER_SCORES,-1);
-                resultUserGameTime = data.getLongExtra(GoGaming.USER_GAMETIME,-1);
-                if(resultUserScore!=-1&&resultUserGameTime!=-1) {
-                    if (resultUserScore > survivalScore) {
-                        date.setTime(survivalTime);
-                        survivalBestTimeValue.setText(dateFormat.format(date));
-                        survivalScore = (resultUserScore > survivalScore ? resultUserScore : survivalScore);
-                        duelMaxPointValue.setText(String.valueOf(survivalScore));
-                        userPoint.setText(String.valueOf(survivalScore));
-                        userTime.setText(dateFormat.format(date));
-                        editor.putInt(APP_SETTINGS_SURVIVAL_MAX_SCORE, survivalScore);
-                        editor.putLong(APP_SETTINGS_SURVIVAL_BEST_TIME, survivalTime);
-                        editor.apply();
-                    }
-                    iButtonDiagram.setVisibility(View.VISIBLE);
-                }
-                break;
-            case 3:// GraphActivity
-                break;
-            case 4:// GameSettingsActivity
+            case 3:// GameSettingsActivity
                 nickName = data.getStringExtra(GameSettings.NICKNAME);
                 userColorNum = data.getIntExtra(GameSettings.USER_COLOR_NUM,1);
                 isBlackBG = data.getBooleanExtra(GameSettings.BLACK_BG, false);
                 if(nickName.length()!=0) {
                     editor.putString(APP_SETTINGS_USER_NAME, nickName);
-                    nameUser.setText(nickName);
+                    // nameUser.setText(nickName);
                 }
                 editor.putInt(APP_SETTINGS_USER_COLOR_NUM, userColorNum);
                 editor.putBoolean(APP_SETTINGS_IS_BLACK_BG, isBlackBG);
@@ -478,7 +328,7 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
                 Settings.GameFieldColor = (isBlackBG==true?Color.BLACK : Color.WHITE);
                 Settings.UserDefaultColor = Settings.UsersBulkColors[userColorNum-1];
                 break;
-            case 5:// GameTableActivity
+            case 4:// GameTableActivity
                 userId = data.getIntExtra(GameTable.ID, 0);
                 editor.putInt(APP_SETTINGS_USER_ID, userId);
                 editor.apply();
@@ -490,28 +340,22 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId())
         {
-            case R.id.iButtonTraining:
+            case R.id.buttonTraining:
                 CriticalData.createTrainingField();
                 intent = new Intent();
                 intent.setClass(MainMenuActivity.this, GoGaming.class);
                 startActivityForResult(intent, 0);
                 break;
-            case R.id.iButtonDuel:
-                CriticalData.createBattleField();
+            case R.id.buttonSurvival:
+                CriticalData.createSurvivalField();
                 intent = new Intent();
                 intent.setClass(MainMenuActivity.this, GoGaming.class);
                 startActivityForResult(intent, 1);
                 break;
-            case R.id.iButtonSurvival:
-                CriticalData.createSurvivalField();
-                intent = new Intent();
-                intent.setClass(MainMenuActivity.this, GoGaming.class);
-                startActivityForResult(intent, 2);
-                break;
             case R.id.iButtonDiagram:
                 intent = new Intent();
                 intent.setClass(MainMenuActivity.this, ProgressGraph.class);
-                startActivityForResult(intent, 3);
+                startActivityForResult(intent, 2);
                 break;
             case R.id.iButtonSettings:
                 intent = new Intent();
@@ -519,17 +363,17 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
                 intent.putExtra(GameSettings.USER_COLOR_NUM,userColorNum);
                 intent.putExtra(GameSettings.BLACK_BG, isBlackBG);
                 intent.setClass(MainMenuActivity.this, GameSettings.class);
-                startActivityForResult(intent, 4);
+                startActivityForResult(intent, 3);
                 break;
             case R.id.iButtonProgressTable:
                 intent = new Intent();
                 intent.putExtra(GameTable.ID, userId);
                 intent.putExtra(GameTable.USER_NAME, nickName);
-                intent.putExtra(GameTable.USERS_SCORES, survivalScore);
-                date.setTime(survivalTime);
+                intent.putExtra(GameTable.USERS_SCORES, maxScore);
+                date.setTime(maxTime);
                 intent.putExtra(GameTable.GAME_TIME, dateFormat.format(date));
                 intent.setClass(MainMenuActivity.this, GameTable.class);
-                startActivityForResult(intent, 5);
+                startActivityForResult(intent, 4);
                 break;
             case R.id.iButtonAbout:
 

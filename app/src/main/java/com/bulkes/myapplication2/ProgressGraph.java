@@ -46,7 +46,7 @@ public class ProgressGraph extends AppCompatActivity {
             public void onClick(View v) {
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 lineChart.saveToGallery("BulkesGraph_" + timeStamp + ".jpg",100);
-                Toast.makeText(graphActivity,"GraphShot is saved",Toast.LENGTH_SHORT).show();
+                Toast.makeText(graphActivity,/*"GraphShot is saved"*/getResources().getString(R.string.digramm_shot), Toast.LENGTH_SHORT).show();
             }
         });
         lineChart.setDescription(null);
@@ -61,6 +61,7 @@ public class ProgressGraph extends AppCompatActivity {
 
     private LineData getData()
     {
+        if (CriticalData.usersMass == null) return null;
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
         for(int i = 0; i<CriticalData.usersMass.size(); i++)
@@ -70,7 +71,7 @@ public class ProgressGraph extends AppCompatActivity {
             date.setTime(i*2000);
             labels.add(sdf.format(date));
         }
-        LineDataSet dataset = new LineDataSet(entries, "Player`s mass");
+        LineDataSet dataset = new LineDataSet(entries, /*"Player`s mass"*/getResources().getString(R.string.diagram_legend));
         dataset.setDrawFilled(true);
         dataset.setLineWidth(3f);
         return  (new LineData(labels,dataset));

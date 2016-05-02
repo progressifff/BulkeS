@@ -7,7 +7,6 @@ import java.util.Random;
  */
 public class Food extends Unit
 {
-
     private  float feed;
     @Override
     public float getFeed() {
@@ -31,6 +30,4 @@ public class Food extends Unit
         if(!isOnMainScreen())
             animationRadius = radius;
     }
-
-
 }

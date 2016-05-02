@@ -38,23 +38,28 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="5dp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@+id/closeTableBtn"
-        android:id="@+id/borderTable"
-        android:background="@color/colorLightGray"></View>
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="7dp"
-        android:layout_below="@+id/borderTable"
-        android:id="@+id/dataGettingProgressBar"
-        android:indeterminate="true"
-        android:progressDrawable="@drawable/indeterminate_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:visibility="visible" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/closeTableBtn">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:id="@+id/borderTable"
+            android:background="@color/colorLightGray" />
+
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="7dp"
+            android:id="@+id/dataGettingProgressBar"
+            android:indeterminate="true"
+            android:progressDrawable="@drawable/indeterminate_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:visibility="visible" />
+    </LinearLayout>
     <TableLayout
         android:id="@+id/progressTableLayout"
         android:stretchColumns="*"
@@ -106,12 +111,9 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </TableRow>
     </TableLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/gameTableList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/progressTableLayout"></android.support.v7.widget.RecyclerView>
-
-
 </RelativeLayout>
